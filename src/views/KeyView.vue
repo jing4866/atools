@@ -5,34 +5,28 @@
       <div class="keys-item keys-last-day">
         <div class="keys-type">关键字 - 左侧</div>
         <div class="keys-content">
-          <el-input
-            class="keys-area"
-            v-model="keyleft"
-            type="textarea"
-            placeholder="点击当前区域输入数据：左侧关键字。"
-            @change="leftChange"
-          />
+          <el-input class="keys-area" v-model="keyleft" type="textarea" placeholder="点击当前区域输入数据：左侧关键字。"
+            @change="leftChange" />
         </div>
       </div>
       <div class="keys-item keys-new-day">
         <div class="keys-type">关键字 - 右侧</div>
         <div class="keys-content">
-          <el-input
-            class="keys-area"
-            v-model="keyright"
-            type="textarea"
-            placeholder="点击当前区域输入数据：右侧关键字。"
-            @change="rightChange"
-          />
+          <el-input class="keys-area" v-model="keyright" type="textarea" placeholder="点击当前区域输入数据：右侧关键字。"
+            @change="rightChange" />
         </div>
       </div>
       <div class="keys-item keys-compared">
         <div class="keys-type">
           <el-button type="primary" size="small" @click="keysFilterHandle(0)">
-            <el-icon class="keys-type-icon" color="red" v-show="keys_filtered_pos === 0"><LocationInformation /></el-icon>关键字不在左
+            <el-icon class="keys-type-icon" color="red" v-show="keys_filtered_pos === 0">
+              <LocationInformation />
+            </el-icon>关键字不在左
           </el-button>
           <el-button type="success" size="small" @click="keysFilterHandle(1)">
-            <el-icon class="keys-type-icon" color="red" v-show="keys_filtered_pos === 1"><LocationInformation /></el-icon>关键字不在右
+            <el-icon class="keys-type-icon" color="red" v-show="keys_filtered_pos === 1">
+              <LocationInformation />
+            </el-icon>关键字不在右
           </el-button>
         </div>
         <div class="keys-content">
@@ -41,11 +35,9 @@
             <el-button type="danger" round size="small" @click="copyHandle">Copy</el-button>
           </div>
           <div class="keys-list">
+            <el-empty v-if="state.length === 0" description="当前数据未空。如左右两数据列已导入数据，请点击上侧按钮进行过滤。" />
             <ul>
-              <li>hello world.</li>
-              <li>hello world.</li>
-              <li>hello world.</li>
-              <li>hello world.</li>
+              <li v-for="item in state" :key="item">{{ item }}</li>
             </ul>
           </div>
         </div>
@@ -62,25 +54,11 @@ import { ElMessage } from 'element-plus';
 import { LocationInformation } from '@element-plus/icons-vue'
 import { str2Array } from '@/utils/util.js'
 
-const test = `10看完三贵  情史又相信真爱了\r\n
-11公司办观摩会在  稻田里铺红毯\r
-  12PPT之父  去世\n
-13金正恩  女儿再次公开露面\r\n
-  14网红流浪狗“黄主任”去世了  
-15孩子扛2条五花肉送老师`
-
-const t = `
-8多条广东暴雨相关传言被辟谣
-9金正恩女儿再次公开露面
-10#看完三贵情史又相信真爱了#
-11孩子扛2条五花肉送老师
-12李咏21岁女儿时装秀全程飙英文
-`
-
-let keyleft = ref(test);
-let keyright = ref(t);
+let keyleft = ref('');
+let keyright = ref('');
 let keys_filtered = ref('关键字不在左');
 let keys_filtered_pos = ref(0);
+let state = reactive([]);
 
 const leftChange = (value) => {
   // 将字符串转为数组
@@ -108,12 +86,12 @@ const keysFilterHandle = (pos) => {
 const copyHandle = (data) => {
   const cp = copy('adfdf');
   const desc = keys_filtered_pos.value ? '关键字不在右' : '关键字不在左';
-  if(cp){
+  if (cp) {
     ElMessage({
       message: `${desc} : 成功复制 ${0} 条数据`,
       type: 'success',
     })
-  }else{
+  } else {
     ElMessage.error(`${desc} : 复制失败，请尝试手动复制。`)
   }
 }
@@ -122,31 +100,37 @@ const copyHandle = (data) => {
 
 <style>
 .keyview-container {
-  .keys-containter{
+  .keys-containter {
     display: flex;
     padding: 20px;
-    .keys-item{
+
+    .keys-item {
       width: 30%;
       padding: 8px;
       margin: 10px;
-      &:nth-of-type(3){
+
+      &:nth-of-type(3) {
         width: 40%;
-        .keys-content{
+
+        .keys-content {
           border: 1px solid #202127;
           border-color: #a8b1ff;
           background-color: rgba(0, 0, 0, 0.1);
         }
       }
-      .keys-type{
+
+      .keys-type {
         font-size: 14px;
         padding: 5px 0;
         display: flex;
         justify-content: space-between;
       }
-      .keys-content{
+
+      .keys-content {
         border-radius: 3px;
         min-height: calc(100vh - 250px);
-        .el-textarea__inner{
+
+        .el-textarea__inner {
           width: 100%;
           height: calc(100vh - 250px);
           padding: 8px;
@@ -155,18 +139,25 @@ const copyHandle = (data) => {
           border: 1px solid #202127;
           border-radius: 3px;
           background-color: rgba(255, 255, 255, 0.1);
-          &:hover{
+
+          &:hover {
             border-color: #a8b1ff;
           }
         }
       }
-      .keys-result{
+
+      .keys-result {
         display: flex;
         justify-content: space-between;
         padding: 8px;
       }
+
+      .keys-list {
+        height: calc(100vh - 300px);
+        padding: 8px;
+        overflow-y: auto;
+      }
     }
   }
 }
-
 </style>
