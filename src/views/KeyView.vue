@@ -124,7 +124,6 @@ function D_Value (pos){
     // 当 pos === 0 时，右侧的关键字不在左侧重复出现
     data.result = _.difference(right, left);
   }
-  console.log(data.result);
 };
 
 
