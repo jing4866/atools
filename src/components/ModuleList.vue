@@ -52,7 +52,7 @@ import { RouterLink } from 'vue-router'
             background-color: #202127;
             transition: border-color .25s,background-color .25s;
             &:hover{
-                border-color: #a8b1ff;;
+                border-color: #a8b1ff;
             }
         }
         .modules-title{
