@@ -3,14 +3,20 @@
     <h1>关键字过滤</h1>
     <div class="keys-containter">
       <div class="keys-item keys-last-day">
-        <div class="keys-type">关键字 - 左侧</div>
+        <div class="keys-type">
+          <p>关键字 - 左侧 </p>
+          <el-button round size="small" @click="clearHandle(0)"><el-icon><Delete /></el-icon>清空数据</el-button>
+        </div>
         <div class="keys-content">
           <el-input class="keys-area" v-model="keyleft" type="textarea" placeholder="点击当前区域输入数据：左侧关键字。"
             @change="leftChange" />
         </div>
       </div>
       <div class="keys-item keys-new-day">
-        <div class="keys-type">关键字 - 右侧</div>
+        <div class="keys-type">
+          <p>关键字 - 右侧</p>
+          <el-button round size="small"  @click="clearHandle(1)"><el-icon><Delete /></el-icon>清空数据</el-button>
+        </div>
         <div class="keys-content">
           <el-input class="keys-area" v-model="keyright" type="textarea" placeholder="点击当前区域输入数据：右侧关键字。"
             @change="rightChange" />
@@ -31,13 +37,13 @@
         </div>
         <div class="keys-content">
           <div class="keys-result">
-            <p class="keys-selected">{{ keys_filtered }} > 过滤结果： {{ 0 }}</p>
+            <p class="keys-selected">{{ keys_filtered }} > 过滤结果： {{ data.result.length }} 条</p>
             <el-button type="danger" round size="small" @click="copyHandle">Copy</el-button>
           </div>
           <div class="keys-list">
-            <el-empty v-if="state.length === 0" description="当前数据为空。如左右两列已导入数据，请点击上侧按钮进行过滤。" />
-            <ul>
-              <li v-for="item in state" :key="item">{{ item }}</li>
+            <el-empty v-if="!data.result.length && (!data.left.length || !data.right.length)" description="当前数据为空。如左右两列已导入数据，请点击上侧按钮进行过滤。" />
+            <ul v-else>
+              <li v-for="(item, index) in data.result" :key="index">{{ item }}</li>
             </ul>
           </div>
         </div>
@@ -51,44 +57,85 @@ import { ref, reactive } from 'vue';
 import copy from 'copy-to-clipboard';
 import _ from 'lodash';
 import { ElMessage } from 'element-plus';
-import { LocationInformation } from '@element-plus/icons-vue'
+import { LocationInformation, Delete } from '@element-plus/icons-vue'
 import { str2Array } from '@/utils/util.js'
 
-let keyleft = ref('');
-let keyright = ref('');
-let keys_filtered = ref('关键字不在左');
-let keys_filtered_pos = ref(0);
-let state = reactive([]);
+let keyleft = ref(''); // 左侧关键字 textarea
+let keyright = ref(''); // 右侧关键字 textarea
+let keys_filtered = ref('关键字不在左'); // 过滤状态
+let keys_filtered_pos = ref(0); // 过滤状态
+let data = reactive({
+  left: [],
+  right: [],
+  result: []
+});
 
+// 左侧关键字函数
 const leftChange = (value) => {
   // 将字符串转为数组
-  const s2Arr = str2Array(test);
+  const s2Arr = str2Array(value);
   // 移除数组项中字符串前后空格
   const arrNoTrims = _.map(s2Arr, _.trim);
   // 移除数组中的空项
   _.remove(arrNoTrims, (n) => n === "" || n === " ");
-}
-const rightChange = (value) => {
-  // 将字符串转为数组
-  const s2Arr = str2Array(test);
-  // 移除数组项中字符串前后空格
-  const arrNoTrims = _.map(s2Arr, _.trim);
-  // 移除数组中的空项
-  _.remove(arrNoTrims, (n) => n === "" || n === " ");
+  // 记录数据
+  data.left = arrNoTrims;
 }
 
+// 右侧关键字函数
+const rightChange = (value) => {
+  // 将字符串转为数组
+  const s2Arr = str2Array(value);
+  // 移除数组项中字符串前后空格
+  const arrNoTrims = _.map(s2Arr, _.trim);
+  // 移除数组中的空项
+  _.remove(arrNoTrims, (n) => n === "" || n === " ");
+  // 记录数据
+  data.right = arrNoTrims;
+}
+
+// 清空数据
+const clearHandle = (pos) => {
+  // 清空 textarea
+  pos ? keyright.value = '' : keyleft.value = '';
+  // 清空数组数据
+  pos ? data.right = [] : data.left = [];
+  data.result = []
+}
+
+// 点击过滤关键字按钮事件
 const keysFilterHandle = (pos) => {
   keys_filtered.value = pos ? '关键字不在右' : '关键字不在左';
   keys_filtered_pos.value = pos;
-
+  D_Value(pos)
 }
 
-const copyHandle = (data) => {
-  const cp = copy('adfdf');
+/*
+ * 求左右两列数据差值:0 =>关键字不在左 表示右侧数据列中的数据没有在左侧出现过； 1=> 关键字不在右 表示左侧关键字数据没有在右侧出现过
+ * @param { any } pos 当前选中的是关键字不在左(0)还是关键字不在右(1)
+ * @return { Array } result 返回数据
+ * */ 
+function D_Value (pos){
+  const { left, right } = data;
+  if(pos){
+    // 当 pos === 1 时， 左侧关键字不在右侧重复出现
+    data.result = _.difference(left, right);
+  }else{
+    // 当 pos === 0 时，右侧的关键字不在左侧重复出现
+    data.result = _.difference(right, left);
+  }
+  console.log(data.result);
+};
+
+
+// 复制过滤结果事件
+const copyHandle = () => {
+  const cp = copy(data.result);
   const desc = keys_filtered_pos.value ? '关键字不在右' : '关键字不在左';
+
   if (cp) {
     ElMessage({
-      message: `${desc} : 成功复制 ${0} 条数据`,
+      message: `${desc} : 成功复制 ${data.result.length} 条数据`,
       type: 'success',
     })
   } else {
