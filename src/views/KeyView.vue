@@ -35,7 +35,7 @@
             <el-button type="danger" round size="small" @click="copyHandle">Copy</el-button>
           </div>
           <div class="keys-list">
-            <el-empty v-if="state.length === 0" description="当前数据未空。如左右两数据列已导入数据，请点击上侧按钮进行过滤。" />
+            <el-empty v-if="state.length === 0" description="当前数据为空。如左右两列已导入数据，请点击上侧按钮进行过滤。" />
             <ul>
               <li v-for="item in state" :key="item">{{ item }}</li>
             </ul>
