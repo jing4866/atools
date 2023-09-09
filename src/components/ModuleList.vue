@@ -1,12 +1,14 @@
 <template>
     <div class="modules-containter">
         <div class="modules-item">
-            <div class="mudules-innter">
-                <h2 class="modules-title">关键字过滤</h2>
-                <p class="modules-description">
-                    关键字过滤
-                </p>
-            </div>
+            <RouterLink to="/keytool">
+                <div class="mudules-innter">
+                    <h2 class="modules-title">关键字过滤</h2>
+                    <p class="modules-description">
+                        关键字过滤
+                    </p>
+                </div>
+            </RouterLink>
         </div>
         <div class="modules-item">
             <div class="mudules-innter">
@@ -28,10 +30,11 @@
 </template>
 
 <script setup>
+import { RouterLink } from 'vue-router'
 
 </script>
 
-<style>
+<style scoped>
 .modules-containter{
     display: flex;
     flex-wrap: wrap;
@@ -56,6 +59,7 @@
             line-height: 24px;
             font-size: 16px;
             font-weight: 600;
+            color: rgba(255, 255, 245, 0.86);
         }
         .modules-description{
             flex-grow: 1;
@@ -63,6 +67,7 @@
             line-height: 24px;
             font-size: 14px;
             font-weight: 500;
+            color: rgba(235, 235, 245, 0.6);
         }
     }
 }

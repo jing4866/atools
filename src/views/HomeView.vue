@@ -3,6 +3,7 @@
     <h1 class="main-title">
       <span class="title-span">A Tools</span>
     </h1>
+    <div class="main-desc">一些在线小工具。</div>
     <ModuleList />
   </main>
 </template>
@@ -11,7 +12,7 @@
 import ModuleList from '../components/ModuleList.vue'
 </script>
 
-<style>
+<style scoped>
 .main-title {
   line-height: 64px;
   font-size: 56px;
@@ -26,5 +27,8 @@ import ModuleList from '../components/ModuleList.vue'
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
+}
+.main-desc{
+  margin: 10px 0 0 100px;  
 }
 </style>

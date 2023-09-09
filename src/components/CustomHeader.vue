@@ -1,11 +1,12 @@
 <template>
     <el-menu :default-active="activeIndex" class="el-menu-container" mode="horizontal" :ellipsis="false" @select="handleSelect">
-        <el-menu-item index="0">LOGO</el-menu-item>
+        <el-menu-item index="0"><RouterLink to="/">LOGO</RouterLink></el-menu-item>
         <div class="flex-grow" />
-        <el-menu-item index="1">关键词过滤</el-menu-item>
-        <el-sub-menu index="2">
+        <el-menu-item index="1"><RouterLink to="/">首页</RouterLink></el-menu-item>
+        <el-menu-item index="2"><RouterLink to="/keytool">关键词过滤</RouterLink></el-menu-item>
+        <el-sub-menu index="3">
             <template #title>More</template>
-            <el-menu-item index="2-1">个人信息</el-menu-item>
+            <el-menu-item index="3-1">个人信息</el-menu-item>
             <!-- <el-sub-menu index="2-4">
                 <template #title>item four</template>
                 <el-menu-item index="2-4-1">item one</el-menu-item>
@@ -18,6 +19,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { RouterLink } from 'vue-router'
 
 const activeIndex = ref('1')
 const handleSelect = (key, keyPath) => {
