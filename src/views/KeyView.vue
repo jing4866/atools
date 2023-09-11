@@ -1,47 +1,68 @@
 <template>
   <div class="keyview-container">
-    <h1>关键字过滤</h1>
+    <!-- 面包屑 -->
+    <el-page-header :icon="ArrowLeft" @back="() => $router.go(-1)">
+      <template #content>
+        <span class="text-large"> Keywords </span>
+      </template>
+    </el-page-header>
+    <div class="tool-desc">
+      <el-icon>
+        <Warning />
+      </el-icon>
+      <span class="tool-desc-text">比较 关键词[1] 和 关键词[2] 两组数据的差值，目前仅支持 字符串 类型的比较， 请使用 回车或空格 作为分隔符。</span>
+    </div>
+    <!-- Main -->
     <div class="keys-containter">
+      <!-- 关键词列表 - [1] -->
       <div class="keys-item keys-last-day">
         <div class="keys-type">
           <p>关键字 - [1] </p>
-          <el-button round size="small" @click="clearHandle(0)"><el-icon><Delete /></el-icon>清空数据</el-button>
+          <el-button round size="small" @click="clearHandle(0)"><el-icon>
+              <Delete />
+            </el-icon>清空数据</el-button>
         </div>
         <div class="keys-content">
           <el-input class="keys-area" v-model="keyleft" type="textarea" placeholder="点击当前区域输入数据：关键字 - [1]。"
             @change="leftChange" />
         </div>
       </div>
+      <!-- 关键词列表 - [2] -->
       <div class="keys-item keys-new-day">
         <div class="keys-type">
           <p>关键字 - [2]</p>
-          <el-button round size="small"  @click="clearHandle(1)"><el-icon><Delete /></el-icon>清空数据</el-button>
+          <el-button round size="small" @click="clearHandle(1)"><el-icon>
+              <Delete />
+            </el-icon>清空数据</el-button>
         </div>
         <div class="keys-content">
           <el-input class="keys-area" v-model="keyright" type="textarea" placeholder="点击当前区域输入数据：关键字 - [2]。"
             @change="rightChange" />
         </div>
       </div>
+      <!-- 关键词差值 - [过滤结果] -->
       <div class="keys-item keys-compared">
         <div class="keys-type">
           <el-button type="success" size="small" @click="keysFilterHandle(1)">
             <el-icon class="keys-type-icon" color="red" v-show="keys_filtered_pos === 1">
               <LocationInformation />
-            </el-icon>关键字[1不在2]
+            </el-icon>关键字 [1不在2]
           </el-button>
           <el-button type="primary" size="small" @click="keysFilterHandle(0)">
             <el-icon class="keys-type-icon" color="red" v-show="keys_filtered_pos === 0">
               <LocationInformation />
-            </el-icon>关键字[2不在1]
+            </el-icon>关键字 [2不在1]
           </el-button>
         </div>
         <div class="keys-content">
           <div class="keys-result">
             <p class="keys-selected">{{ keys_filtered }} > 过滤结果： {{ data.result.length }} 条</p>
-            <el-button type="danger" round size="small" @click="copyHandle">Copy</el-button>
+            <el-button class="copyButton" type="danger" round size="small" @click="copyHandle">Copy</el-button>
           </div>
-          <div class="keys-list" :style="{background: keys_filtered_pos ? 'rgba(103, 194, 58, 0.1)' : 'rgba(64, 158, 255, 0.1)'}">
-            <el-empty v-if="!data.result.length && (!data.left.length || !data.right.length)" description="当前数据为空。如左右两列已导入数据，请点击上侧按钮进行过滤。" />
+          <div class="keys-list"
+            :style="{ background: keys_filtered_pos ? 'rgba(103, 194, 58, 0.1)' : 'rgba(64, 158, 255, 0.1)' }">
+            <el-empty v-if="!data.result.length && (!data.left.length || !data.right.length)"
+              description="当前数据为空。如左右两列已导入数据，请点击上侧按钮进行过滤。" />
             <ul v-else>
               <li v-for="(item, index) in data.result" :key="index">{{ item }}</li>
             </ul>
@@ -54,10 +75,11 @@
 
 <script setup>
 import { ref, reactive } from 'vue';
-import copy from 'copy-to-clipboard';
+// import copy from 'copy-to-clipboard';
+import copy from 'copy-text-to-clipboard';
 import _ from 'lodash';
 import { ElMessage } from 'element-plus';
-import { LocationInformation, Delete } from '@element-plus/icons-vue'
+import { ArrowLeft, Warning, LocationInformation, Delete } from '@element-plus/icons-vue'
 import { str2Array } from '@/utils/util.js'
 
 let keyleft = ref(''); // 左侧关键字 textarea
@@ -114,25 +136,25 @@ const keysFilterHandle = (pos) => {
  * 求左右两列数据差值:0 =>关键字不在左 表示右侧数据列中的数据没有在左侧出现过； 1=> 关键字不在右 表示左侧关键字数据没有在右侧出现过
  * @param { any } pos 当前选中的是关键字不在左(0)还是关键字不在右(1)
  * @return { Array } result 返回数据
- * */ 
-function D_Value (pos){
+ * */
+function D_Value(pos) {
   const { left, right } = data;
-  if(pos){
+  if (pos) {
     // 当 pos === 1 时， 左侧关键字不在右侧重复出现
     data.result = _.difference(left, right);
-  }else{
+  } else {
     // 当 pos === 0 时，右侧的关键字不在左侧重复出现
     data.result = _.difference(right, left);
   }
 };
 
-
 // 复制过滤结果事件
 const copyHandle = () => {
-  const cp = copy(data.result);
-  const desc = keys_filtered_pos.value ? '关键字不在右' : '关键字不在左';
+  const result = data.result.join('\r\n');
+  const desc = keys_filtered_pos.value ? '关键字[1不在2]' : '关键字[2不在1]';
+  const copyReturn = copy(result)
 
-  if (cp) {
+  if (copyReturn) {
     ElMessage({
       message: `${desc} : 成功复制 ${data.result.length} 条数据`,
       type: 'success',
@@ -142,29 +164,43 @@ const copyHandle = () => {
   }
 }
 
+
+
 </script>
 
 <style>
 .keyview-container {
+
+  .tool-desc {
+    font-size: 12px;
+    color: #636466;
+    padding: 5px 40px;
+    .tool-desc-text{
+      color: #636466;
+      vertical-align: text-bottom;
+      padding: 0 5px;
+    }
+  }
+
   .keys-containter {
     display: flex;
-    padding: 20px;
+    padding: 10px 20px;
 
     .keys-item {
       width: 30%;
       padding: 8px;
       margin: 10px;
 
-      &:nth-of-type(1){
-        .keys-content{
+      &:nth-of-type(1) {
+        .keys-content {
           .el-textarea__inner {
             background-color: rgba(103, 194, 58, 0.1);
           }
         }
       }
 
-      &:nth-of-type(2){
-        .keys-content{
+      &:nth-of-type(2) {
+        .keys-content {
           .el-textarea__inner {
             background-color: rgba(64, 158, 255, 0.1);
           }
@@ -173,6 +209,7 @@ const copyHandle = () => {
 
       &:nth-of-type(3) {
         width: 40%;
+
         .keys-content {
           border: 1px solid #202127;
           border-color: #a8b1ff;
@@ -200,6 +237,7 @@ const copyHandle = () => {
           border: 1px solid #202127;
           border-radius: 3px;
           background-color: rgba(255, 255, 255, 0.1);
+
           &:hover {
             border-color: #a8b1ff;
           }
@@ -219,5 +257,4 @@ const copyHandle = () => {
       }
     }
   }
-}
-</style>
+}</style>

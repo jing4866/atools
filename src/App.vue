@@ -4,14 +4,17 @@
       <custom-header></custom-header>
     </el-header>
     <el-main>
-      <RouterView />
+      <RouterView :key="$route.name" />
     </el-main>
   </el-container>
 </template>
 
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import CustomHeader from './components/CustomHeader.vue'
+import { useRoute, RouterView } from 'vue-router';
+import CustomHeader from './components/CustomHeader.vue';
+
+const $route = useRoute();
+
 </script>
 
 <style scoped>

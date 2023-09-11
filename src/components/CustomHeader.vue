@@ -1,10 +1,10 @@
 <template>
-    <el-menu :default-active="activeIndex" class="el-menu-container" mode="horizontal" :ellipsis="false" @select="handleSelect">
-        <el-menu-item index="0"><RouterLink to="/">LOGO</RouterLink></el-menu-item>
+    <el-menu :default-active="activeIndex" class="el-menu-container" mode="horizontal" :ellipsis="false">
+        <el-menu-item index="logo"><RouterLink to="/">LOGO</RouterLink></el-menu-item>
         <div class="flex-grow" />
-        <el-menu-item index="1"><RouterLink to="/">首页</RouterLink></el-menu-item>
-        <el-menu-item index="2"><RouterLink to="/keytool">关键词过滤</RouterLink></el-menu-item>
-        <el-sub-menu index="3">
+        <el-menu-item index="Home"><RouterLink to="/">Home</RouterLink></el-menu-item>
+        <el-menu-item index="KeyTool"><RouterLink to="keytool">Keywords</RouterLink></el-menu-item>
+        <el-sub-menu index="more">
             <template #title>More</template>
             <el-menu-item index="3-1">个人信息</el-menu-item>
             <!-- <el-sub-menu index="2-4">
@@ -18,13 +18,21 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { ref, watch } from 'vue'
+import { RouterLink, useRoute } from 'vue-router'
 
-const activeIndex = ref('1')
-const handleSelect = (key, keyPath) => {
-  console.log(key, keyPath)
-}
+const $route = useRoute();
+const activeIndex = ref('Home');
+
+// const handleSelect = (key, keyPath) => {
+//   activeIndex.value = key
+//   console.log(key, keyPath)
+// }
+
+watch( $route, ( value ) => {
+  activeIndex.value = value.name
+})
+
 </script>
 
 <style scoped> 
