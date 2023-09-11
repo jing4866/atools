@@ -10,7 +10,7 @@
       <el-icon>
         <Warning />
       </el-icon>
-      <span class="tool-desc-text">比较 关键词[1] 和 关键词[2] 两组数据的差值，目前仅支持 字符串 类型的比较， 请使用 回车或空格 作为分隔符。</span>
+      <span class="tool-desc-text">比较 关键词[1] 和 关键词[2] 两组数据的差值，目前仅支持 字符串 类型的比较， 请使用 回车 或 换行 作为分隔符。</span>
     </div>
     <!-- Main -->
     <div class="keys-containter">
