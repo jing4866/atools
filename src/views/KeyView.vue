@@ -4,35 +4,35 @@
     <div class="keys-containter">
       <div class="keys-item keys-last-day">
         <div class="keys-type">
-          <p>关键字 - 左侧 </p>
+          <p>关键字 - [1] </p>
           <el-button round size="small" @click="clearHandle(0)"><el-icon><Delete /></el-icon>清空数据</el-button>
         </div>
         <div class="keys-content">
-          <el-input class="keys-area" v-model="keyleft" type="textarea" placeholder="点击当前区域输入数据：左侧关键字。"
+          <el-input class="keys-area" v-model="keyleft" type="textarea" placeholder="点击当前区域输入数据：关键字 - [1]。"
             @change="leftChange" />
         </div>
       </div>
       <div class="keys-item keys-new-day">
         <div class="keys-type">
-          <p>关键字 - 右侧</p>
+          <p>关键字 - [2]</p>
           <el-button round size="small"  @click="clearHandle(1)"><el-icon><Delete /></el-icon>清空数据</el-button>
         </div>
         <div class="keys-content">
-          <el-input class="keys-area" v-model="keyright" type="textarea" placeholder="点击当前区域输入数据：右侧关键字。"
+          <el-input class="keys-area" v-model="keyright" type="textarea" placeholder="点击当前区域输入数据：关键字 - [2]。"
             @change="rightChange" />
         </div>
       </div>
       <div class="keys-item keys-compared">
         <div class="keys-type">
-          <el-button type="primary" size="small" @click="keysFilterHandle(0)">
-            <el-icon class="keys-type-icon" color="red" v-show="keys_filtered_pos === 0">
-              <LocationInformation />
-            </el-icon>关键字不在左
-          </el-button>
           <el-button type="success" size="small" @click="keysFilterHandle(1)">
             <el-icon class="keys-type-icon" color="red" v-show="keys_filtered_pos === 1">
               <LocationInformation />
-            </el-icon>关键字不在右
+            </el-icon>关键字[1不在2]
+          </el-button>
+          <el-button type="primary" size="small" @click="keysFilterHandle(0)">
+            <el-icon class="keys-type-icon" color="red" v-show="keys_filtered_pos === 0">
+              <LocationInformation />
+            </el-icon>关键字[2不在1]
           </el-button>
         </div>
         <div class="keys-content">
@@ -40,7 +40,7 @@
             <p class="keys-selected">{{ keys_filtered }} > 过滤结果： {{ data.result.length }} 条</p>
             <el-button type="danger" round size="small" @click="copyHandle">Copy</el-button>
           </div>
-          <div class="keys-list">
+          <div class="keys-list" :style="{background: keys_filtered_pos ? 'rgba(103, 194, 58, 0.1)' : 'rgba(64, 158, 255, 0.1)'}">
             <el-empty v-if="!data.result.length && (!data.left.length || !data.right.length)" description="当前数据为空。如左右两列已导入数据，请点击上侧按钮进行过滤。" />
             <ul v-else>
               <li v-for="(item, index) in data.result" :key="index">{{ item }}</li>
@@ -62,7 +62,7 @@ import { str2Array } from '@/utils/util.js'
 
 let keyleft = ref(''); // 左侧关键字 textarea
 let keyright = ref(''); // 右侧关键字 textarea
-let keys_filtered = ref('关键字不在左'); // 过滤状态
+let keys_filtered = ref('关键字[2不在1]'); // 过滤状态
 let keys_filtered_pos = ref(0); // 过滤状态
 let data = reactive({
   left: [],
@@ -105,7 +105,7 @@ const clearHandle = (pos) => {
 
 // 点击过滤关键字按钮事件
 const keysFilterHandle = (pos) => {
-  keys_filtered.value = pos ? '关键字不在右' : '关键字不在左';
+  keys_filtered.value = pos ? '关键字[1不在2]' : '关键字[2不在1]';
   keys_filtered_pos.value = pos;
   D_Value(pos)
 }
@@ -155,9 +155,24 @@ const copyHandle = () => {
       padding: 8px;
       margin: 10px;
 
+      &:nth-of-type(1){
+        .keys-content{
+          .el-textarea__inner {
+            background-color: rgba(103, 194, 58, 0.1);
+          }
+        }
+      }
+
+      &:nth-of-type(2){
+        .keys-content{
+          .el-textarea__inner {
+            background-color: rgba(64, 158, 255, 0.1);
+          }
+        }
+      }
+
       &:nth-of-type(3) {
         width: 40%;
-
         .keys-content {
           border: 1px solid #202127;
           border-color: #a8b1ff;
@@ -185,7 +200,6 @@ const copyHandle = () => {
           border: 1px solid #202127;
           border-radius: 3px;
           background-color: rgba(255, 255, 255, 0.1);
-
           &:hover {
             border-color: #a8b1ff;
           }
@@ -199,7 +213,7 @@ const copyHandle = () => {
       }
 
       .keys-list {
-        height: calc(100vh - 300px);
+        height: calc(100vh - 294px);
         padding: 8px;
         overflow-y: auto;
       }
