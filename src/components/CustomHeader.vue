@@ -1,6 +1,6 @@
 <template>
     <el-menu :default-active="activeIndex" class="el-menu-container" mode="horizontal" :ellipsis="false">
-        <el-menu-item index="logo"><RouterLink to="/">LOGO</RouterLink></el-menu-item>
+        <el-menu-item index="logo"><RouterLink to="/"><img src="../assets/img/logo.png" width="60"></RouterLink></el-menu-item>
         <div class="flex-grow" />
         <el-menu-item index="Home"><RouterLink to="/">Home</RouterLink></el-menu-item>
         <el-menu-item index="KeyTool"><RouterLink to="keytool">Keywords</RouterLink></el-menu-item>
