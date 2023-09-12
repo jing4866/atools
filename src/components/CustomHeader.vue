@@ -22,6 +22,9 @@ import { ref, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 
 const $route = useRoute();
+// console.log( '路由:', $route ); 
+// console.log( '路由Name:', $route.name ); 
+
 const activeIndex = ref('Home');
 
 // const handleSelect = (key, keyPath) => {
@@ -30,7 +33,7 @@ const activeIndex = ref('Home');
 // }
 
 watch( $route, ( value ) => {
-  activeIndex.value = value.name
+  activeIndex.value = value.name ? value.name : 'Home';
 })
 
 </script>

@@ -38,4 +38,13 @@ import ModuleList from '../components/ModuleList.vue'
 
 .main-desc {
   margin: 10px 0 0 100px;
-}</style>
+}
+
+/* 简单适配移动端 */
+@media (max-width: 896px) {
+  .main-title {
+    margin: 50px 0 0 50px;
+  }
+}
+
+</style>

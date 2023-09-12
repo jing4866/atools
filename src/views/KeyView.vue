@@ -175,7 +175,8 @@ const copyHandle = () => {
     font-size: 12px;
     color: #636466;
     padding: 5px 40px;
-    .tool-desc-text{
+
+    .tool-desc-text {
       color: #636466;
       vertical-align: text-bottom;
       padding: 0 5px;
@@ -257,4 +258,22 @@ const copyHandle = () => {
       }
     }
   }
-}</style>
+}
+
+/* 简单适配移动端 */
+@media (max-width: 896px) {
+  .keyview-container{
+    .keys-containter{
+      display: block;
+      & .keys-item{
+        width: 100%;
+        &:nth-of-type(3){
+          width: 100%;
+        }
+      }
+    }
+
+  }
+}
+
+</style>

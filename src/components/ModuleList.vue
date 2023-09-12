@@ -71,4 +71,19 @@ import { RouterLink } from 'vue-router'
         }
     }
 }
+
+
+/* 简单适配移动端 */
+@media (max-width: 896px) {
+    .modules-containter{
+        display: block;
+        padding: 50px;
+        .modules-item{
+            width: 100%;
+            .mudules-innter{
+                padding: 12px;
+            }
+        }
+    }
+}
 </style>
