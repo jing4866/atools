@@ -45,21 +45,24 @@ import { RouterLink } from 'vue-router'
         width: calc(100% / 3);
         padding: 8px;
         .mudules-innter{
+            color: #2C3E50;
             padding: 24px;
-            border: 1px solid #202127;
+            border: 1px solid #f6f6f7;
             border-radius: 12px;
             height: 100%;
-            background-color: #202127;
-            transition: border-color .25s,background-color .25s;
+            background-color: #f6f6f7;
+            transition: box-shadow .25s,background-color .25s, transform .25s;
             &:hover{
-                border-color: #a8b1ff;
+                /* border-color: #a8b1ff; */
+                box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.5);
+                transform: scale(1.01);
             }
         }
         .modules-title{
             line-height: 24px;
             font-size: 16px;
             font-weight: 600;
-            color: rgba(255, 255, 245, 0.86);
+            color: #3C3C43;
         }
         .modules-description{
             flex-grow: 1;
@@ -67,7 +70,7 @@ import { RouterLink } from 'vue-router'
             line-height: 24px;
             font-size: 14px;
             font-weight: 500;
-            color: rgba(235, 235, 245, 0.6);
+            color: rgba(60, 60, 67, 0.78);
         }
     }
 }

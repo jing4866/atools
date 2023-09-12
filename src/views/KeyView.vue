@@ -61,8 +61,10 @@
           </div>
           <div class="keys-list"
             :style="{ background: keys_filtered_pos ? 'rgba(103, 194, 58, 0.1)' : 'rgba(64, 158, 255, 0.1)' }">
-            <el-empty v-if="!data.result.length && (!data.left.length || !data.right.length)"
-              description="当前数据为空。如左右两列已导入数据，请点击上侧按钮进行过滤。" />
+
+            <div class="empty-desc"  v-if="!data.result.length">
+              当前数据为空。如左右两列已导入数据，请点击上侧按钮进行过滤。
+            </div>  
             <ul v-else>
               <li v-for="(item, index) in data.result" :key="index">{{ item }}</li>
             </ul>
@@ -182,7 +184,10 @@ const copyHandle = () => {
       padding: 0 5px;
     }
   }
-
+  .empty-desc{
+      color: #636466;
+      padding: 0 5px;   
+  }
   .keys-containter {
     display: flex;
     padding: 10px 20px;
@@ -234,6 +239,7 @@ const copyHandle = () => {
           height: calc(100vh - 250px);
           padding: 8px;
           font-size: 14px;
+          color: #3C3C43;
           resize: none;
           border: 1px solid #202127;
           border-radius: 3px;
