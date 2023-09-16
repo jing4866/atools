@@ -10,12 +10,17 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/keytool',
-      name: 'KeyTool',
+      path: '/keyword',
+      name: 'KeyWord',
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/KeyView.vue')
+      component: () => import('../views/KeyWordView.vue')
+    },
+    {
+      path: '/keyroot',
+      name: 'KeyRoot',
+      component: () => import('../views/KeyRootView.vue')
     }
   ]
 })

@@ -1,9 +1,9 @@
 <template>
-  <div class="keyview-container">
+  <div class="keyview-container  modules-tool-container">
     <!-- 面包屑 -->
     <el-page-header :icon="ArrowLeft" @back="() => $router.go(-1)">
       <template #content>
-        <span class="text-large"> Keywords </span>
+        <span class="text-large"> KeyWord </span>
       </template>
     </el-page-header>
     <div class="tool-desc">
@@ -13,7 +13,7 @@
       <span class="tool-desc-text">比较 关键词[1] 和 关键词[2] 两组数据的差值，目前仅支持 字符串 类型的比较， 请使用 回车 或 换行 作为分隔符。</span>
     </div>
     <!-- Main -->
-    <div class="keys-containter">
+    <div class="keys-container">
       <!-- 关键词列表 - [1] -->
       <div class="keys-item keys-last-day">
         <div class="keys-type">
@@ -81,8 +81,8 @@ import { ref, reactive } from 'vue';
 import copy from 'copy-text-to-clipboard';
 import _ from 'lodash';
 import { ElMessage } from 'element-plus';
-import { ArrowLeft, Warning, LocationInformation, Delete } from '@element-plus/icons-vue'
-import { str2Array } from '@/utils/util.js'
+import { ArrowLeft, Warning, LocationInformation, Delete } from '@element-plus/icons-vue';
+import { str2Array } from '@/utils/util.js';
 
 let keyleft = ref(''); // 左侧关键字 textarea
 let keyright = ref(''); // 右侧关键字 textarea
@@ -166,29 +166,15 @@ const copyHandle = () => {
   }
 }
 
-
-
 </script>
 
 <style>
 .keyview-container {
-
-  .tool-desc {
-    font-size: 12px;
-    color: #636466;
-    padding: 5px 40px;
-
-    .tool-desc-text {
-      color: #636466;
-      vertical-align: text-bottom;
-      padding: 0 5px;
-    }
-  }
   .empty-desc{
       color: #636466;
       padding: 0 5px;   
   }
-  .keys-containter {
+  .keys-container {
     display: flex;
     padding: 10px 20px;
 
@@ -269,7 +255,7 @@ const copyHandle = () => {
 /* 简单适配移动端 */
 @media (max-width: 896px) {
   .keyview-container{
-    .keys-containter{
+    .keys-container{
       display: block;
       & .keys-item{
         width: 100%;

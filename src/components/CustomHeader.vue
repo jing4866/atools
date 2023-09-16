@@ -7,8 +7,11 @@
     <el-menu-item index="Home">
       <RouterLink to="/">Home</RouterLink>
     </el-menu-item>
-    <el-menu-item index="KeyTool">
-      <RouterLink to="keytool">Keywords</RouterLink>
+    <el-menu-item index="KeyWord">
+      <RouterLink to="keyword">KeyWord</RouterLink>
+    </el-menu-item>
+    <el-menu-item index="KeyRoot">
+      <RouterLink to="keyroot">KeyRoot</RouterLink>
     </el-menu-item>
     <el-sub-menu index="more">
       <template #title>More</template>
