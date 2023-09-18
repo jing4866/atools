@@ -117,7 +117,7 @@ const keysFilterHandle = () => {
     const subSource = _.map(source, item => item.split(' '));
     const publicArr = _.intersection(...subSource);
     const publicArr_len = publicArr.length;
-    console.log(publicArr)
+
     if( publicArr_len === 0 ){
         target.value = '';
         data.result = [];

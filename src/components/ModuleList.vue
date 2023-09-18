@@ -1,11 +1,21 @@
 <template>
     <div class="modules-containter">
         <div class="modules-item">
+            <RouterLink to="/trend">
+                <div class="mudules-innter">
+                    <h2 class="modules-title">趋势分析</h2>
+                    <p class="modules-description">
+                        关键字趋势分析
+                    </p>
+                </div>
+            </RouterLink>
+        </div>
+        <div class="modules-item">
             <RouterLink to="/keyword">
                 <div class="mudules-innter">
-                    <h2 class="modules-title">关键字过滤</h2>
+                    <h2 class="modules-title">关键字比较</h2>
                     <p class="modules-description">
-                        关键字过滤
+                        关键字差值比较
                     </p>
                 </div>
             </RouterLink>
@@ -13,20 +23,12 @@
         <div class="modules-item">
             <RouterLink to="/keyroot">
                 <div class="mudules-innter">
-                    <h2 class="modules-title">词根过滤</h2>
+                    <h2 class="modules-title">词根删选</h2>
                     <p class="modules-description">
                         查找词根
                     </p>
                 </div>
             </RouterLink>
-        </div>
-        <div class="modules-item">
-            <div class="mudules-innter">
-                <h2 class="modules-title">Coming...</h2>
-                <p class="modules-description">
-                    正在开发中...
-                </p>
-            </div>
         </div>
     </div>
 </template>

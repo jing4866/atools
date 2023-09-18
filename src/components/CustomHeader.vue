@@ -5,16 +5,19 @@
     </el-menu-item>
     <div class="flex-grow" />
     <el-menu-item index="Home">
-      <RouterLink to="/">Home</RouterLink>
+      <RouterLink to="/">首页</RouterLink>
+    </el-menu-item>
+    <el-menu-item index="Trend">
+      <RouterLink to="trend">趋势分析</RouterLink>
     </el-menu-item>
     <el-menu-item index="KeyWord">
-      <RouterLink to="keyword">KeyWord</RouterLink>
+      <RouterLink to="keyword">关键字比较</RouterLink>
     </el-menu-item>
     <el-menu-item index="KeyRoot">
-      <RouterLink to="keyroot">KeyRoot</RouterLink>
+      <RouterLink to="keyroot">词根删选</RouterLink>
     </el-menu-item>
     <el-sub-menu index="more">
-      <template #title>More</template>
+      <template #title>更多</template>
       <el-menu-item index="3-1">个人信息</el-menu-item>
       <!-- <el-sub-menu index="2-4">
                 <template #title>item four</template>
