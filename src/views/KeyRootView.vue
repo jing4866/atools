@@ -91,7 +91,7 @@ const clearHandle = () => {
 // 词源数据更新
 const originChange = (value) => {
     // 将字符串转为数组
-    const s2Arr = str2Array(value);
+    const s2Arr = str2Array(value.toLowerCase());
     // 移除数组项中字符串前后空格
     const arrNoTrims = _.map(s2Arr, _.trim);
     // 移除数组中的空项
@@ -117,7 +117,6 @@ const keysFilterHandle = () => {
     const subSource = _.map(source, item => item.split(' '));
     const publicArr = _.intersection(...subSource);
     const publicArr_len = publicArr.length;
-
     if( publicArr_len === 0 ){
         target.value = '';
         data.result = [];
@@ -129,7 +128,7 @@ const keysFilterHandle = () => {
     const separator = ' ';
     for(let i = 1; i < publicArr_len; i++ ){
         let next = publicWords + separator + publicArr[i];
-        let isPub = _.every( source, item => _.includes(item, next));
+        let isPub = _.every( source, item => _.includes(item.toLowerCase(), next.toLowerCase()));
         if(isPub){
             publicWords = next;
         }else{
