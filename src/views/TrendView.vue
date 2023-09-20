@@ -45,7 +45,7 @@
             <div class="trend-list">
                 <h2 style="text-align: center; line-height: 60px;">[ASIN] 202401200032</h2>
 
-                <div v-for="item in test" class="" style="background: #f6f6f7; margin-bottom: 20px; padding:10px; border-radius: 5px;">
+                <div v-for="item in test" class="chart-wraper">
                     <DoubleLines :key="item.name"></DoubleLines>
                 </div>
             </div>
@@ -159,6 +159,17 @@ const shortcuts = [
 
         .el-form-item {
             margin-bottom: 0;
+        }
+    }
+    .chart-wraper{
+        background: #f6f6f7; 
+        margin-bottom: 20px; 
+        padding:10px; 
+        border-radius: 5px;
+        transition: all 1s;
+        &:hover{
+            box-shadow: 0px 0px 5px rgba(51, 51, 51, 0.5);
+            transform: scale(1.01);
         }
     }
 }
