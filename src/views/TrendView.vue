@@ -20,21 +20,13 @@
             <div class="form-container">
                 <el-form :inline="true" :model="filterForm" class="form-filter">
                     <el-form-item label="ASIN">
-                        <el-select v-model="filterForm.asin" placeholder="Asin" clearable>
-                            <el-option label="Zone one" value="shanghai" />
-                            <el-option label="Zone two" value="beijing" />
+                        <el-select v-model="selectModel" placeholder="Asin" clearable>
+                            <el-option v-for="item in selectData" :key="item.ASIN" :label="item.ASIN" :value="item.ASIN" />
                         </el-select>
                     </el-form-item>
                     <el-form-item label="选择时间">
                         <el-date-picker v-model="filterForm.date" type="daterange" unlink-panels range-separator="至"
                             start-placeholder="开始时间" end-placeholder="结束时间" :shortcuts="shortcuts" />
-                    </el-form-item>
-                    <el-form-item label="显示">
-                        <el-select v-model="filterForm.size" placeholder="显示全部" clearable>
-                            <el-option label="全部" value="all" />
-                            <el-option label="前十条" value="10" />
-                            <el-option label="前二十条" value="20" />
-                        </el-select>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="onQuerySubmit">查询</el-button>
@@ -43,10 +35,32 @@
             </div>
             <!-- 趋势图列表 -->
             <div class="trend-list">
-                <h2 style="text-align: center; line-height: 60px;">[ASIN] 202401200032</h2>
-
-                <div v-for="item in test" class="chart-wraper">
-                    <DoubleLines :key="item.name"></DoubleLines>
+                <div class="trend-title">
+                    <span class="sub">关键词数量: {{ currentCount || '-' }}</span>
+                    <h2 class="title"> ASIN {{ currentAsin }}</h2>
+                    <div class="filter">
+                        <el-select class="filter-select" multiple collapse-tags collapse-tags-tooltip
+                            v-model="keyword" placeholder="过滤关键词" clearable size="small"
+                            @change="filterBykeyword" 
+                            @clear="keywordClearHandle">
+                            <el-option v-for="item in keywords" :key="item.keyword" :label="item.keyword" :value="item.keyword" />
+                        </el-select>
+                    </div>
+                </div>
+                <!-- 显示图表 -->
+                <div v-if="chartData.length === 0">
+                    <el-result icon="info" title="当前无可用数据">
+                        <template #sub-title>
+                            <p>请重新选择 ASIN 进行查找</p>
+                        </template>
+                    </el-result>
+                </div>
+                <div v-else>
+                    <template v-for="item in chartData">
+                        <div v-if="item.filtered" class="chart-wraper">
+                            <DoubleLines :key="item.keyword" :data="item"></DoubleLines>
+                        </div>
+                    </template>
                 </div>
             </div>
             <el-backtop :right="30" :bottom="100" />
@@ -56,28 +70,126 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
 import _ from 'lodash';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElLoading } from 'element-plus';
 import { ArrowLeft, Warning } from '@element-plus/icons-vue';
 import DoubleLines from '../components/charts/DoubleLines.vue';
+import { getAsinAll, getAsinOnly, getAsinByPk } from '../api/asin.js';
 
-const test = [{
-    name: 1
-},{
-    name: 2
-},{
-    name: 3
-}]
-
-
+// 页面标题 和 关键词数量
+const currentAsin = ref('');
+const currentCount = ref('');
+// ASIN Selected 和 Options
+const selectModel = ref('');
+const selectData = ref([]);
+// 图表数据
+const chartData = ref([]);
+// 关键词 selected 和 options
+const keyword = ref([]);
+const keywords = ref([]);
+// Form 表单
 const filterForm = reactive({
     asin: null,
     date: null,
     size: '全部数据'
-})
+});
 
-const onQuerySubmit = () => {
-
+/*
+ * 图表数据过滤器
+ * @param { Array } keyword 过滤条件关键词
+ * @param { Array } data 需要过滤的源数据
+ * @param { Array } 返回值 包含过滤条件的数据
+ * */ 
+const chartFilterByKey = (keyword, data) => {
+    return _.map(data, item => {
+        // 清空关键词时，显示全部数据
+        if(keyword.length === 0){
+            item.filtered = true
+            return item
+        }
+        item.filtered =  _.includes(keyword, item.keyword);
+        return item
+    });
 }
+
+/*
+ * 处理后端返回的ASIN数据
+ * 返回根据关键字将数据分组的结果
+ * @param { Array } data 后端返回的数据
+ * @return { Array } 处理过后的结果 [{ count: 10, keyword: 'abc', data: [{}] }]
+ * */
+const chartDataHandler = (data) => {
+    const grouped = _.groupBy(data, '关键词');
+    const result = [];
+    // 遍历数据 处理格式
+    _.mapKeys(grouped, (val, key) => {
+        result.push({
+            keyword: key,
+            data: val,
+            count: val.length,
+            filtered: true,
+        })
+    })
+    keywords.value = result;
+    return result;
+};
+
+// 根据条件请求数据
+const onQuerySubmit = () => {
+    const pk = selectModel.value;
+    const loadingInstance = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+    });
+    if (!pk) {
+        ElMessage({
+            type: 'warning',
+            message: ` 请选择 ASIN 。`
+        });
+        loadingInstance.close()
+        return;
+    }
+    currentAsin.value = pk;
+    getAsinByPk(pk).then(res => {
+        const { statusText, data } = res;
+        if (statusText === 'OK') {
+            // chartData.value = data.data;
+            // 对返回的数据做分组处理
+            chartData.value = chartDataHandler(data.data);
+            currentCount.value = chartData.value.length;
+        } else {
+            ElMessage(`${data.message}`);
+        };
+        loadingInstance.close()
+    }).catch(err => {
+        const { data } = err.response;
+        ElMessage(`${data.message}`);
+        loadingInstance.close()
+    })
+};
+
+// 过滤关键词
+const filterBykeyword = (val) => {
+    keyword.value = val;
+    chartFilterByKey(keyword.value, chartData.value);    
+}
+// 清空关键词过滤
+const keywordClearHandle = (val) => {
+    keyword.value = []
+    chartFilterByKey(keyword.value, chartData.value);   
+}
+
+
+// 初始化 ASIN Select 列表
+getAsinOnly().then(res => {
+    const { statusText, data } = res;
+    if (statusText === 'OK') {
+        selectData.value = data.data;
+    }
+}).catch(err => {
+    const { data } = err.response;
+    ElMessage.error(`${data.message}`);
+});
 
 const colorConfig = {
     advertise: {
@@ -98,6 +210,7 @@ const colorConfig = {
     }
 }
 
+// Date组件配置
 const shortcuts = [
     {
         text: '最近一周',
@@ -161,16 +274,38 @@ const shortcuts = [
             margin-bottom: 0;
         }
     }
-    .chart-wraper{
-        background: #f6f6f7; 
-        margin-bottom: 20px; 
-        padding:10px; 
+
+    .chart-wraper {
+        background: #f6f6f7;
+        margin-bottom: 20px;
+        padding: 10px;
         border-radius: 5px;
         transition: all 1s;
-        &:hover{
+
+        &:hover {
             box-shadow: 0px 0px 5px rgba(51, 51, 51, 0.5);
             transform: scale(1.01);
         }
     }
-}
-</style>
+
+    .trend-title {
+        display: flex;
+        text-align: center;
+        line-height: 60px;
+        justify-content: space-around;
+        .title {
+            padding: 0 20px;
+        }
+        .sub {
+            position: relative;
+            top: 3px;
+            color: #636466;
+        }
+        .filter{
+            align-self: flex-end;
+            .filter-select{
+                width: 200px;
+            }
+        }
+    }
+}</style>

@@ -106,7 +106,10 @@ const keysFilterHandle = () => {
     const { source } = data;
     const s_len = source.length;
     if( s_len === 0 ){
-        return ElMessage.error(` 请输入原始数据。`)       
+        return ElMessage({
+            type: 'warning',
+            message: ` 请输入原始数据。`
+        })       
     }
     if( s_len ===1 ){
         target.value = source[0];

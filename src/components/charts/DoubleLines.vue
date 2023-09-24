@@ -9,12 +9,42 @@ import { ref, nextTick, onMounted, getCurrentInstance } from 'vue';
 import * as echarts from 'echarts';
 import { option } from './doubleLinesConfig.js';
 
-// 数据
+// 接收父组件数据
 const props = defineProps({
-  title: String,
-  data : Array,
-})
+  data : Object,  // 包含数据： {keyword:'', count: 0, data:[]}
+});
 
+// 解构 props 数据
+const { keyword, data } = props.data;
+
+/*
+ * 处理接收到的数据为指定格式
+ * @param { Array } data 父组件传递的数据对象
+ * @return { Array } 返回后的格式： { date: [], n_rank: [], sp_rank: [], ASIN: '', keyword: '' }
+ **/ 
+const chartDataHandle = (data) => {
+    const date = []; // 跟源数据相对应的时间
+    const n_rank = []; // 自然排名
+    const sp_rank = []; // SP广告排名
+    if(!data || data.length === 0){
+        return { date: [], n_rank: [], sp_rank: [], ASIN: '', keyword: '' }
+    }
+    for( let i = 0; i < data.length; i++ ){
+        date.push(data[i]['下载日期']);
+        n_rank.push(data[i]['自然排名']);
+        sp_rank.push(data[i]['sp广告排名']);
+    };
+    return {
+        date,
+        n_rank,
+        sp_rank,
+        ASIN: data[0]['ASIN'],
+        keyword: data[0]['关键词'],
+    }
+}
+
+
+// 实例化图表
 onMounted(() => {
     // 获取实例下的 DOM 元素
     const ins = getCurrentInstance();
@@ -22,44 +52,15 @@ onMounted(() => {
     // 初始化 Echarts
     var myChart = echarts.init(chartDom);
 
-    // 测试数据
-    let base = +new Date(1968, 9, 3);
-    let oneDay = 24 * 3600 * 1000;
-    // 自然流量
-    let date = [];
-    let data = [Math.random() * 300];
-    // 广告流量
-    let date1 = [];
-    let data1 = [Math.random() * 300];
-    for (let i = 1; i < 10000; i++) {
-        var now = new Date((base += oneDay));
-        var times = [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/')
-        date.push(times);
-        // data.push(Math.round((Math.random() - 0.5) * 100 + data[i - 1]));
-        data.push(Math.round((Math.random()) * 200 ));
-        if(i%10 === 0){
-            data.push(null)
-            data.push(null)
-        }
-    }
-    for (let i = 1; i < 10000; i++) {
-        var now = new Date((base += oneDay));
-        var times = [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/')
-        date1.push(times);
-        data1.push(Math.round((Math.random()) * 100 ));
-        if(i%20 === 0){
-            data.push(null)
-            data.push(null)
-        }
+    // // 处理数据
+    const chart = chartDataHandle(data);
+    // 配置文件
+    option.title.text = keyword;
+    option.series[0].data = chart.n_rank;
+    option.series[1].data = chart.sp_rank;
+    option.xAxis.data = chart.date;
 
-    }
-    option.title.text = 'test'
-    option.series[0].data = data;
-    option.series[1].data = data1;
-    option.xAxis.data = date
-
-    console.log(option)
-
+    // 生成图表
     option && myChart.setOption(option);
 })
 

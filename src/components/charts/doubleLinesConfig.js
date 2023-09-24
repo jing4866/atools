@@ -59,18 +59,18 @@ export const option = {
         {
             type: 'inside',
             start: 0,
-            end: 10
+            end: 100
         },
         {
             start: 0,
-            end: 10
+            end: 100
         }
     ],
     // 提示框组件
     tooltip: {
         trigger: 'axis',
         position: function (pt) {
-            return [pt[0], '10%'];
+            return [pt[0] - 140, '10%'];
         }
     },
     series: [
