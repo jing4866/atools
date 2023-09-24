@@ -25,8 +25,9 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="选择时间">
-                        <el-date-picker v-model="filterForm.date" type="daterange" unlink-panels range-separator="至"
-                            start-placeholder="开始时间" end-placeholder="结束时间" :shortcuts="shortcuts" />
+                        <el-date-picker v-model="date" type="daterange" unlink-panels range-separator="至"
+                            start-placeholder="开始时间" end-placeholder="结束时间" :shortcuts="shortcuts" 
+                            @change="dateChangeHandle" />
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="onQuerySubmit">查询</el-button>
@@ -48,7 +49,7 @@
                     </div>
                 </div>
                 <!-- 显示图表 -->
-                <div v-if="chartData.length === 0">
+                <div v-if="chartData.value.length === 0">
                     <el-result icon="info" title="当前无可用数据">
                         <template #sub-title>
                             <p>请重新选择 ASIN 进行查找</p>
@@ -56,7 +57,7 @@
                     </el-result>
                 </div>
                 <div v-else>
-                    <template v-for="item in chartData">
+                    <template v-for="item in chartData.value">
                         <div v-if="item.filtered" class="chart-wraper">
                             <DoubleLines :key="item.keyword" :data="item"></DoubleLines>
                         </div>
@@ -70,6 +71,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
 import _ from 'lodash';
+import moment from 'moment';
 import { ElMessage, ElLoading } from 'element-plus';
 import { ArrowLeft, Warning } from '@element-plus/icons-vue';
 import DoubleLines from '../components/charts/DoubleLines.vue';
@@ -82,10 +84,14 @@ const currentCount = ref('');
 const selectModel = ref('');
 const selectData = ref([]);
 // 图表数据
-const chartData = ref([]);
+const chartData = reactive({
+    value: []
+});
 // 关键词 selected 和 options
 const keyword = ref([]);
 const keywords = ref([]);
+// 时间
+const date = ref([]);
 // Form 表单
 const filterForm = reactive({
     asin: null,
@@ -149,11 +155,17 @@ const onQuerySubmit = () => {
         loadingInstance.close()
         return;
     }
+
     currentAsin.value = pk;
-    getAsinByPk(pk).then(res => {
+    // 格式化时间
+    const queryDate = []
+    if(date.value && date.value.length > 0){
+        queryDate[0] = moment(date.value[0]).format('YYYY-MM-DD');
+        queryDate[1] = moment(date.value[1]).add(1, 'd').format('YYYY-MM-DD');
+    }
+    getAsinByPk(pk, queryDate).then(res => {
         const { statusText, data } = res;
         if (statusText === 'OK') {
-            // chartData.value = data.data;
             // 对返回的数据做分组处理
             chartData.value = chartDataHandler(data.data);
             currentCount.value = chartData.value.length;
@@ -162,8 +174,7 @@ const onQuerySubmit = () => {
         };
         loadingInstance.close()
     }).catch(err => {
-        const { data } = err.response;
-        ElMessage(`${data.message}`);
+        ElMessage.error( err );
         loadingInstance.close()
     })
 };
@@ -177,6 +188,12 @@ const filterBykeyword = (val) => {
 const keywordClearHandle = (val) => {
     keyword.value = []
     chartFilterByKey(keyword.value, chartData.value);   
+}
+
+// 日期选择事件
+const dateChangeHandle = (val) => {
+    // 格式化时间
+    date.value = val || [];
 }
 
 

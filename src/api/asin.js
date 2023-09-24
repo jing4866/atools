@@ -8,4 +8,9 @@ export const getAsinAll = () => $http.get('/asin');
 export const getAsinOnly = () => $http.get('/asin/group');
 
 // 根据 ASIN 请求对应数据
-export const getAsinByPk = (pk) => $http.get(`/asin/${pk}`);
+export const getAsinByPk = (pk, date) => $http.get(`/asin/pk`, {
+    params: {
+        pk,
+        date
+    }
+});
