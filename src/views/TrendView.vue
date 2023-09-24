@@ -57,9 +57,9 @@
                     </el-result>
                 </div>
                 <div v-else>
-                    <template v-for="item in chartData.value">
+                    <template v-for="(item) in chartData.value">
                         <div v-if="item.filtered" class="chart-wraper">
-                            <DoubleLines :key="item.keyword" :data="item"></DoubleLines>
+                            <DoubleLines :key="item.timestamp" :data="item"></DoubleLines>
                         </div>
                     </template>
                 </div>
@@ -133,6 +133,7 @@ const chartDataHandler = (data) => {
             data: val,
             count: val.length,
             filtered: true,
+            timestamp: moment.unix(1318781876).utc()
         })
     })
     keywords.value = result;
