@@ -1,8 +1,11 @@
 <template>
   <el-container>
-    <el-header>
+    <!-- <el-header>
       <custom-header></custom-header>
     </el-header>
+    <el-main>
+      <RouterView :key="$route.name" />
+    </el-main> -->
     <el-main>
       <RouterView :key="$route.name" />
     </el-main>
@@ -14,6 +17,8 @@ import { useRoute, RouterView } from 'vue-router';
 import CustomHeader from './components/CustomHeader.vue';
 
 const $route = useRoute();
+
+
 
 </script>
 
