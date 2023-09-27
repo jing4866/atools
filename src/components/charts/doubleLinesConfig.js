@@ -2,6 +2,7 @@
 export const option = {
     // 图表的标题
     title: {
+        show: false,
         left: '0',
         top: 100,
         text: `标题`,
@@ -26,7 +27,7 @@ export const option = {
     // 直角坐标系网格
     grid: {
         show: false,
-        left: 300,
+        left: 100,
         right: 50,
         borderColor: '#cccccc',
         containLabel: false

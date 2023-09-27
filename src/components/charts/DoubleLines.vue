@@ -69,6 +69,6 @@ onMounted(() => {
 <style>
 .chart-dom{
     width: 100%;
-    height: 200px;
+    height: 230px;
 }
 </style>

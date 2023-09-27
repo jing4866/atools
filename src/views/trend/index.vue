@@ -59,13 +59,16 @@
                 <div class="trend-content" v-else>
                     <template v-for="(item) in chartData.value">
                         <div v-if="item.filtered" class="chart-wraper">
-                            <!-- 图表数据 -->
-                            <div class="chart-left">
-                                <DoubleLines :key="item.timestamp" :data="item"></DoubleLines>
+                            <div class="title-left">
+                                {{ item.keyword }}
                             </div>
                             <!-- 环比数据 -->
-                            <div class="static-right">
+                            <div class="static-center">
                                 <Statistic :key="item.timestamp" :data="item"></Statistic>
+                            </div>
+                            <!-- 图表数据 -->
+                            <div class="chart-right">
+                                <DoubleLines :key="item.timestamp" :data="item"></DoubleLines>
                             </div>
                         </div>
                     </template>
@@ -340,10 +343,15 @@ const shortcuts = [
     }
     .chart-wraper{
         display: flex;
-        .chart-left{
+        .title-left{
+            width: 300px;
+            color: #185abd;
+            padding: 10px;
+        }
+        .chart-right{
             width: 100%;
         }
-        .static-right{
+        .static-center{
             width: 200px;
         }
     }
