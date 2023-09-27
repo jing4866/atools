@@ -10,14 +10,14 @@
             </div>
             <!-- 右侧登录注册 -->
             <div class="right-container">
-                <SignIn v-if="isLogin"></SignIn>
-                <SignUp v-else></SignUp>
+                <SignIn v-if="checkLogin" :loading="loading" @signInSubmit="signInSubmit"></SignIn>
+                <SignUp v-else  :loading="loading"  @signUpSubmit="signUpSubmit"></SignUp>
             </div>
             <!-- 切换登录注册 -->
             <div class="checkout">
                 <el-button type="primary" link class="check-btn" @click="checkHandle">
                     <el-icon><Promotion /></el-icon>
-                    {{ isLogin ? '注册' : '登录' }}
+                    {{ checkLogin ? '注册' : '登录' }}
                 </el-button>
             </div>
         </div>
@@ -25,16 +25,85 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import SignIn from './SignIn.vue';
-import SignUp from './SignUp.vue';
+import { ref, nextTick } from 'vue';
+import { useRouter } from 'vue-router';
 import { Promotion } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus';
+import { loginStore } from '@/stores/loginStore';
+import { storeToRefs } from 'pinia';
+import SignIn from '@/views/login/SignIn.vue';
+import SignUp from '@/views/login/SignUp.vue';
+import { triggerLoading, closeLoading } from '@/utils/loading';
+import { signInService, whoIsService, signUpService } from '@/api/login';
 
-const isLogin = ref(true);
 
+// 全局状态
+const loginState = loginStore();
+const { isLogin, username, loading } = storeToRefs(loginState);
+
+// 路由
+const $router = useRouter();
+
+// 切换登录注册
+const checkLogin = ref(true);
 const checkHandle = () => {
-    isLogin.value = !isLogin.value;
+    checkLogin.value = !checkLogin.value;
+};
+
+// 登录函数
+const signInSubmit = (val) => {
+    // 显示Loading
+    triggerLoading();
+    loginState.updateLoading(true);
+    // 请求接口
+    signInService(val).then( res => {
+        const { statusText, data } = res;
+        // 登录成功
+        if(statusText === 'OK'){
+            // 存储用户信息到 Store
+            console.log('signInSubmit', data);
+            $router.push('/');
+        }
+        // 关闭Loading
+        closeLoading();
+        loginState.updateLoading(false);
+    }).catch( err => {
+        const error = err instanceof Error ?  err.message : err;
+        // 提示错误信息
+        ElMessage.error(`登录失败: ${error}`)
+        // 关闭Loading
+        closeLoading();
+        loginState.updateLoading(false);
+    })
 }
+
+// 注册函数
+const signUpSubmit = (val) => {
+    triggerLoading();
+    loginState.updateLoading(true);
+    signUpService(val).then( res => {
+        const { statusText, data } = res;
+        // 注册成功
+        if(statusText === 'OK'){
+            // 存储用户信息到 Store
+            console.log('signInSubmit', data);
+            $router.push('/');
+        }
+        // 关闭Loading
+        closeLoading();
+        loginState.updateLoading(false);
+    }).catch( err => {
+        const error = err instanceof Error ?  err.message : err;
+        // 提示错误信息
+        ElMessage.error(`注册失败: ${error}`)
+        // 关闭Loading
+        closeLoading();
+        loginState.updateLoading(false);
+    })
+}
+
+
+
 
 </script>
 

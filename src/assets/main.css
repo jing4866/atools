@@ -33,6 +33,7 @@ a,
 
 /* 工具模块容器通用样式 */
 .modules-tool-container{
+  padding: 20px;
   .tool-desc {
     font-size: 12px;
     color: #636466;

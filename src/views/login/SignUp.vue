@@ -16,14 +16,19 @@
             </el-form-item>
             <!-- 注册按钮 -->
             <el-form-item>
-                <el-button type="primary" @click="onSubmit">注 册</el-button>
+                <el-button type="primary" :disabled="loading" @click="onSubmit">{{ loading ? '注 册 中 ...' : '注 册' }}</el-button>
             </el-form-item>
         </el-form>
     </div>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, defineProps } from 'vue';
+
+const props = defineProps({
+  loading : Boolean,  // 是否正在登录中
+});
+const emits = defineEmits(['signUpSubmit'])
 
 // 登录表单
 const logupForm = ref();
@@ -52,14 +57,30 @@ const rules = reactive({
     repassword: [
         {
             required: true, message: `请输入 确认密码/Confirm Password`, trigger: 'blur'  
-        }       
+        },{
+            validator: (rule, value, callback)=>{
+                if( logup.password !== logup.repassword ){
+                    callback(new Error("两次密码不一致。"));
+                }
+                callback(); // 数据正常的情况下，调用callback，否则validate验证不执行
+            },
+            trigger: 'blur'
+        }    
     ]
 });
 
 // 点击登录事件
 const onSubmit = () => {
-
+    // 表单验证
+    logupForm.value.validate( (valid) => {
+        if( !valid ){
+            return false;
+        };
+        emits('signUpSubmit', logup); 
+    })  
 }
+
+
 
 </script>
 

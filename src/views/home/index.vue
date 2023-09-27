@@ -1,21 +1,23 @@
 <template>
-  <div class="container-bg">
-    <h1 class="main-title">
-      <span class="title-span">A Tools</span>
-    </h1>
-    <div class="main-desc">一些在线小工具。</div>
-    <ModuleList />
-  </div>
+    <div class="container container-bg">
+        <h1 class="main-title">
+            <span class="title-span">A Tools</span>
+        </h1>
+        <div class="main-desc">一些在线小工具。</div>
+        <ModuleList />
+    </div>
 </template>
 
 <script setup>
-import ModuleList from '../components/ModuleList.vue'
+import ModuleList from '@/components/ModuleList.vue';
+
 </script>
+
 
 <style scoped>
 .container-bg {
   min-height: calc(100vh - 200px);
-  background: url(../assets/img/wave_lines.png) center 50% no-repeat;
+  background: url(@/assets/img/wave_lines.png) center 50% no-repeat;
   background-size: 100%;
 }
 
@@ -46,5 +48,4 @@ import ModuleList from '../components/ModuleList.vue'
     margin: 50px 0 0 50px;
   }
 }
-
 </style>

@@ -1,0 +1,101 @@
+<template>
+    <!-- 头部 -->
+    <el-menu :default-active="activeIndex" class="el-menu-container" mode="horizontal" :ellipsis="false"
+        @select="menuChangeHandle">
+        <!-- 页面Logo -->
+        <el-menu-item class="el-menu-item-logo" index="logo">
+            <RouterLink to="/home"><img class="img-logo" src="@/assets/img/logo.png" width="100"></RouterLink>
+        </el-menu-item>
+
+        <!-- 分隔符 -->
+        <div class="flex-grow" ></div>
+
+        <!-- 页面导航：循环路由配置列表 -->
+        <template v-for="(link, idx) in routesLinks">
+            <!-- 只有一个children数据：隐藏hidden属性  -->
+            <template v-if="!link.hidden && link.children.length == 1">
+                <el-menu-item :index="`${idx}`">
+                    <RouterLink :to="link.children[0].toPath">{{ link.children[0].meta.title }}</RouterLink>
+                </el-menu-item>
+            </template>
+            <!-- end：只有一个children -->
+
+            <!-- 不只一个children数据：隐藏hidden属性 -->
+            <template v-else-if="!link.hidden && link.children.length>1">
+                <el-sub-menu :index="`${idx}`">
+                    <template #title>{{ link.meta.title }}</template>
+                    <template v-for="(sub, i) in link.children">
+                        <el-menu-item :index="`${idx}-${i}`">
+                            <RouterLink :to="sub.toPath">{{ sub.meta.title }}</RouterLink>
+                        </el-menu-item>
+                    </template>
+                </el-sub-menu>
+            </template>
+            <!-- end：不只一个children -->
+        </template>
+        <!-- end：页面导航 -->
+
+        <!-- 用户信息：暂时为退出登录 -->
+        <el-sub-menu index="4">
+            <template #title>更多</template>
+            <el-menu-item index="4-1">个人信息</el-menu-item>
+            <el-menu-item index="4-1" divided>退出登录</el-menu-item>
+        </el-sub-menu> 
+
+
+    <!-- <el-menu-item index="Trend">
+      <RouterLink to="/trend">趋势分析</RouterLink>
+    </el-menu-item>
+    <el-menu-item index="KeyWord">
+      <RouterLink to="/tools/keyword">关键字比较</RouterLink>
+    </el-menu-item>
+    <el-menu-item index="KeyRoot">
+      <RouterLink to="/tools/keyroot">词根删选</RouterLink>
+    </el-menu-item>
+    <el-sub-menu index="more">
+      <template #title>更多</template>
+      <el-menu-item index="3-1">个人信息</el-menu-item>
+       <el-sub-menu index="2-4">
+                <template #title>item four</template>
+                <el-menu-item index="2-4-1">item one</el-menu-item>
+                <el-menu-item index="2-4-2">item two</el-menu-item>
+                <el-menu-item index="2-4-3">item three</el-menu-item>
+            </el-sub-menu>
+    </el-sub-menu> 
+  -->
+  </el-menu>
+</template>
+
+<script setup>
+import { ref, watch, onUpdated } from 'vue'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
+// 当前路由实例信息
+const $route = useRoute();
+const activeIndex = ref('1');
+
+// 全部路由
+const $router = useRouter();
+const routesLinks = $router.options.routes;
+
+// 导航点击事件
+const menuChangeHandle = (key, keyPath) => {
+
+}
+
+</script>
+
+<style scoped> header {
+   line-height: 1.5;
+   max-height: 100vh;
+ }
+
+ .flex-grow {
+   flex-grow: 1;
+ }
+
+ .el-menu-item-logo {
+   .img-logo {
+     vertical-align: middle;
+   }
+ }
+</style>

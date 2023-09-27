@@ -74,8 +74,8 @@ import _ from 'lodash';
 import moment from 'moment';
 import { ElMessage, ElLoading } from 'element-plus';
 import { ArrowLeft, Warning } from '@element-plus/icons-vue';
-import DoubleLines from '../components/charts/DoubleLines.vue';
-import { getAsinAll, getAsinOnly, getAsinByPk } from '../api/asin.js';
+import DoubleLines from '@/components/charts/DoubleLines.vue';
+import { getAsinAll, getAsinOnly, getAsinByPk } from '@/api/asin.js';
 
 // 页面标题 和 关键词数量
 const currentAsin = ref('');

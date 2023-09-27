@@ -16,14 +16,20 @@
             </el-form-item>
             <!-- 登录按钮 -->
             <el-form-item>
-                <el-button type="primary" @click="onSubmit">登 录</el-button>
+                <el-button type="primary" :disabled="loading" @click="onSubmit">{{ loading ? `登 录 中 ...` : `登 录` }}</el-button>
             </el-form-item>
         </el-form>
     </div>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, defineProps } from 'vue';
+// 父组件传递的数据
+const props = defineProps({
+  loading : Boolean,  // 是否正在登录中
+});
+const emits = defineEmits(['signInSubmit'])
+
 
 // 登录表单
 const loginForm = ref();
@@ -53,8 +59,17 @@ const rules = reactive({
 
 // 点击登录事件
 const onSubmit = () => {
-
+    // 表单验证
+    if (!loginForm) return;
+    loginForm.value.validate( valid => {
+        console.log(valid)
+        if( !valid ){
+            return false;
+        };
+        emits('signInSubmit', login); 
+    })   
 }
+
 
 </script>
 
