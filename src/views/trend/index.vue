@@ -26,7 +26,7 @@
                     </el-form-item>
                     <el-form-item label="选择时间">
                         <el-date-picker v-model="date" type="daterange" unlink-panels range-separator="至"
-                            start-placeholder="开始时间" end-placeholder="结束时间" :shortcuts="shortcuts" 
+                            start-placeholder="开始时间" end-placeholder="结束时间" :shortcuts="shortcuts"
                             @change="dateChangeHandle" />
                     </el-form-item>
                     <el-form-item>
@@ -40,11 +40,11 @@
                     <span class="sub">关键词数量: {{ currentCount || '-' }}</span>
                     <h2 class="title"> ASIN {{ currentAsin }}</h2>
                     <div class="filter">
-                        <el-select class="filter-select" multiple collapse-tags collapse-tags-tooltip
-                            v-model="keyword" placeholder="过滤关键词" clearable size="small"
-                            @change="filterBykeyword" 
+                        <el-select class="filter-select" multiple collapse-tags collapse-tags-tooltip v-model="keyword"
+                            placeholder="过滤关键词" clearable size="small" @change="filterBykeyword"
                             @clear="keywordClearHandle">
-                            <el-option v-for="item in keywords" :key="item.keyword" :label="item.keyword" :value="item.keyword" />
+                            <el-option v-for="item in keywords" :key="item.keyword" :label="item.keyword"
+                                :value="item.keyword" />
                         </el-select>
                     </div>
                 </div>
@@ -56,10 +56,17 @@
                         </template>
                     </el-result>
                 </div>
-                <div v-else>
+                <div class="trend-content" v-else>
                     <template v-for="(item) in chartData.value">
                         <div v-if="item.filtered" class="chart-wraper">
-                            <DoubleLines :key="item.timestamp" :data="item"></DoubleLines>
+                            <!-- 图表数据 -->
+                            <div class="chart-left">
+                                <DoubleLines :key="item.timestamp" :data="item"></DoubleLines>
+                            </div>
+                            <!-- 环比数据 -->
+                            <div class="static-right">
+                                <Statistic :key="item.timestamp" :data="item"></Statistic>
+                            </div>
                         </div>
                     </template>
                 </div>
@@ -75,6 +82,7 @@ import moment from 'moment';
 import { ElMessage, ElLoading } from 'element-plus';
 import { ArrowLeft, Warning } from '@element-plus/icons-vue';
 import DoubleLines from '@/components/charts/DoubleLines.vue';
+import Statistic from '@/components/Statistic.vue';
 import { getAsinAll, getAsinOnly, getAsinByPk } from '@/api/asin.js';
 
 // 页面标题 和 关键词数量
@@ -104,15 +112,15 @@ const filterForm = reactive({
  * @param { Array } keyword 过滤条件关键词
  * @param { Array } data 需要过滤的源数据
  * @param { Array } 返回值 包含过滤条件的数据
- * */ 
+ * */
 const chartFilterByKey = (keyword, data) => {
     return _.map(data, item => {
         // 清空关键词时，显示全部数据
-        if(keyword.length === 0){
+        if (keyword.length === 0) {
             item.filtered = true
             return item
         }
-        item.filtered =  _.includes(keyword, item.keyword);
+        item.filtered = _.includes(keyword, item.keyword);
         return item
     });
 }
@@ -160,7 +168,7 @@ const onQuerySubmit = () => {
     currentAsin.value = pk;
     // 格式化时间
     const queryDate = []
-    if(date.value && date.value.length > 0){
+    if (date.value && date.value.length > 0) {
         queryDate[0] = moment(date.value[0]).format('YYYY-MM-DD');
         queryDate[1] = moment(date.value[1]).add(1, 'd').format('YYYY-MM-DD');
     }
@@ -175,7 +183,7 @@ const onQuerySubmit = () => {
         };
         loadingInstance.close()
     }).catch(err => {
-        ElMessage.error( err );
+        ElMessage.error(err);
         loadingInstance.close()
     })
 };
@@ -183,12 +191,12 @@ const onQuerySubmit = () => {
 // 过滤关键词
 const filterBykeyword = (val) => {
     keyword.value = val;
-    chartFilterByKey(keyword.value, chartData.value);    
+    chartFilterByKey(keyword.value, chartData.value);
 }
 // 清空关键词过滤
 const keywordClearHandle = (val) => {
     keyword.value = []
-    chartFilterByKey(keyword.value, chartData.value);   
+    chartFilterByKey(keyword.value, chartData.value);
 }
 
 // 日期选择事件
@@ -311,19 +319,33 @@ const shortcuts = [
         text-align: center;
         line-height: 60px;
         justify-content: space-around;
+
         .title {
             padding: 0 20px;
         }
+
         .sub {
             position: relative;
             top: 3px;
             color: #636466;
         }
-        .filter{
+
+        .filter {
             align-self: flex-end;
-            .filter-select{
+
+            .filter-select {
                 width: 200px;
             }
         }
     }
-}</style>
+    .chart-wraper{
+        display: flex;
+        .chart-left{
+            width: 100%;
+        }
+        .static-right{
+            width: 200px;
+        }
+    }
+}
+</style>
