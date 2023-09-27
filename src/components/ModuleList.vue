@@ -11,7 +11,7 @@
             </RouterLink>
         </div>
         <div class="modules-item">
-            <RouterLink to="/keyword">
+            <RouterLink to="/tools/keyword">
                 <div class="mudules-innter">
                     <h2 class="modules-title">关键字比较</h2>
                     <p class="modules-description">
@@ -21,7 +21,7 @@
             </RouterLink>
         </div>
         <div class="modules-item">
-            <RouterLink to="/keyroot">
+            <RouterLink to="/tools/keyroot">
                 <div class="mudules-innter">
                     <h2 class="modules-title">词根删选</h2>
                     <p class="modules-description">
