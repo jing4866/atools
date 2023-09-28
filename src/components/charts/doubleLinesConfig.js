@@ -29,6 +29,7 @@ export const option = {
         show: false,
         left: 100,
         right: 50,
+        top: 35,
         borderColor: '#cccccc',
         containLabel: false
     },

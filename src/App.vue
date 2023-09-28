@@ -1,7 +1,7 @@
 <template>
-    <div class="">
-        <RouterView :key="$route.name" />
-    </div>
+  <div class="">
+    <RouterView :key="$route.name" />
+  </div>
 </template>
 
 <script setup>

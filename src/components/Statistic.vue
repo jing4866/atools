@@ -13,9 +13,6 @@
             </div>
             <div class="statistic-value">
                 <strong>{{ staticReactive['n'] }}</strong>
-            </div>
-            <div class="statistic-compare">
-                <span class="statistic-desc">与昨日环比</span>
                 <span :class="staticReactive['n_diff'] > 0 ? 'red' : 'green'">
                     {{ staticReactive['n_diff'] }}
                     <el-icon>
@@ -37,9 +34,6 @@
             </div>
             <div class="statistic-value" style="color: #ffc20e;">
                 <strong>{{ staticReactive['sp'] }}</strong>
-            </div>
-            <div class="statistic-compare">
-                <span class="statistic-desc">与昨日环比</span>
                 <span :class="staticReactive['sp_diff'] > 0 ? 'red' : 'green'">
                     {{ staticReactive['sp_diff'] }}
                     <el-icon>
@@ -89,7 +83,7 @@ staticReactive = tempData.length === 2 ? tempData.reduce((prev, next) => {
         next_date: next['下载日期'],
         asin: next['ASIN']
     }
-}) : tempData.map( item => {
+}) : tempData.map(item => {
     item.n_diff = '-';
     item.sp_diff = '-';
     item.n = item['自然排名'];
@@ -103,9 +97,10 @@ staticReactive = tempData.length === 2 ? tempData.reduce((prev, next) => {
 </script>
 
 <style>
-.el-divider--horizontal{
+.el-divider--horizontal {
     margin: 10px 0;
 }
+
 .el-statistic {
     --el-statistic-content-font-size: 28px;
 }
@@ -115,17 +110,22 @@ staticReactive = tempData.length === 2 ? tempData.reduce((prev, next) => {
     padding: 20px;
     border-radius: 4px;
     background-color: var(--el-bg-color-overlay);
-    .statistic-title{
+
+    .statistic-title {
         font-size: 12px;
         line-height: 20px;
         color: #606266;
     }
-    .statistic-value{
+
+    .statistic-value {
+        display: flex;
         color: #41a5ee;
         font-size: 20px;
         font-weight: 400;
+        justify-content: space-between;
     }
-    .statistic-desc{
+
+    .statistic-desc {
         font-size: 12px;
         line-height: 20px;
         color: #606266;
@@ -157,11 +157,13 @@ staticReactive = tempData.length === 2 ? tempData.reduce((prev, next) => {
 
 .green {
     font-size: 14px;
+    line-height: 30px;
     color: var(--el-color-success);
 }
 
 .red {
     font-size: 14px;
+    line-height: 30px;
     color: var(--el-color-error);
 }
 </style>

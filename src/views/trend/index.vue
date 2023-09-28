@@ -33,6 +33,9 @@
                         <el-button type="primary" @click="onQuerySubmit">查询</el-button>
                     </el-form-item>
                 </el-form>
+                <!-- <div class="extra-options">
+                    <el-button type="warning">应用补全</el-button>
+                </div> -->
             </div>
             <!-- 趋势图列表 -->
             <div class="trend-list">
@@ -87,6 +90,8 @@ import { ArrowLeft, Warning } from '@element-plus/icons-vue';
 import DoubleLines from '@/components/charts/DoubleLines.vue';
 import Statistic from '@/components/Statistic.vue';
 import { getAsinAll, getAsinOnly, getAsinByPk } from '@/api/asin.js';
+import { shortcuts } from './config.js';
+// import { dataPatch } from './tools.js';
 
 // 页面标题 和 关键词数量
 const currentAsin = ref('');
@@ -146,7 +151,8 @@ const chartDataHandler = (data) => {
             filtered: true,
             timestamp: moment.unix(1318781876).utc()
         })
-    })
+    });
+
     keywords.value = result;
     return result;
 };
@@ -220,73 +226,8 @@ getAsinOnly().then(res => {
     ElMessage.error(`${data.message}`);
 });
 
-const colorConfig = {
-    advertise: {
-        color: '#ffc20e',
-        desc: '广告流量排名'
-    },
-    natural: {
-        color: '#41a5ee',
-        desc: '自然流量排名'
-    },
-    keyword: {
-        color: '#185abd',
-        desc: '关键字'
-    },
-    grid: {
-        color: '#333333',
-        desc: '坐标系'
-    }
-}
 
-// Date组件配置
-const shortcuts = [
-    {
-        text: '最近一周',
-        value: () => {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            return [start, end]
-        },
-    },
-    {
-        text: '最近一个月',
-        value: () => {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            return [start, end]
-        },
-    },
-    {
-        text: '最近三个月',
-        value: () => {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            return [start, end]
-        },
-    },
-    {
-        text: '最近六个月',
-        value: () => {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 180)
-            return [start, end]
-        },
-    },
-    {
-        text: '最近一年',
-        value: () => {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 365)
-            return [start, end]
-        },
-    },
-]
+
 
 
 </script>
@@ -295,6 +236,8 @@ const shortcuts = [
     padding: 5px;
 
     .form-container {
+        display: flex;
+        justify-content: space-between;
         background-color: #f6f6f7;
         padding: 5px 25px;
         border-radius: 5px;

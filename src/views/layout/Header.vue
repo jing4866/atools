@@ -1,6 +1,6 @@
 <template>
     <!-- 头部 -->
-    <el-menu :default-active="activeIndex" class="el-menu-container" mode="horizontal" :ellipsis="false"
+    <el-menu :default-active="activeRef" class="el-menu-container" mode="horizontal" :ellipsis="false"
         @select="menuChangeHandle">
         <!-- 页面Logo -->
         <el-menu-item class="el-menu-item-logo" index="logo">
@@ -41,37 +41,15 @@
             <el-menu-item index="4-1">个人信息</el-menu-item>
             <el-menu-item index="4-1" divided>退出登录</el-menu-item>
         </el-sub-menu> 
-
-
-    <!-- <el-menu-item index="Trend">
-      <RouterLink to="/trend">趋势分析</RouterLink>
-    </el-menu-item>
-    <el-menu-item index="KeyWord">
-      <RouterLink to="/tools/keyword">关键字比较</RouterLink>
-    </el-menu-item>
-    <el-menu-item index="KeyRoot">
-      <RouterLink to="/tools/keyroot">词根删选</RouterLink>
-    </el-menu-item>
-    <el-sub-menu index="more">
-      <template #title>更多</template>
-      <el-menu-item index="3-1">个人信息</el-menu-item>
-       <el-sub-menu index="2-4">
-                <template #title>item four</template>
-                <el-menu-item index="2-4-1">item one</el-menu-item>
-                <el-menu-item index="2-4-2">item two</el-menu-item>
-                <el-menu-item index="2-4-3">item three</el-menu-item>
-            </el-sub-menu>
-    </el-sub-menu> 
-  -->
   </el-menu>
 </template>
 
 <script setup>
-import { ref, watch, onUpdated } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 // 当前路由实例信息
 const $route = useRoute();
-const activeIndex = ref('1');
+const activeRef = ref('1');
 
 // 全部路由
 const $router = useRouter();
@@ -79,8 +57,9 @@ const routesLinks = $router.options.routes;
 
 // 导航点击事件
 const menuChangeHandle = (key, keyPath) => {
-
-}
+  console.log(key, 111)
+  console.log(keyPath, 2222)
+};
 
 </script>
 
