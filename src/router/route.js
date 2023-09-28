@@ -64,12 +64,12 @@ export const route = [
         path: '/error',
         name: 'ErrorPage',
         hidden: true,
-        component: () => import('@/views//ErrorPage.vue') 
+        component: () => import('@/views//ErrorPage.vue')
     },
     {
         path: '/:pathMatch(.*)*',
         name: 'NotFound',
         hidden: true,
-        component: () => import('@/views//NotFound.vue') 
+        component: () => import('@/views//NotFound.vue')
     }
 ]

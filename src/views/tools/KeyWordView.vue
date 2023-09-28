@@ -1,17 +1,7 @@
 <template>
-  <div class="keyview-container  modules-tool-container">
+  <div class="keyview-container">
     <!-- 面包屑 -->
-    <el-page-header :icon="ArrowLeft" @back="() => $router.go(-1)">
-      <template #content>
-        <span class="text-large"> KeyWord </span>
-      </template>
-    </el-page-header>
-    <div class="tool-desc">
-      <el-icon>
-        <Warning />
-      </el-icon>
-      <span class="tool-desc-text">比较 关键词[1] 和 关键词[2] 两组数据的差值，目前仅支持 字符串 类型的比较， 请使用 回车 或 换行 作为分隔符。</span>
-    </div>
+    <PageTitle title="关键词比较" description="比较 关键词[1] 和 关键词[2] 两组数据的差值，目前仅支持 字符串 类型的比较， 请使用 回车 或 换行 作为分隔符" />
     <!-- Main -->
     <div class="keys-container">
       <!-- 关键词列表 - [1] -->
@@ -83,6 +73,7 @@ import _ from 'lodash';
 import { ElMessage } from 'element-plus';
 import { ArrowLeft, Warning, LocationInformation, Delete } from '@element-plus/icons-vue';
 import { str2Array } from '@/utils/util.js';
+import PageTitle from '@/components/PageTitle.vue';
 
 let keyleft = ref(''); // 左侧关键字 textarea
 let keyright = ref(''); // 右侧关键字 textarea

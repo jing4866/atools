@@ -1,19 +1,7 @@
 <template>
-    <div class="keyroot-container modules-tool-container">
+    <div class="keyroot-container">
         <!-- 面包屑 -->
-        <el-page-header :icon="ArrowLeft" @back="() => $router.go(-1)">
-            <template #content>
-                <span class="text-large"> KeyRoot </span>
-            </template>
-        </el-page-header>
-
-        <!-- 功能描述 -->
-        <div class="tool-desc">
-            <el-icon>
-                <Warning />
-            </el-icon>
-            <span class="tool-desc-text">查找所有词组的公有词根。</span>
-        </div>
+        <PageTitle title="词根筛选" description="查找所有词组的公有词根" />
 
         <!-- 功能模块  -->
         <div class="keys-container">
@@ -70,7 +58,8 @@ import copy from 'copy-text-to-clipboard';
 import _, { split } from 'lodash';
 import { ElMessage } from 'element-plus';
 import { ArrowLeft, Warning, Delete, DArrowRight } from '@element-plus/icons-vue';
-import { str2Array } from '@/utils/util.js'
+import { str2Array } from '@/utils/util.js';
+import PageTitle from '@/components/PageTitle.vue';
 
 const filter = ref([]);
 let origin = ref(''); // 词源 textarea

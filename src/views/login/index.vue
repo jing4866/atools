@@ -31,10 +31,10 @@ import { Promotion } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { loginStore } from '@/stores/loginStore';
 import { storeToRefs } from 'pinia';
-import SignIn from '@/views/login/SignIn.vue';
-import SignUp from '@/views/login/SignUp.vue';
 import { triggerLoading, closeLoading } from '@/utils/loading';
 import { signInService, whoIsService, signUpService } from '@/api/login';
+import SignIn from '@/views/login/SignIn.vue';
+import SignUp from '@/views/login/SignUp.vue';
 
 
 // 全局状态

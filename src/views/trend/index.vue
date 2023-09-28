@@ -1,19 +1,8 @@
 <template>
     <!-- 关键字趋势分析图 -->
-    <div class="trendview-container  modules-tool-container">
+    <div class="trendview-container">
         <!-- 面包屑 -->
-        <el-page-header :icon="ArrowLeft" @back="() => $router.go(-1)">
-            <template #content>
-                <span class="text-large"> 关键词趋势分析 </span>
-            </template>
-        </el-page-header>
-        <!-- 页面功能描述 -->
-        <div class="tool-desc">
-            <el-icon>
-                <Warning />
-            </el-icon>
-            <span class="tool-desc-text">查询指定 ASIN 下广告关键词流量趋势。</span>
-        </div>
+        <PageTitle title="关键词趋势分析" description="查询指定 ASIN 下广告关键词流量趋势" />
         <!-- Main -->
         <div class="trend-container">
             <!-- 过滤条件 -->
@@ -89,6 +78,7 @@ import { ElMessage, ElLoading } from 'element-plus';
 import { ArrowLeft, Warning } from '@element-plus/icons-vue';
 import DoubleLines from '@/components/charts/DoubleLines.vue';
 import Statistic from '@/components/Statistic.vue';
+import PageTitle from '@/components/PageTitle.vue';
 import { getAsinAll, getAsinOnly, getAsinByPk } from '@/api/asin.js';
 import { shortcuts } from './config.js';
 // import { dataPatch } from './tools.js';

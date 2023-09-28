@@ -67,5 +67,4 @@ export const shortcuts = [
     },
 ]
 
-// 补全数据日期
-export const fullDate = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+

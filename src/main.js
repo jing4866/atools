@@ -1,11 +1,11 @@
-import './assets/main.css';
+import '@/assets/styles/main.css';
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router/index.js';
 import ElementPlus from 'element-plus';
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs';
 import 'element-plus/dist/index.css';
-import './assets/custom.css';
+import '@/assets/styles/custom.css';
 import { createPinia } from 'pinia';
 
 // 全局状态管理中间件

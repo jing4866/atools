@@ -1,0 +1,14 @@
+@import './base.css';
+
+#app {
+  margin: 0 auto;
+  padding: 0;
+  font-weight: normal;
+}
+
+a,
+.green {
+  text-decoration: none;
+  transition: 0.4s;
+}
+
