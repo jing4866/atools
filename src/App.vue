@@ -1,13 +1,15 @@
 <template>
-  <div class="">
-    <RouterView :key="$route.name" />
+  <div class="root-container">
+    <!-- 路由：显示与 URL 对应的组件 -->
+    <router-view></router-view>
   </div>
 </template>
 
 <script setup>
-import { useRoute, RouterView } from 'vue-router';
+// 引入全局路由
+import { RouterView } from 'vue-router';
 
-const $route = useRoute();
+
 
 </script>
 
