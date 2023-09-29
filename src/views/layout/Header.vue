@@ -14,8 +14,8 @@
         <template v-for="(link, idx) in routesLinks">
             <!-- 只有一个children数据：隐藏hidden属性  -->
             <template v-if="!link.hidden && link.children.length == 1">
-                <el-menu-item :index="`${idx}`">
-                    <RouterLink :to="link.children[0].toPath">{{ link.children[0].meta.title }}</RouterLink>
+                <el-menu-item :index="link.children[0].toPath">
+                    {{ link.children[0].meta.title }}
                 </el-menu-item>
             </template>
             <!-- end：只有一个children -->
@@ -25,8 +25,8 @@
                 <el-sub-menu :index="`${idx}`">
                     <template #title>{{ link.meta.title }}</template>
                     <template v-for="(sub, i) in link.children">
-                        <el-menu-item :index="`${idx}-${i}`">
-                            <RouterLink :to="sub.toPath">{{ sub.meta.title }}</RouterLink>
+                        <el-menu-item :index="sub.toPath">
+                            {{ sub.meta.title }}
                         </el-menu-item>
                     </template>
                 </el-sub-menu>
@@ -49,16 +49,16 @@ import { computed, ref, watch } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 // 当前路由实例信息
 const $route = useRoute();
-const activeRef = ref('1');
+const activeRef = ref('/home');
 
-// 全部路由
+// 全部路由函数
 const $router = useRouter();
 const routesLinks = $router.options.routes;
 
-// 导航点击事件
+// 导航点击事件，进行跳转
 const menuChangeHandle = (key, keyPath) => {
-  console.log(key, 111)
-  console.log(keyPath, 2222)
+    $router.push(key);
+    activeRef.value = key;
 };
 
 </script>
