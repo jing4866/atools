@@ -63,18 +63,19 @@ const menuChangeHandle = (key, keyPath) => {
 
 </script>
 
-<style scoped> header {
+<style scoped> 
+header {
    line-height: 1.5;
    max-height: 100vh;
  }
 
  .flex-grow {
-   flex-grow: 1;
+    flex-grow: 1;
  }
 
  .el-menu-item-logo {
-   .img-logo {
-     vertical-align: middle;
-   }
+    .img-logo {
+        vertical-align: middle;
+    }
  }
 </style>
