@@ -88,10 +88,9 @@ selectIdOptions().then(res => {
 /*
  * 组件过滤查询
  * @param { Object } query 子组件返回的查询对象  {product: '产品id', date_range: ['开始时间','结束时间']}
- *
+ * @return { * } 无需返回
  */
 const onQuerySubmit = (query) => {
-    console.log(query)
     // 定义Loading
     const loadingInstance = ElLoading.service({
         lock: true,
@@ -105,6 +104,7 @@ const onQuerySubmit = (query) => {
     // 查询后台数据
     chartDatasByPk( pk, queryDate ).then(res => {
         // 将数据根据关键词进行分组
+        console.log(res)
         const data_group = chart2Group(res);
         // 一共有多少组关键词
         currentCountRef.value = data_group.length;
@@ -118,7 +118,7 @@ const onQuerySubmit = (query) => {
 
 <style>
 .trend-container {
-    padding: 5px;
+    padding: 5px 10px;
     .chart-wraper {
         background: #f6f6f7;
         margin-bottom: 20px;

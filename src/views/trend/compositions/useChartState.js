@@ -3,18 +3,17 @@ import { ElMessage } from 'element-plus';
 import _ from 'lodash';
 import moment from 'moment';
 
-// 根据筛选条件查询数据
+/*
+ * 根据筛选条件(id, date)查询数据
+ * @param { String } pk 产品ID
+ * @param { Array } date 时间范围
+ * @return { Array } datas 查询结果
+ * */ 
 export const chartDatasByPk = async(pk, date = []) => {
     const datas = await getAsinByPk(pk, date).then(res => {
         const { statusText, data } = res;
         if (statusText === 'OK') {
-            // 对返回的数据做分组处理
-            // chartData.value = chartDataHandler(data.data);
-            // currentCount.value = chartData.value.length;
-
-            return {
-                data: data.data
-            }
+            return data.data;
         } else {
             ElMessage(`${data.message}`);
             return []
@@ -25,7 +24,7 @@ export const chartDatasByPk = async(pk, date = []) => {
         ElMessage.error(message);
         return []
     });
-
+    // 返回最后结果
     return datas
 };
 
@@ -37,7 +36,7 @@ export const chartDatasByPk = async(pk, date = []) => {
  * @return { Array } data 分组后的返回值 [{ count: 10, keyword: 'abc', filtered: true, timestamp:'', data: [{}] }]
  * */ 
 export const chart2Group = ( origin, key='关键词' ) => {
-    const grouped = _.groupBy(origin.data, key);
+    const grouped = _.groupBy(origin, key);
     const result = [];
     // 遍历数据 处理格式
     _.mapKeys(grouped, (val, key) => {

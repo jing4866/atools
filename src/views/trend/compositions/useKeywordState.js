@@ -2,7 +2,7 @@ import { ref, reactive } from 'vue';
 import _ from 'lodash';
 
 /*
- * 图表数据过滤器
+ * 图表数据过滤器：根据关键词下拉值进行过滤
  * @param { Array } keyword 过滤条件关键词
  * @param { Array } data 需要过滤的源数据
  * @param { Array } 返回值 包含过滤条件的数据
@@ -30,7 +30,7 @@ export const keywordFilterHandle = (val,state) => {
 }
 /**
  * 清空关键词Select多选框数据
- * @param { Array }
+ * @param { Array }  无需参数
  * @return { Array } 清空后的数据
  */
 export const keywordClearHandle = (val, state) => {
