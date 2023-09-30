@@ -1,5 +1,5 @@
 import { getAsinOnly } from '@/api/asin.js';
-import { ElMessage, ElLoading } from 'element-plus';
+import { ElMessage } from 'element-plus';
 import moment from 'moment';
 
 // 初始化 产品 Select 列表

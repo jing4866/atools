@@ -58,7 +58,7 @@
 <script setup>
 import { ref, reactive } from 'vue';
 import _ from 'lodash';
-import { ElMessage, ElLoading } from 'element-plus';
+import { ElLoading } from 'element-plus';
 import DoubleLines from '@/components/charts/DoubleLines.vue';
 import Statistic from '@/components/Statistic.vue';
 import PageTitle from '@/components/PageTitle.vue';
@@ -85,8 +85,13 @@ selectIdOptions().then(res => {
     state.options = res;
 }); 
 
-// 根据条件请求数据
+/*
+ * 组件过滤查询
+ * @param { Object } query 子组件返回的查询对象  {product: '产品id', date_range: ['开始时间','结束时间']}
+ *
+ */
 const onQuerySubmit = (query) => {
+    console.log(query)
     // 定义Loading
     const loadingInstance = ElLoading.service({
         lock: true,
@@ -110,6 +115,7 @@ const onQuerySubmit = (query) => {
 
 
 </script>
+
 <style>
 .trend-container {
     padding: 5px;
