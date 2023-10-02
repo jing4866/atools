@@ -3,6 +3,17 @@
         <!-- 面包屑 -->
         <PageTitle title="词根筛选" description="查找所有词组的公有词根" />
 
+        <!-- 筛选条件 -->
+        <div class="form-container">
+            <!-- 筛选条件表单 -->
+            <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate"
+                @change="handleCheckAllChange" :disabled="true">全选</el-checkbox>
+            <el-checkbox-group v-model="checkedStatus" @change="handleCheckedStatusChange">
+                <el-checkbox v-for="status in status2Check" :key="status.key" :label="status.key" :disabled="status.disabled">{{ status.lable }}</el-checkbox>  
+            </el-checkbox-group>
+            <!-- End 筛选条件表单 -->
+        </div>
+
         <!-- 功能模块  -->
         <div class="keys-container">
             <!-- 数据源 -->
@@ -10,8 +21,7 @@
                 <template #header>
                     <div class="card-header keys-type">
                         <span>词源</span>
-                        <el-popconfirm title="清除页面全部数据?" width="170" placement="top"
-                            @confirm="clearHandle">
+                        <el-popconfirm title="清除页面全部数据?" width="170" placement="top" @confirm="clearHandle">
                             <template #reference>
                                 <el-button round size="small">
                                     <el-icon>
@@ -23,10 +33,8 @@
                     </div>
                 </template>
                 <div class="keys-content">
-                    <el-input class="keys-area" :class="validErrorRef ? 'valid-error' : ''" 
-                        v-model="originRef" type="textarea" 
-                        placeholder="点击当前区域输入需要过滤的数据源"
-                        @focus="() => { validErrorRef = false }" />
+                    <el-input class="keys-area" :class="validErrorRef ? 'valid-error' : ''" v-model="originRef"
+                        type="textarea" placeholder="点击当前区域输入需要过滤的数据源" @focus="() => { validErrorRef = false }" />
                 </div>
             </el-card>
             <!-- 过滤操作 -->
@@ -89,6 +97,32 @@ const resultArrRef = ref([]);
 const validErrorRef = ref(false);
 
 
+// 筛选条件
+const checkAll = ref(false);
+const isIndeterminate = ref(true);
+const checkedStatus = ref(['ignoreCase'])
+const status2Check = [
+    {
+        key: 'ignoreCase',
+        lable: '忽略大小写',
+        disabled: false
+    },{
+        key: 'ginoreComplex',
+        lable: '忽略复数',
+        disabled: true
+    }]
+
+const handleCheckAllChange = (value) => {
+    checkedStatus.value = value ? status2Check : []
+    isIndeterminate.value = false
+}
+const handleCheckedStatusChange = (value) => {
+    console.log(value)
+      const checkedCount = value.length
+      checkAll.value = checkedCount === status2Check.length
+      isIndeterminate.value = checkedCount > 0 && checkedCount < status2Check.length
+}
+
 /*
  * 清空全部数据
  * 清空原始数据 originRef
@@ -104,17 +138,17 @@ const clearHandle = () => {
  * 过滤词根：对用户输入的数据进行处理
  * @param { String } originRef 用户数据源
  * @return { Array } resultRef 处理后的结果
- * */ 
+ * */
 const keyrootsFilterHandle = () => {
     // 数据源为空的情况
-    if( !originRef.value.trim() ){
+    if (!originRef.value.trim()) {
         validErrorRef.value = true;
         return ElMessage.warning('请在左侧文本域中输入数据。')
     }
     // 当数据不为空的时候，将 String => Array
-    const str2Arr = string2Array(originRef.value);
+    const str2Arr = string2Array(originRef.value, checkedStatus.value.includes('ignoreCase'));
     const { commons, marked } = markCommons(str2Arr, originRef.value);
-    
+
     resultRef.value = commons;
     resultArrRef.value = marked;
 }
@@ -139,6 +173,18 @@ const copyHandle = () => {
 
 <style>
 .keyroot-container {
+    .form-container {
+        display: flex;
+        margin: 5px 10px;
+        justify-content: flex-start;
+        background-color: #f6f6f7;
+        padding: 5px 25px;
+        border-radius: 5px;
+        .el-checkbox-group{
+            margin-left: 20px;
+        }
+    }
+
     .keys-container {
         display: flex;
         padding: 5px 20px;
@@ -179,11 +225,12 @@ const copyHandle = () => {
 
         .keys-content {
             border-radius: 3px;
-            min-height: calc(100vh - 300px);
+            min-height: calc(100vh - 350px);
             border: 1px solid #e4e7ed;
+
             .el-textarea__inner {
                 width: 100%;
-                height: calc(100vh - 300px);
+                height: calc(100vh - 350px);
                 padding: 8px;
                 font-size: 14px;
                 color: #3C3C43;
@@ -196,10 +243,11 @@ const copyHandle = () => {
                     border-color: #a8b1ff;
                 }
             }
-            .valid-error{
-                .el-textarea__inner{
+
+            .valid-error {
+                .el-textarea__inner {
                     border-color: red;
-                }  
+                }
             }
         }
 
@@ -210,7 +258,7 @@ const copyHandle = () => {
         }
 
         .keys-list {
-            height: calc(100vh - 350px);
+            height: calc(100vh - 400px);
             padding: 8px;
             overflow-y: auto;
         }

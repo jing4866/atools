@@ -6,14 +6,14 @@ import _ from 'lodash';
  * @param { String } str 字符串类型的参数 
  * @return { Array } array 返回数组
  * */ 
-export function string2Array (str) {
+export function string2Array (str, ignore) {
     // 如果数据不存在或不是字符串，则返回空数组
     if( !str || typeof str !== 'string'){
         return [];
     }
-
+    console.log('ignore', ignore)
     const regexpRN = /\r\n/g; // 换行和回车的正则表达式
-    const array = str.toLocaleLowerCase().replaceAll(regexpRN, '\n').split('\n');
+    const array = ignore ? str.toLocaleLowerCase().replaceAll(regexpRN, '\n').split('\n') : str.replaceAll(regexpRN, '\n').split('\n') ;
     // 移除所有数据项的首尾空格并返回非空数据
     array.filter(item => {
         item.trim();
