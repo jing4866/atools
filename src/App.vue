@@ -9,8 +9,6 @@
 // 引入全局路由
 import { RouterView } from 'vue-router';
 
-
-
 </script>
 
 <style scoped>

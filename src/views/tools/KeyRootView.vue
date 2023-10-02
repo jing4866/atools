@@ -6,144 +6,128 @@
         <!-- 功能模块  -->
         <div class="keys-container">
             <!-- 数据源 -->
-            <div class="keys-item keys-source">
-                <div class="keys-type">
-                    <p>词源</p>
-                    <el-button round size="small" @click="clearHandle">
-                        <el-icon>
-                            <Delete />
-                        </el-icon>清空数据
-                    </el-button>
-                </div>
+            <el-card class="keys-item box-card" shadow="hover">
+                <template #header>
+                    <div class="card-header keys-type">
+                        <span>词源</span>
+                        <el-popconfirm title="清除页面全部数据?" width="170" placement="top"
+                            @confirm="clearHandle">
+                            <template #reference>
+                                <el-button round size="small">
+                                    <el-icon>
+                                        <Delete />
+                                    </el-icon>清空数据
+                                </el-button>
+                            </template>
+                        </el-popconfirm>
+                    </div>
+                </template>
                 <div class="keys-content">
-                    <el-input class="keys-area" v-model="origin" type="textarea" placeholder="点击当前区域输入需要过滤的数据源"
-                        @change="originChange" />
+                    <el-input class="keys-area" :class="validErrorRef ? 'valid-error' : ''" 
+                        v-model="originRef" type="textarea" 
+                        placeholder="点击当前区域输入需要过滤的数据源"
+                        @focus="() => { validErrorRef = false }" />
                 </div>
-            </div>
+            </el-card>
+            <!-- 过滤操作 -->
             <div class="keys-item keys-transfer">
-                <el-button type="success" size="small" class="transfer-btn" @click="keysFilterHandle">
-                    <el-icon><DArrowRight /></el-icon>过滤词根
-                </el-button>   
+                <el-button type="primary" size="small" class="transfer-btn" @click="keyrootsFilterHandle">
+                    <el-icon>
+                        <DArrowRight />
+                    </el-icon>
+                    过滤词根
+                </el-button>
             </div>
             <!-- 过滤结果 -->
-            <div class="keys-item keys-filtered">
-                <div class="keys-type">
-                    <p>词根</p>
-                    <el-button class="copyButton" type="primary" size="small" @click="copyHandle">复制</el-button>
-                </div>
+            <el-card class="keys-item box-card" shadow="hover">
+                <template #header>
+                    <div class="card-header keys-type">
+                        <span>词根</span>
+                        <el-button class="copyButton" type="primary" size="small" @click="copyHandle">复制</el-button>
+                    </div>
+                </template>
                 <div class="keys-content">
                     <div class="keys-result">
-                        <p class="keys-selected">过滤结果： 
-                            <span  style="color: red;">{{ target==='' ? `无词根` : target }}</span>
+                        <p class="keys-selected">过滤结果：
+                            <span style="color: red;">{{ resultRef === '' ? `无词根` : resultRef }}</span>
                         </p>
                     </div>
-                    <div class="keys-list" >
-                        <div class="empty-desc" v-if="!data.result.length">
-                            {{ target ===  '' ? `过滤结果为无词根存在。` : `当前数据为空。如已导入数据，请点击中间按钮进行过滤。`  }}
+                    <div class="keys-list">
+                        <div class="empty-desc" v-if="!resultRef.length">
+                            {{ resultRef === '' ? `过滤结果为无词根存在。` : `当前数据为空。如已导入数据，请点击中间按钮进行过滤。` }}
                         </div>
                         <ul v-else>
-                            <li v-for="(item, index) in filter" :key="index">
+                            <li v-for="(item, index) in resultArrRef" :key="index">
                                 <p v-html="item"></p>
                             </li>
                         </ul>
                     </div>
                 </div>
-            </div>
+            </el-card>
         </div>
+        <!-- End 功能模块 -->
     </div>
 </template>
+
 <script setup>
+
 import { ref, reactive, watch } from 'vue';
 import copy from 'copy-text-to-clipboard';
-import _, { split } from 'lodash';
+import _ from 'lodash';
 import { ElMessage } from 'element-plus';
-import { ArrowLeft, Warning, Delete, DArrowRight } from '@element-plus/icons-vue';
-import { str2Array } from '@/utils/util.js';
+import { Delete, DArrowRight } from '@element-plus/icons-vue';
 import PageTitle from '@/components/PageTitle.vue';
+import { string2Array, markCommons } from './compositions/useRoot.js';
 
-const filter = ref([]);
-let origin = ref(''); // 词源 textarea
-let target = ref(null); // 词根
-let data = reactive({
-    source: [],
-    result: []
-});
+// 数据源：字符串 textarea
+const originRef = ref('');
+// 过滤结果：公共的子串
+const resultRef = ref('');
+// 数据源分隔处理后的数组
+const resultArrRef = ref([]);
+// 表单错误提示
+const validErrorRef = ref(false);
 
-// 清空源数据文本域
+
+/*
+ * 清空全部数据
+ * 清空原始数据 originRef
+ * 清空过滤结果 
+ */
 const clearHandle = () => {
-    data.source = [];
-    data.result = [];
-    target.value = null;
-    origin.value = ''
+    originRef.value = '';
+    resultRef.value = '';
+    resultArrRef.value = [];
 }
 
-// 词源数据更新
-const originChange = (value) => {
-    // 将字符串转为数组
-    const s2Arr = str2Array(value.toLowerCase());
-    // 移除数组项中字符串前后空格
-    const arrNoTrims = _.map(s2Arr, _.trim);
-    // 移除数组中的空项
-    _.remove(arrNoTrims, (n) => n === "" || n === " ");
-    // 记录数据
-    data.source = arrNoTrims;
+/*
+ * 过滤词根：对用户输入的数据进行处理
+ * @param { String } originRef 用户数据源
+ * @return { Array } resultRef 处理后的结果
+ * */ 
+const keyrootsFilterHandle = () => {
+    // 数据源为空的情况
+    if( !originRef.value.trim() ){
+        validErrorRef.value = true;
+        return ElMessage.warning('请在左侧文本域中输入数据。')
+    }
+    // 当数据不为空的时候，将 String => Array
+    const str2Arr = string2Array(originRef.value);
+    const { commons, marked } = markCommons(str2Arr, originRef.value);
+    
+    resultRef.value = commons;
+    resultArrRef.value = marked;
 }
 
-// 过滤词根
-const keysFilterHandle = () => {
-    // 源数据
-    const { source } = data;
-    const s_len = source.length;
-    if( s_len === 0 ){
-        return ElMessage({
-            type: 'warning',
-            message: ` 请输入原始数据。`
-        })       
-    }
-    if( s_len ===1 ){
-        target.value = source[0];
-        data.result = source;
-        return;
-    }
-    // 获取数组各项的交集
-    const subSource = _.map(source, item => item.split(' '));
-    const publicArr = _.intersection(...subSource);
-    const publicArr_len = publicArr.length;
-    if( publicArr_len === 0 ){
-        target.value = '';
-        data.result = [];
-        return;
-    }
-
-    // 当数据不为空时
-    let publicWords = publicArr[0];
-    const separator = ' ';
-    for(let i = 1; i < publicArr_len; i++ ){
-        let next = publicWords + separator + publicArr[i];
-        let isPub = _.every( source, item => _.includes(item.toLowerCase(), next.toLowerCase()));
-        if(isPub){
-            publicWords = next;
-        }else{
-            break;
-        }
-    }
-    target.value = publicWords;
-    data.result = publicWords.split(' ');
-}
-// 监听词根 变动后高亮
-watch(target, (newValue, oldValue) => {
-    const replaceRegex = `<span style="color: red;">${newValue}</span>`;
-    return filter.value = _.map(data.source, item => item.replace(newValue, replaceRegex));   
-})
 
 // 复制词根
 const copyHandle = () => {
-    const desc = target.value ? '复制成功' : '复制失败';
-    const copyReturn = copy(target.value)
+    const desc = resultRef.value ? '复制成功' : '复制失败';
+    const copyReturn = copy(resultRef.value)
 
     if (copyReturn) {
         ElMessage({
-            message: `${desc} : ${target.value}`,
+            message: `${desc} : ${resultRef.value}`,
             type: 'success',
         })
     } else {
@@ -154,60 +138,79 @@ const copyHandle = () => {
 </script>
 
 <style>
-.keyroot-container{
-    .keys-container{
+.keyroot-container {
+    .keys-container {
         display: flex;
-        padding: 10px 20px;
+        padding: 5px 20px;
         justify-content: space-between;
-        .empty-desc{
+
+        .empty-desc {
             color: #636466;
-            padding: 0 5px;   
+            padding: 0 5px;
         }
-        .keys-item{
-            width: 42%;
+
+        .keys-item {
+            width: 43%;
             padding: 8px;
             margin: 10px;
-            &.keys-transfer{
-                width: 6%;  
+
+            &.keys-transfer {
+                width: 6%;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                .transfer-btn{
+
+                .transfer-btn {
                     margin-top: 30%;
                 }
             }
+
+            .el-card__header {
+                padding: 5px 10px;
+            }
         }
-        .keys-type{
+
+        .keys-type {
             display: flex;
             justify-content: space-between;
             font-size: 14px;
             padding: 5px 0;
         }
-        .keys-content{
+
+        .keys-content {
             border-radius: 3px;
-            min-height: calc(100vh - 250px);
-            border: 1px solid #202127;
+            min-height: calc(100vh - 300px);
+            border: 1px solid #e4e7ed;
             .el-textarea__inner {
                 width: 100%;
-                height: calc(100vh - 250px);
+                height: calc(100vh - 300px);
                 padding: 8px;
                 font-size: 14px;
                 color: #3C3C43;
                 resize: none;
                 border-radius: 3px;
+                border: 1px solid #e4e7ed;
                 background-color: rgba(255, 255, 255, 0.1);
+
                 &:hover {
                     border-color: #a8b1ff;
                 }
-            }            
+            }
+            .valid-error{
+                .el-textarea__inner{
+                    border-color: red;
+                }  
+            }
         }
+
         .keys-result {
             display: flex;
             justify-content: space-between;
             padding: 8px;
         }
+
         .keys-list {
-            height: calc(100vh - 294px);
+            height: calc(100vh - 350px);
             padding: 8px;
             overflow-y: auto;
         }
@@ -219,7 +222,7 @@ const copyHandle = () => {
 @media (max-width: 896px) {
     .keyroot-container {
         display: block;
-        
+
     }
 }
 </style>

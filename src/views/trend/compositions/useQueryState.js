@@ -11,7 +11,7 @@ export const selectIdOptions = async() => {
         };
         return []
     }).catch(err => {
-        const message = err instanceof Error ? err.response.data.message : err ;     // { data } = err.response;
+        const message = err instanceof Error ? err.message : err ;     // { data } = err.response;
         ElMessage.error(`${message}`);
         return [];
     });

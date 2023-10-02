@@ -23,6 +23,7 @@ const { keyword, data } = props.data;
  * @return { Array } 返回后的格式： { date: [], n_rank: [], sp_rank: [], ASIN: '', keyword: '' }
  **/ 
 const chartDataHandle = (data) => {
+    
     const date = []; // 跟源数据相对应的时间
     const n_rank = []; // 自然排名
     const sp_rank = []; // SP广告排名
@@ -44,6 +45,8 @@ const chartDataHandle = (data) => {
 }
 
 
+
+
 // 实例化图表
 onMounted(() => {
     // 获取实例下的 DOM 元素
@@ -54,6 +57,8 @@ onMounted(() => {
 
     // // 处理数据
     const chart = chartDataHandle(data);
+
+
     // 配置文件
     option.title.text = keyword;
     option.series[0].data = chart.n_rank;

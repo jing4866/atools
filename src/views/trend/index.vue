@@ -34,20 +34,23 @@
                     </el-result>
                 </div>
                 <div class="trend-content" v-else>
-                    <template v-for="(item) in state.chartData">
-                        <div v-if="item.filtered" class="chart-wraper">
-                            <div class="title-left">
-                                {{ item.keyword }}
+                    <template v-for="(item, index) in state.chartData">
+                        <!-- 开启一个延时函数，优化渲染速度 -->
+                        <template v-if="defer(index)">
+                            <div v-if="item.filtered" class="chart-wraper">
+                                <div class="title-left">
+                                    {{ item.keyword }}
+                                </div>
+                                <!-- 环比数据 -->
+                                <div class="static-center">
+                                    <Statistic :key="item.timestamp" :data="item"></Statistic>
+                                </div>
+                                <!-- 图表数据 -->
+                                <div class="chart-right">
+                                    <DoubleLines :key="item.timestamp" :data="item"></DoubleLines>
+                                </div>
                             </div>
-                            <!-- 环比数据 -->
-                            <div class="static-center">
-                                <Statistic :key="item.timestamp" :data="item"></Statistic>
-                            </div>
-                            <!-- 图表数据 -->
-                            <div class="chart-right">
-                                <DoubleLines :key="item.timestamp" :data="item"></DoubleLines>
-                            </div>
-                        </div>
+                        </template>
                     </template>
                 </div>
             </div>
@@ -58,7 +61,7 @@
 <script setup>
 import { ref, reactive } from 'vue';
 import _ from 'lodash';
-import { ElLoading } from 'element-plus';
+import { ElLoading, ElMessage } from 'element-plus';
 import DoubleLines from '@/components/charts/DoubleLines.vue';
 import Statistic from '@/components/Statistic.vue';
 import PageTitle from '@/components/PageTitle.vue';
@@ -68,6 +71,7 @@ import { shortcuts } from './config.js';
 import { selectIdOptions, queryOptions } from './compositions/useQueryState.js';
 import { chartDatasByPk, chart2Group } from './compositions/useChartState.js';
 import { keywordFilterHandle, keywordClearHandle } from './compositions/useKeywordState.js';
+import { useDefer } from './compositions/useDefer.js';
 
 
 // 页面标题 和 关键词数量
@@ -83,7 +87,13 @@ const state = reactive({
 // 初始化 产品 ID 列表
 selectIdOptions().then(res => {
     state.options = res;
+}).catch( err => {
+    const message = err instanceof Error ? err.message : err;
+    ElMessage.error(`${message}`); 
 }); 
+
+// 
+const defer = useDefer();
 
 /*
  * 组件过滤查询
@@ -104,7 +114,6 @@ const onQuerySubmit = (query) => {
     // 查询后台数据
     chartDatasByPk( pk, queryDate ).then(res => {
         // 将数据根据关键词进行分组
-        console.log(res)
         const data_group = chart2Group(res);
         // 一共有多少组关键词
         currentCountRef.value = data_group.length;

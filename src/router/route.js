@@ -30,7 +30,7 @@ export const route = [
                 path: '',
                 name: 'Trend',
                 toPath: '/trend',
-                meta: { title: '趋势分析', icon: 'chart', affix: true },
+                meta: { title: '数据分析', icon: 'chart', affix: true },
                 component: () => import('@/views/trend/index.vue')
             }
         ]
