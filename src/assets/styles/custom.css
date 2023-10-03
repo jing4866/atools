@@ -6,3 +6,6 @@
     min-height: calc(100vh - 60px);
     --el-main-padding: 0;
 }
+.el-card__header{
+    padding: 5px 10px;
+}

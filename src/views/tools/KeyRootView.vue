@@ -51,7 +51,7 @@
                 <template #header>
                     <div class="card-header keys-type">
                         <span>词根</span>
-                        <el-button class="copyButton" type="primary" size="small" @click="copyHandle">复制</el-button>
+                        <el-button class="copyButton" type="primary" size="small" @click="copyHandle">复制词根</el-button>
                     </div>
                 </template>
                 <div class="keys-content">
@@ -209,10 +209,6 @@ const copyHandle = () => {
                 .transfer-btn {
                     margin-top: 30%;
                 }
-            }
-
-            .el-card__header {
-                padding: 5px 10px;
             }
         }
 

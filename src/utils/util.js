@@ -4,7 +4,7 @@
  * @return { Array } [] 返回值一个数组
  * */ 
 export const str2Array = ( str ) =>{
-    // const regexpRN = /\r\n/g; // 同时存在换行和回车
+    // const regexpRN = /\r+\n+/g; // 同时存在换行和回车
     const regexpR = /\r/g; // 只存在 回车
     const regexpN = /\n/g; // 只存在 换行
     // 判断基本数据类型
