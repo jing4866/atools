@@ -156,16 +156,18 @@ const keyrootsFilterHandle = () => {
 
 // 复制词根
 const copyHandle = () => {
-    const desc = resultRef.value ? '复制成功' : '复制失败';
+    // const desc = resultRef.value ? '复制成功' : '复制失败';
     const copyReturn = copy(resultRef.value)
-
+    if(!resultRef.value.length){
+        return  ElMessage.warning(`没有符合条件的数据。`)
+    }
     if (copyReturn) {
         ElMessage({
-            message: `${desc} : ${resultRef.value}`,
+            message: `复制成功 : ${resultRef.value}`,
             type: 'success',
         })
     } else {
-        ElMessage.error(`${desc} : 请尝试手动复制。`)
+        ElMessage.error(`复制失败 : 请尝试手动复制。`)
     }
 }
 
@@ -222,8 +224,6 @@ const copyHandle = () => {
         .keys-content {
             border-radius: 3px;
             min-height: calc(100vh - 350px);
-            border: 1px solid #e4e7ed;
-
             .el-textarea__inner {
                 width: 100%;
                 height: calc(100vh - 350px);
@@ -234,7 +234,7 @@ const copyHandle = () => {
                 border-radius: 3px;
                 border: 1px solid #e4e7ed;
                 background-color: rgba(255, 255, 255, 0.1);
-
+                box-shadow: none;
                 &:hover {
                     border-color: #a8b1ff;
                 }

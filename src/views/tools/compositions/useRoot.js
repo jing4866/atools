@@ -11,12 +11,11 @@ export function string2Array (str, ignore) {
     if( !str || typeof str !== 'string'){
         return [];
     }
-    console.log('ignore', ignore)
-    const regexpRN = /\r\n/g; // 换行和回车的正则表达式
-    const array = ignore ? str.toLocaleLowerCase().replaceAll(regexpRN, '\n').split('\n') : str.replaceAll(regexpRN, '\n').split('\n') ;
+    let regexpRN = /(\r\n)+/g; // 换行和回车的正则表达式
+    let array = ignore ? str.toLocaleLowerCase().replaceAll(regexpRN, '\n').split('\n') : str.replaceAll(regexpRN, '\n').split('\n') ;
     // 移除所有数据项的首尾空格并返回非空数据
-    array.filter(item => {
-        item.trim();
+    array = array.filter(item => {
+        _.trim(item);
         return !!item; 
     });
     // 去掉首尾空格后的一维数组，每个子项为一条含空格的字符串
@@ -83,6 +82,7 @@ export function markCommons ( source, sourceStr ){
     // 遍历处理源数据，查找公共子串的位置
     for( let i = 0; i < source.length; i++ ){
         // 由于子串是公共部分 所以无需做if判断
+        
         source[i] = _.replace(source[i], commons, `<strong style="color: red;">${commons}</strong>`) 
     }
 
