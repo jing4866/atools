@@ -8,10 +8,16 @@
 import { ref, nextTick, onMounted, getCurrentInstance } from 'vue';
 import * as echarts from 'echarts';
 import { option } from './doubleLinesConfig.js';
+import usePatch from './usePatch.js';
+
 
 // 接收父组件数据
 const props = defineProps({
   data : Object,  // 包含数据： {keyword:'', count: 0, data:[]}
+  patch: {
+    default: false,
+    type: Boolean
+  }
 });
 
 // 解构 props 数据
@@ -23,7 +29,7 @@ const { keyword, data } = props.data;
  * @return { Array } 返回后的格式： { date: [], n_rank: [], sp_rank: [], ASIN: '', keyword: '' }
  **/ 
 const chartDataHandle = (data) => {
-    
+    data = usePatch(data);
     const date = []; // 跟源数据相对应的时间
     const n_rank = []; // 自然排名
     const sp_rank = []; // SP广告排名

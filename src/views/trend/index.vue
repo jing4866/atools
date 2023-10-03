@@ -7,7 +7,7 @@
         <div class="trend-container">
             <!-- 过滤条件 -->
             <QueryForm :options="state.options" :shortcuts="shortcuts" 
-                @onQuerySubmit="onQuerySubmit"></QueryForm>
+                @onQuerySubmit="onQuerySubmit" @onQueryPatch="onQueryPatch"></QueryForm>
             <!-- 趋势图列表 -->
             <div class="trend-list">
                 <!-- 图表头部信息 -->
@@ -47,7 +47,7 @@
                                 </div>
                                 <!-- 图表数据 -->
                                 <div class="chart-right">
-                                    <DoubleLines :key="item.timestamp" :data="item"></DoubleLines>
+                                    <DoubleLines :key="item.timestamp" :data="item" :patch="state.patch"></DoubleLines>
                                 </div>
                             </div>
                         </template>
@@ -82,6 +82,7 @@ const state = reactive({
     options: [],   // 产品 Select 列表
     chartData: [], // 渲染图表的数据
     keyword: [],   //  页面关键词过滤select 
+    patch: false
 });
 
 // 初始化 产品 ID 列表
@@ -121,6 +122,11 @@ const onQuerySubmit = (query) => {
         loadingInstance.close();
     }); 
 };
+
+// 临时功能 补全缺失日期
+const onQueryPatch = (bool) => {
+    state.patch = bool;
+}
 
 
 </script>

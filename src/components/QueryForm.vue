@@ -10,15 +10,18 @@
             </el-form-item>
             <!-- 日期选择器 -->
             <el-form-item label="选择时间">
-                <el-date-picker v-model="queryForm.date_range" type="daterange" unlink-panels 
-                    range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" 
-                    :shortcuts="shortcuts" @change="onDateRangeHandle" />
+                <el-date-picker v-model="queryForm.date_range" type="daterange" unlink-panels range-separator="至"
+                    start-placeholder="开始时间" end-placeholder="结束时间" :shortcuts="shortcuts" @change="onDateRangeHandle" />
             </el-form-item>
             <el-form-item>
                 <!-- 查询操作 -->
                 <el-button type="primary" @click="onQuerySubmitHandle">查询</el-button>
             </el-form-item>
         </el-form>
+        <el-tooltip class="box-item" effect="dark" content="临时功能" placement="top">
+            <el-button type="warning" plain @click="onTriggerPatch">数据补全</el-button>
+        </el-tooltip>
+
         <!-- End 筛选条件表单 -->
     </div>
 </template>
@@ -35,13 +38,13 @@ const props = defineProps({
     },
     // date-picker's shortcuts
     shortcuts: {
-        type: Array, 
+        type: Array,
         default: () => []
     }
 });
 
 // 接收父组件方法
-const emit = defineEmits(['onQuerySubmit'])
+const emit = defineEmits(['onQuerySubmit', 'onQueryPatch'])
 
 // 表单属性
 const queryForm = reactive({
@@ -55,7 +58,7 @@ const queryFormReturn = readonly(queryForm);
  * 组件 date-picker 选择事件
  * @param { Array } val 选中的日期范围 ['开始时间', '结束时间']
  * @return { Object } 被重新赋值的 queryForm
- * */ 
+ * */
 const onDateRangeHandle = (val) => {
     queryForm.date_range = val || [];
 }
@@ -63,9 +66,17 @@ const onDateRangeHandle = (val) => {
 /*
  * 组件点击查询事件 
  * 触发父组件的 onQuerySubmit， 将子组件的 queryFormReturn 传递给父组件
- * */ 
+ * */
 const onQuerySubmitHandle = () => {
     emit('onQuerySubmit', queryFormReturn);
+}
+
+/*
+ * 临时功能，补全数据不全的日期
+ * @param { Boolean } true 触发补全功能
+ */ 
+const onTriggerPatch = () => {
+    emit('onQueryPatch', true);
 }
 
 </script>
