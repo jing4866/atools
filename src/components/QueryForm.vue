@@ -19,7 +19,7 @@
             </el-form-item>
         </el-form>
         <el-tooltip class="box-item" effect="dark" content="临时功能" placement="top">
-            <el-button type="warning" plain @click="onTriggerPatch">数据补全</el-button>
+            <el-button type="warning" plain @click="onTriggerPatch" v-show="false">数据补全</el-button>
         </el-tooltip>
 
         <!-- End 筛选条件表单 -->

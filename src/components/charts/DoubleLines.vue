@@ -29,13 +29,15 @@ const { keyword, data } = props.data;
  * @return { Array } 返回后的格式： { date: [], n_rank: [], sp_rank: [], ASIN: '', keyword: '' }
  **/ 
 const chartDataHandle = (data) => {
-    data = usePatch(data);
     const date = []; // 跟源数据相对应的时间
     const n_rank = []; // 自然排名
     const sp_rank = []; // SP广告排名
     if(!data || data.length === 0){
         return { date: [], n_rank: [], sp_rank: [], ASIN: '', keyword: '' }
     }
+
+    usePatch(data);
+    
     for( let i = 0; i < data.length; i++ ){
         date.push(data[i]['下载日期']);
         n_rank.push(data[i]['自然排名']);
