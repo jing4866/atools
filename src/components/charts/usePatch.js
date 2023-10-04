@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import { orderBy } from 'natural-orderby';
 
 /*
  * 将数据中同一个月份的值过滤出来
