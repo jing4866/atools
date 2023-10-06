@@ -56,15 +56,22 @@ const onQuerySubmit = (query) => {
     state.checkout = query.checkout;
     state.product = query.product;
     state.date_range = query.date_range;
-
+    
     // 定义Loading
     const loadingInstance = ElLoading.service({
         lock: true,
         text: 'Loading',
         background: 'rgba(0, 0, 0, 0.7)'
     });
+    if(state.checkout==='图表'){
+        fetchChartHandle(query, loadingInstance);
+    }
+
+};
+
+const fetchChartHandle = (query, loading) => {
     // 格式化后返回可用查询条件
-    const { pk, queryDate } = queryOptions(query);
+    const { pk, queryDate } = queryOptions(query, loading);
     // 设置当前页面 产品标题
     currentIdRef.value = pk;
     // 查询后台数据
@@ -73,9 +80,9 @@ const onQuerySubmit = (query) => {
         const data_group = chart2Group(res);
         // 一共有多少组关键词
         state.chartData = data_group;
-        loadingInstance.close();
+        if( loading ) loading.close();
     });
-};
+}
 
 // 临时功能 补全缺失日期
 const onQueryPatch = (bool) => {

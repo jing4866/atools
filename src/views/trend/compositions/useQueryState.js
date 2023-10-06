@@ -23,9 +23,10 @@ export const selectIdOptions = async() => {
  * @param { Object } query 子组件的返回的只读属性 {product: '产品id', date_range: ['开始时间','结束时间']}
  * @return { Object } pk 需查询的产品 ID ，queryDate 需要查询的时间范围
  * */ 
-export const queryOptions = (query) => {
+export const queryOptions = (query, loading) => {
     // 验证参数是否存在
     if(!query.product){
+        if( loading ) loading.close();
         return  ElMessage({
             type: 'warning',
             message: ` 请选择产品 ID 。`
