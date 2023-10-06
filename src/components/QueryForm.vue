@@ -53,7 +53,7 @@ const emit = defineEmits(['onQuerySubmit', 'onQueryPatch'])
 
 // 表单属性
 const queryForm = reactive({
-    checkout: "图表",
+    checkout: "表格",
     product: '',
     date_range: []
 });

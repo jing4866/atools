@@ -39,7 +39,7 @@ const queryRef = ref([]);
 // 图表数据数量
 const currentIdRef = ref('');
 const state = reactive({
-    checkout: '图表',
+    checkout: '表格',
     product: '',
     date_range: [],
     options: [], // 条件筛选下拉框
@@ -56,22 +56,24 @@ const onQuerySubmit = (query) => {
     state.checkout = query.checkout;
     state.product = query.product;
     state.date_range = query.date_range;
-    
+
+    if( state.checkout==='图表' && state.product !=='' ){
+        fetchChartHandle(query);
+    }else if( state.checkout==='表格' && !state.product !=='' ){
+        
+    }
+
+};
+
+const fetchChartHandle = (query) => {    
     // 定义Loading
     const loadingInstance = ElLoading.service({
         lock: true,
         text: 'Loading',
         background: 'rgba(0, 0, 0, 0.7)'
     });
-    if(state.checkout==='图表'){
-        fetchChartHandle(query, loadingInstance);
-    }
-
-};
-
-const fetchChartHandle = (query, loading) => {
     // 格式化后返回可用查询条件
-    const { pk, queryDate } = queryOptions(query, loading);
+    const { pk, queryDate } = queryOptions(query, loadingInstance);
     // 设置当前页面 产品标题
     currentIdRef.value = pk;
     // 查询后台数据
@@ -80,7 +82,7 @@ const fetchChartHandle = (query, loading) => {
         const data_group = chart2Group(res);
         // 一共有多少组关键词
         state.chartData = data_group;
-        if( loading ) loading.close();
+        loadingInstance.close();
     });
 }
 
