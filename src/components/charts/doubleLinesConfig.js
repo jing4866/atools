@@ -77,7 +77,7 @@ export const option = {
     },
     series: [
         {
-            name: '自然流量',
+            name: '自然排名',
             type: 'line',
             symbol: 'emptyCircle',
             symbolSize: 8,
@@ -92,7 +92,7 @@ export const option = {
             data: []
         },
         {
-            name: '广告流量',
+            name: '广告排名',
             type: 'line',
             symbol: 'emptyCircle',
             symbolSize: 8,

@@ -22,6 +22,20 @@ export const route = [
         }]
     },
     {
+        path: '/dashboard',
+        component: Layout,
+        hidden: false,
+        children: [
+            {
+                path: '',
+                name: 'Dashboard',
+                toPath: '/dashboard',
+                meta: { title: '数据分析', icon: 'chart', affix: true },
+                component: () => import('@/views/dashboard/index.vue')
+            }
+        ]
+    },
+    {
         path: '/trend',
         component: Layout,
         hidden: false,
@@ -30,7 +44,7 @@ export const route = [
                 path: '',
                 name: 'Trend',
                 toPath: '/trend',
-                meta: { title: '数据分析', icon: 'chart', affix: true },
+                meta: { title: '趋势分析', icon: 'chart', affix: true },
                 component: () => import('@/views/trend/index.vue')
             }
         ]

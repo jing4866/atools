@@ -4,7 +4,7 @@
         <!-- 自然流量 -->
         <div class="statistic-item">
             <div class="statistic-tooltip">
-                <span class="statistic-title">今日自然流量</span>
+                <span class="statistic-title">今日自然排名</span>
                 <el-tooltip effect="dark" content="当日数据减去前一日数据，红色增长，绿色下降。" placement="top">
                     <el-icon style="margin-left: 4px" :size="12">
                         <Warning />
@@ -25,7 +25,7 @@
         <el-divider />
         <div class="statistic-item">
             <div class="statistic-tooltip">
-                <span class="statistic-title">今日广告流量</span>
+                <span class="statistic-title">今日广告排名</span>
                 <el-tooltip effect="dark" content="当日数据减去前一日数据，红色增长，绿色下降。" placement="top">
                     <el-icon style="margin-left: 4px" :size="12">
                         <Warning />

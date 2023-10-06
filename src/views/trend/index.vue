@@ -2,7 +2,7 @@
     <!-- 关键字趋势分析图 -->
     <div class="trendview-container">
         <!-- 面包屑 -->
-        <PageTitle title="关键词趋势分析" description="查询指定 ASIN 下广告关键词流量趋势" />
+        <PageTitle title="关键词趋势分析" description="查询指定 ASIN 下广告关键词排名趋势" />
         <!-- Main -->
         <div class="trend-container">
             <!-- 过滤条件 -->
@@ -73,6 +73,10 @@ import { chartDatasByPk, chart2Group } from './compositions/useChartState.js';
 import { keywordFilterHandle, keywordClearHandle } from './compositions/useKeywordState.js';
 import { useDefer } from './compositions/useDefer.js';
 
+import { useRoute } from 'vue-router';
+const $route = useRoute();
+console.log($route)
+
 
 // 页面标题 和 关键词数量
 const currentIdRef = ref('');
@@ -133,7 +137,7 @@ const onQueryPatch = (bool) => {
 
 <style>
 .trend-container {
-    padding: 5px 10px;
+    padding: 10px 20px;
     .chart-wraper {
         background: #f6f6f7;
         margin-bottom: 20px;
