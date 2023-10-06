@@ -21,7 +21,12 @@
         <el-tooltip class="box-item" effect="dark" content="临时功能" placement="top">
             <el-button type="warning" plain @click="onTriggerPatch" v-show="false">数据补全</el-button>
         </el-tooltip>
-
+        <div class="checkout-box">
+            <el-radio-group v-model="queryForm.checkout" @change="checkoutHandle">
+                <el-radio-button label="表格" name="table" />
+                <el-radio-button label="图表" chame="chart" />
+            </el-radio-group>
+        </div>
         <!-- End 筛选条件表单 -->
     </div>
 </template>
@@ -48,6 +53,7 @@ const emit = defineEmits(['onQuerySubmit', 'onQueryPatch'])
 
 // 表单属性
 const queryForm = reactive({
+    checkout: "图表",
     product: '',
     date_range: []
 });
@@ -72,9 +78,17 @@ const onQuerySubmitHandle = () => {
 }
 
 /*
+ * 表格图表切换
+ * @param { String } val 切换的值
+ */ 
+const checkoutHandle = (val) => {
+    emit('onQuerySubmit', queryFormReturn);
+}
+
+/*
  * 临时功能，补全数据不全的日期
  * @param { Boolean } true 触发补全功能
- */ 
+ */
 const onTriggerPatch = () => {
     emit('onQueryPatch', true);
 }

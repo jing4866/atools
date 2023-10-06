@@ -1,104 +1,51 @@
 <template>
-    <!-- 关键字趋势分析图 -->
-    <div class="trendview-container">
+    <div class="trend-container">
         <!-- 面包屑 -->
         <PageTitle title="关键词趋势分析" description="查询指定 ASIN 下广告关键词排名趋势" />
-        <!-- Main -->
-        <div class="trend-container">
-            <!-- 过滤条件 -->
-            <QueryForm :options="state.options" :shortcuts="shortcuts" 
-                @onQuerySubmit="onQuerySubmit" @onQueryPatch="onQueryPatch"></QueryForm>
-            <!-- 趋势图列表 -->
-            <div class="trend-list">
-                <!-- 图表头部信息 -->
-                <div class="trend-title">
-                    <span class="sub">关键词数量: {{ currentCountRef || '-' }}</span>
-                    <h2 class="title"> 产品 ID {{ currentIdRef }}</h2>
-                    <!-- 根据关键词过滤图表 -->
-                    <div class="filter">
-                        <el-select class="filter-select" multiple collapse-tags collapse-tags-tooltip 
-                            v-model="state.keyword" placeholder="过滤关键词" clearable size="small" 
-                            @change="(val) => keywordFilterHandle(val, state)"
-                            @clear="(val) => keywordClearHandle(val, state)">
-                            <el-option v-for="item in state.chartData" :key="item.keyword" :label="item.keyword"
-                                :value="item.keyword" />
-                        </el-select>
-                    </div>
-                </div>
-                <!-- 显示图表 -->
-                <div v-if="state.chartData.length === 0">
-                    <el-result icon="info" title="当前无可用数据">
-                        <template #sub-title>
-                            <p>请重新选择 ASIN 进行查找</p>
-                        </template>
-                    </el-result>
-                </div>
-                <div class="trend-content" v-else>
-                    <template v-for="(item, index) in state.chartData">
-                        <!-- 开启一个延时函数，优化渲染速度 -->
-                        <template v-if="defer(index)">
-                            <div v-if="item.filtered" class="chart-wraper">
-                                <div class="title-left">
-                                    {{ item.keyword }}
-                                </div>
-                                <!-- 环比数据 -->
-                                <div class="static-center">
-                                    <Statistic :key="item.timestamp" :data="item"></Statistic>
-                                </div>
-                                <!-- 图表数据 -->
-                                <div class="chart-right">
-                                    <DoubleLines :key="item.timestamp" :data="item" :patch="state.patch"></DoubleLines>
-                                </div>
-                            </div>
-                        </template>
-                    </template>
-                </div>
-            </div>
-            <el-backtop :right="30" :bottom="100" />
+        <!-- 过滤条件 -->
+        <div class="query-box">
+            <QueryForm :options="state.options" :shortcuts="shortcuts" @onQuerySubmit="onQuerySubmit"
+                @onQueryPatch="onQueryPatch">
+            </QueryForm>
+        </div>
+        <div class="tabs-box">
+            <Transition>
+                <KeepAlive>
+                    <Table v-if="state.checkout === '表格'" :data="state.chartData" :id="currentIdRef"></Table>
+                    <Chart v-else-if="state.checkout === '图表'" :data="state.chartData" :id="currentIdRef"></Chart>
+                </KeepAlive>
+            </Transition>
         </div>
     </div>
 </template>
+
 <script setup>
 import { ref, reactive } from 'vue';
-import _ from 'lodash';
 import { ElLoading, ElMessage } from 'element-plus';
-import DoubleLines from '@/components/charts/DoubleLines.vue';
-import Statistic from '@/components/Statistic.vue';
 import PageTitle from '@/components/PageTitle.vue';
 import QueryForm from '@/components/QueryForm.vue';
 import { shortcuts } from './config.js';
-
+import Chart from './pages/Chart.vue';
+import Table from './pages/Table.vue';
 import { selectIdOptions, queryOptions } from './compositions/useQueryState.js';
 import { chartDatasByPk, chart2Group } from './compositions/useChartState.js';
-import { keywordFilterHandle, keywordClearHandle } from './compositions/useKeywordState.js';
-import { useDefer } from './compositions/useDefer.js';
-
 import { useRoute } from 'vue-router';
 const $route = useRoute();
-console.log($route)
+// 从总览页面过来时带的参数
+console.log($route.query)
 
-
-// 页面标题 和 关键词数量
+// 页面状态
+const queryRef = ref([]);
+// 图表数据数量
 const currentIdRef = ref('');
-const currentCountRef = ref('');
-// 当前页面状态
 const state = reactive({
-    options: [],   // 产品 Select 列表
-    chartData: [], // 渲染图表的数据
-    keyword: [],   //  页面关键词过滤select 
-    patch: false
-});
+    checkout: '图表',
+    product: '',
+    date_range: [],
+    options: [], // 条件筛选下拉框
+    chartData: [], // 图表数据
+})
 
-// 初始化 产品 ID 列表
-selectIdOptions().then(res => {
-    state.options = res;
-}).catch( err => {
-    const message = err instanceof Error ? err.message : err;
-    ElMessage.error(`${message}`); 
-}); 
-
-// 
-const defer = useDefer();
 
 /*
  * 组件过滤查询
@@ -106,6 +53,10 @@ const defer = useDefer();
  * @return { * } 无需返回
  */
 const onQuerySubmit = (query) => {
+    state.checkout = query.checkout;
+    state.product = query.product;
+    state.date_range = query.date_range;
+
     // 定义Loading
     const loadingInstance = ElLoading.service({
         lock: true,
@@ -117,77 +68,39 @@ const onQuerySubmit = (query) => {
     // 设置当前页面 产品标题
     currentIdRef.value = pk;
     // 查询后台数据
-    chartDatasByPk( pk, queryDate ).then(res => {
+    chartDatasByPk(pk, queryDate).then(res => {
         // 将数据根据关键词进行分组
         const data_group = chart2Group(res);
         // 一共有多少组关键词
-        currentCountRef.value = data_group.length;
         state.chartData = data_group;
         loadingInstance.close();
-    }); 
+    });
 };
 
 // 临时功能 补全缺失日期
 const onQueryPatch = (bool) => {
-    state.patch = bool;
+    // queryRef.patch = bool;
 }
 
+
+// 初始化 产品 ID 列表
+selectIdOptions().then(res => {
+    state.options = res;
+}).catch(err => {
+    const message = err instanceof Error ? err.message : err;
+    ElMessage.error(`${message}`);
+});
 
 </script>
 
 <style>
 .trend-container {
-    padding: 10px 20px;
-    .chart-wraper {
-        background: #f6f6f7;
-        margin-bottom: 20px;
-        padding: 10px;
-        border-radius: 5px;
-        transition: all 1s;
-
-        &:hover {
-            box-shadow: 0px 0px 5px rgba(51, 51, 51, 0.5);
-            transform: scale(1.01);
-        }
+    .query-box {
+        padding: 5px 10px;
     }
 
-    .trend-title {
-        display: flex;
-        text-align: center;
-        line-height: 60px;
-        justify-content: space-around;
-
-        .title {
-            padding: 0 20px;
-        }
-
-        .sub {
-            position: relative;
-            top: 3px;
-            color: #636466;
-        }
-
-        .filter {
-            align-self: flex-end;
-
-            .filter-select {
-                width: 200px;
-            }
-        }
-    }
-    .chart-wraper{
-        display: flex;
-        .title-left{
-            width: 300px;
-            color: #185abd;
-            padding: 10px;
-        }
-        .chart-right{
-            width: 100%;
-        }
-        .static-center{
-            width: 200px;
-        }
+    .tabs-box {
+        padding: 5px 10px;
     }
 }
 </style>

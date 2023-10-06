@@ -10,7 +10,7 @@ import _ from 'lodash';
 export const chartFilterByKey = (keyword, data) => {
     return _.map(data, item => {
         // 清空关键词时，显示全部数据
-        if (keyword.length === 0) {
+        if ( keyword == null || keyword.length ===0 ) {
             item.filtered = true
             return item
         }
@@ -24,16 +24,16 @@ export const chartFilterByKey = (keyword, data) => {
  * @param { Array } val select多选框的选择结果
  * @return { Array } 返回值，过滤后的结果
  * */
-export const keywordFilterHandle = (val,state) => {
-    state.keyword = val;
-    chartFilterByKey(state.keyword, state.chartData);
+export const keywordFilterHandle = (val,data) => {
+    // state.keyword = val;
+    chartFilterByKey(val, data);
 }
 /**
  * 清空关键词Select多选框数据
  * @param { Array }  无需参数
  * @return { Array } 清空后的数据
  */
-export const keywordClearHandle = (val, state) => {
-    state.keyword = []
-    chartFilterByKey(state.keyword, state.chartData);
+export const keywordClearHandle = (val, data) => {
+    // keyfilterRef.value = []
+    chartFilterByKey(val, data);
 }

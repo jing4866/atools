@@ -72,7 +72,7 @@ import { useRouter } from 'vue-router';
 import _ from 'lodash';
 import moment from 'moment';
 import { ElMessage } from 'element-plus';
-import { Top, Bottom, Minus, Search } from '@element-plus/icons-vue'
+import { Top, Bottom, Minus, Search } from '@element-plus/icons-vue';
 import PageTitle from '@/components/PageTitle.vue';
 import { getAsinOverview } from '@/api/asin.js';
 import { triggerLoading, closeLoading } from '@/utils/loading.js';
@@ -107,7 +107,7 @@ onMounted(() => {
 const goToDetail = (param) => {
     $router.push({
         name: 'Trend',
-        param: {
+        query: {
             ASIN: param
         }
     })
