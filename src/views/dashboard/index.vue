@@ -6,8 +6,8 @@
         <!-- 筛选 -->
         <div class="filter-container">
             <div class="filter-desc"> 当前页面总数据: {{ dataRef.length }} 条</div>
-            <el-input v-model.lazy="filterRef" placeholder="ASIN 查询，不区分大小写。" clearable class="filter-input" @input="filterHandler"
-                @clear="clearFilter">
+            <el-input v-model.lazy="filterRef" placeholder="ASIN 查询，不区分大小写。" clearable class="filter-input"
+                @input="filterHandler" @clear="clearFilter">
                 <template #append>
                     <el-button :icon="Search" />
                 </template>
