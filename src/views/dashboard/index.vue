@@ -15,11 +15,12 @@
         </div>
         <!-- 数据列表 -->
         <div class="dashboard-content">
-            <el-table :data="dataFilterRef" :height="tableH" style="width: 100%" >
+            <el-table :data="dataFilterRef" :height="tableH" style="width: 100%">
                 <el-table-column type="index" label="序号" width="70" align="center" />
                 <el-table-column prop="ASIN" label="ASIN">
                     <template #default="scope">
-                        <el-text class="link-text" type="primary" @click="() => goToDetail(scope.row.ASIN)">{{ scope.row.ASIN }}</el-text>
+                        <el-text class="link-text" type="primary" @click="() => goToDetail(scope.row)">{{
+                            scope.row.ASIN }}</el-text>
                     </template>
                 </el-table-column>
                 <el-table-column prop="earliest_date" label="最早日期" align="center" />
@@ -63,6 +64,7 @@
                 </el-table-column>
             </el-table>
         </div>
+        <Drawer :visible="drawerVisibleRef" :data="drawerContentRef" @onCloseDrawer="onCloseDrawer"></Drawer>
     </div>
 </template>
 
@@ -76,6 +78,7 @@ import { Top, Bottom, Minus, Search } from '@element-plus/icons-vue';
 import PageTitle from '@/components/PageTitle.vue';
 import { getAsinOverview } from '@/api/asin.js';
 import { triggerLoading, closeLoading } from '@/utils/loading.js';
+import Drawer from '@/components/Drawer.vue'
 
 
 // table高度
@@ -103,14 +106,17 @@ onMounted(() => {
     tableH = document.documentElement.clientHeight - 250;
 })
 
-// 跳转至详情页
+// 转至详情页
+const drawerVisibleRef = ref(false);
+const drawerContentRef = ref([]);
 const goToDetail = (param) => {
-    $router.push({
-        name: 'Trend',
-        query: {
-            ASIN: param
-        }
-    })
+    console.log(param)
+    drawerVisibleRef.value = true;
+    drawerContentRef.value = param;
+}
+const onCloseDrawer = (boolean) => {
+    drawerVisibleRef.value = boolean;
+    drawerContentRef.value = [];
 }
 
 // 页面加载即打开loading
@@ -125,7 +131,7 @@ getAsinOverview().then(res => {
         dataFilterRef.value = dataRef.value;
         // 关闭loading
         closeLoading();
-    }else{
+    } else {
         // 如果请求返回异常
         ElMessage.error(`页面请求数据异常，请刷新。`);
     }
@@ -141,14 +147,18 @@ const data2Serialize = (data) => {
     // 将关键词数据进行分组
     const keysGroup = _.groupBy(keys, item => item['ASIN']);
     const compareGroup = _.groupBy(comparekeys, item => item['ASIN']);
+
     // 返回数据处理结果
     return _.map(asins, item => {
         // 指定asin下今日关键词数
         item.t_count = keysGroup[item.ASIN] ? keysGroup[item.ASIN].length : null;
         // 指定asin下今日关键词列表
-        // item.children = keysGroup[item.ASIN] ? keysGroup[item.ASIN] : [];
+        item.children = keysGroup[item.ASIN] ? keysGroup[item.ASIN] : [];
         // 指定asin下前一日关键词数
         item.y_count = compareGroup[item.ASIN] ? compareGroup[item.ASIN].length : null;
+        // 指定asin下前一日关键词列表
+        item.compare = compareGroup[item.ASIN] ? compareGroup[item.ASIN] : [];
+        // 返回结果
         return item;
     })
 }
@@ -158,8 +168,9 @@ const data2Serialize = (data) => {
 <style>
 .dashboard-content {
     padding: 10px 20px;
-    .link-text{
-        &:hover{
+
+    .link-text {
+        &:hover {
             text-decoration: underline;
             cursor: pointer;
         }
@@ -182,4 +193,5 @@ const data2Serialize = (data) => {
         width: 300px;
     }
 }
+
 </style>
