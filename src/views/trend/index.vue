@@ -39,7 +39,7 @@ const queryRef = ref([]);
 // 图表数据数量
 const currentIdRef = ref('');
 const state = reactive({
-    checkout: '表格',
+    checkout: '图表',
     product: '',
     date_range: [],
     options: [], // 条件筛选下拉框

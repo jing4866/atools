@@ -79,13 +79,6 @@
                                             <Minus></Minus>
                                         </el-icon>
                                     </div>
-                                    <div v-else>
-                                        <el-tooltip effect="dark" content="数据有空，无法比较" placement="top">
-                                            <el-icon>
-                                                <Warning />
-                                            </el-icon>
-                                        </el-tooltip>
-                                    </div>
                                 </div>
                             </template>
                         </el-table-column>
@@ -114,11 +107,6 @@
                                     <div v-else-if="scope.row.sp_trend === '持平'">
                                         <el-icon>
                                             <Minus></Minus>
-                                        </el-icon>
-                                    </div>
-                                    <div v-else>
-                                        <el-icon>
-                                            <Warning />
                                         </el-icon>
                                     </div>
                                 </div>
@@ -171,24 +159,44 @@ const tableData = computed(() => {
             child.sp_rank = result[0]['sp广告排名'];
             // 处理自然排名
             if (result[0]['自然排名'] === '-' || child['自然排名'] === '-') {
-                // 有空数据 无法比较
-                child.n_trend = '无法比较'
+                if(result[0]['自然排名'] !== '-' && child['自然排名'] === '-'){
+                    child.n_trend = '下降'
+                }else if(result[0]['自然排名'] === '-' && child['自然排名'] !== '-'){
+                    child.n_trend = '上升'
+                }else{
+                    child.n_trend = '持平'
+                }   
             } else {
                 // 差值大于0 上升； 差值小于0 下降； 差值相等 持平
                 child.n_trend = (child['自然排名'] - result[0]['自然排名']) > 0 ? '上升' : (child['自然排名'] - result[0]['自然排名']) < 0 ? '下降' : '持平';
             }
             // 处理sp排名
             if (result[0]['sp广告排名'] === '-' || child['sp广告排名'] === '-') {
-                child.sp_trend = '无法比较'
+                if(result[0]['sp广告排名'] !== '-' && child['sp广告排名'] === '-'){
+                    child.sp_trend = '下降'
+                }else if(result[0]['sp广告排名'] === '-' && child['sp广告排名'] !== '-'){
+                    child.sp_trend = '上升'
+                }else{
+                    child.sp_trend = '持平'
+                } 
             } else {
                 // 差值大于0 上升； 差值小于0 下降； 差值相等 持平
                 child.sp_trend = (child['sp广告排名'] - result[0]['sp广告排名']) > 0 ? '上升' : (child['sp广告排名'] - result[0]['sp广告排名']) < 0 ? '下降' : '持平';
             }
         } else {
+            // 前一日不存在对比数据
+            if(child['自然排名'] === '-'){
+                child.n_trend = '持平';
+            }else{
+                child.n_trend = '上升';
+            };
+            if(child['sp广告排名'] === '-'){
+                child.sp_trend = '持平';
+            }else{
+                child.sp_trend = '上升';
+            };
             child.n_rank = '-';
             child.sp_rank = '-';
-            child.n_trend = '无法比较';
-            child.sp_trend = '无法比较';
         }
         // 返回结果
         return child

@@ -37,21 +37,22 @@
                     <template #default="scope">
                         <div>
                             <!-- 上升 -->
-                            <div v-if="scope.row.t_count > scope.row.y_count">
+                            <div v-if="(scope.row.t_count > scope.row.y_count) || (scope.row.t_count !=='-' && scope.row.y_count === '-')">
                                 <el-icon color="red" style="vertical-align: middle;margin-right: 5px;">
                                     <Top />
                                 </el-icon>
                                 <span style="color: red; vertical-align: middle;">
-                                    {{ scope.row.t_count - scope.row.y_count }}
+                                    {{ scope.row.y_count === '-' ? scope.row.t_count : scope.row.t_count - scope.row.y_count }}
                                 </span>
                             </div>
                             <!-- 下降 -->
-                            <div v-else-if="scope.row.t_count < scope.row.y_count">
+                            <div v-else-if="(scope.row.t_count ==='-' && scope.row.y_count !== '-' ) || (scope.row.t_count < scope.row.y_count)">
                                 <el-icon color="green" style="vertical-align: middle;margin-right: 5px;">
                                     <Bottom />
                                 </el-icon>
-                                <span style="color: green; vertical-align: middle;">{{ scope.row.t_count -
-                                    scope.row.y_count }}</span>
+                                <span style="color: green; vertical-align: middle;">
+                                    {{ scope.row.t_count === '-' ? scope.row.t_count : scope.row.t_count - scope.row.y_count }}
+                                </span>
                             </div>
                             <!-- 持平 -->
                             <div v-else-if="scope.row.t_count === scope.row.y_count">
