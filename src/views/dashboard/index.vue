@@ -113,7 +113,6 @@ const drawerVisibleRef = ref(false);
 const drawerContentRef = ref([]);
 const DrawerChartRef = ref({}); 
 const goToDetail = (param) => {
-    console.log(param)
     drawerVisibleRef.value = true;
     drawerContentRef.value = param;
 }

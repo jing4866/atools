@@ -73,8 +73,6 @@ const props = defineProps({
     }
 });
 
-console.log(props.data)
-
 // 接收父组件方法
 const emit = defineEmits([])
 

@@ -32,7 +32,7 @@ import { chartDatasByPk, chart2Group } from './compositions/useChartState.js';
 import { useRoute } from 'vue-router';
 const $route = useRoute();
 // 从总览页面过来时带的参数
-console.log($route.query)
+// console.log($route.query)
 
 // 页面状态
 const queryRef = ref([]);
@@ -57,15 +57,15 @@ const onQuerySubmit = (query) => {
     state.product = query.product;
     state.date_range = query.date_range;
 
-    if( state.checkout==='图表' && state.product !=='' ){
+    if (state.checkout === '图表' && state.product !== '') {
         fetchChartHandle(query);
-    }else if( state.checkout==='表格' && !state.product !=='' ){
-        
+    } else if (state.checkout === '表格' && !state.product !== '') {
+
     }
 
 };
 
-const fetchChartHandle = (query) => {    
+const fetchChartHandle = (query) => {
     // 定义Loading
     const loadingInstance = ElLoading.service({
         lock: true,

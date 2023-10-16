@@ -4,7 +4,7 @@
             <span class="title-span">A Tools</span>
         </h1>
         <div class="main-desc">一些在线小工具。</div>
-        <ModuleList />
+        <!-- <ModuleList /> -->
     </div>
 </template>
 

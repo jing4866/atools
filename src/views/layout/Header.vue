@@ -3,7 +3,7 @@
     <el-menu :default-active="activeRef" class="el-menu-container" mode="horizontal" :ellipsis="false"
         @select="menuChangeHandle">
         <!-- 页面Logo -->
-        <el-menu-item class="el-menu-item-logo" index="logo">
+        <el-menu-item class="el-menu-item-logo" index="/">
             <RouterLink to="/home"><img class="img-logo" src="@/assets/img/logo.png" width="100"></RouterLink>
         </el-menu-item>
 
@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, onBeforeMount } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 // 当前路由实例信息
 const $route = useRoute();
@@ -60,6 +60,12 @@ const menuChangeHandle = (key, keyPath) => {
     $router.push(key);
     activeRef.value = key;
 };
+
+onBeforeMount(()=>{
+    // 当页面强制刷新时 导航状态丢失
+    activeRef.value = $route.fullPath;
+})
+
 
 </script>
 

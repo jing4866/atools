@@ -23,7 +23,7 @@
         </el-tooltip>
         <div class="checkout-box">
             <el-radio-group v-model="queryForm.checkout" @change="checkoutHandle">
-                <el-radio-button label="表格" name="table" />
+                <el-radio-button label="表格" name="table" disabled />
                 <el-radio-button label="图表" chame="chart" />
             </el-radio-group>
         </div>
@@ -53,7 +53,7 @@ const emit = defineEmits(['onQuerySubmit', 'onQueryPatch'])
 
 // 表单属性
 const queryForm = reactive({
-    checkout: "表格",
+    checkout: "图表",
     product: '',
     date_range: []
 });

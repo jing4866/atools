@@ -172,7 +172,6 @@ const closeHandler = () => {
 };
 
 const tableData = computed(() => {
-	console.log('Updated')
 	// 处理从父组件中接收到的数据
 	const { children, compare, chart } = props.data;
 	// 遍历今日数据
@@ -256,14 +255,12 @@ let tableH = 500;
 // 根据浏览器高度设置表格高度 以固定表头
 onMounted(() => {
 	tableH = document.documentElement.clientHeight - 180;
-	console.log(tableData, props.data, 1223)
 });
 
 
 // 当前expand变化的行
 const expandRowKeys = ref([]); // 当前展开行
 const expandChangeHandle = (row, expandedRows) => {
-	console.log(row, expandedRows)
 	// 移除其他数据，只展示当前行
 	expandRowKeys.value.shift();
 	expandRowKeys.value.push(row['关键词']);
