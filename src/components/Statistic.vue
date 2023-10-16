@@ -4,8 +4,8 @@
         <!-- 自然流量 -->
         <div class="statistic-item">
             <div class="statistic-tooltip">
-                <span class="statistic-title">今日自然排名</span>
-                <el-tooltip effect="dark" content="当日数据减去前一日数据，红色增长，绿色下降。" placement="top">
+                <span class="statistic-title">自然排名</span>
+                <el-tooltip effect="dark" content="最后数据减去前一日数据，红色增长，绿色下降。" placement="top">
                     <el-icon style="margin-left: 4px" :size="12">
                         <Warning />
                     </el-icon>
@@ -25,8 +25,8 @@
         <el-divider />
         <div class="statistic-item">
             <div class="statistic-tooltip">
-                <span class="statistic-title">今日广告排名</span>
-                <el-tooltip effect="dark" content="当日数据减去前一日数据，红色增长，绿色下降。" placement="top">
+                <span class="statistic-title">广告排名</span>
+                <el-tooltip effect="dark" content="最后数据减去前一日数据，红色增长，绿色下降。" placement="top">
                     <el-icon style="margin-left: 4px" :size="12">
                         <Warning />
                     </el-icon>
@@ -43,56 +43,75 @@
                 </span>
             </div>
         </div>
-
     </div>
 </template>
 
 <script setup>
 import { CaretBottom, CaretTop, Warning } from '@element-plus/icons-vue';
-import { reactive, ref } from 'vue';
+import { reactive, onBeforeUpdate } from 'vue';
 import _ from 'lodash';
 
 // 接收父组件数据
 const props = defineProps({
     data: Object,  // 包含数据： {keyword:'', count: 0, data:[]}
+    default: () => {
+        return { keyword: '', count: 0, data: [] }
+    }
 });
 
-// 解构 props 数据
-const { keyword, data } = props.data;
-// 定义变量并提出最后两项数据
+
 // 数据内容 {关键词: '', 自然排名: '', sp广告排名: '-', 下载日期: '', ASIN: ''}
 let staticReactive = reactive({});
-let tempData = data;
-// 截取目标数据
-if (data && data.length > 0) {
-    // 至少有两项数据
-    tempData = data.slice(-2);
+
+const dataSequlise = (data) => {
+    // 定义变量并提出最后两项数据
+    let tempData = data;
+    // 截取目标数据
+    if (data && data.length > 0) {
+        // 至少有两项数据
+        tempData = data.slice(-2);
+        staticReactive = tempData.length === 2 ? tempData.reduce((prev, next) => {
+            // 处理非法数据数据 
+            const n_diff = next['自然排名'] - prev['自然排名'];
+            const sp_diff = next['sp广告排名'] - prev['sp广告排名'];
+
+            return {
+                n_diff: _.isNaN(n_diff) ? '-' : n_diff,
+                sp_diff: _.isNaN(sp_diff) ? '-' : sp_diff,
+                n: prev['自然排名'],
+                sp: prev['sp广告排名'],
+                prev_date: prev['下载日期'],
+                next_date: next['下载日期'],
+                asin: next['ASIN']
+            }
+        }) : tempData.map(item => {
+            item.n_diff = '-';
+            item.sp_diff = '-';
+            item.n = item['自然排名'];
+            item.sp = item['sp广告排名'];
+            item.prev_date = item['下载日期'];
+            item.next_date = item['下载日期'];
+            item.asin = item['ASIN'];
+            return item
+        })[0]
+    } else {
+        staticReactive = {
+            n_diff: '-',
+            sp_diff: '-',
+            n: '-',
+            sp: '-',
+            prev_date: '-',
+            next_date: '-',
+            asin: '-'
+        }
+    }
 }
 
-staticReactive = tempData.length === 2 ? tempData.reduce((prev, next) => {
-    // 处理非法数据数据 
-    const n_diff = next['自然排名'] - prev['自然排名'];
-    const sp_diff = next['sp广告排名'] - prev['sp广告排名'];
-
-    return {
-        n_diff: _.isNaN(n_diff) ? '-' : n_diff,
-        sp_diff: _.isNaN(sp_diff) ? '-' : sp_diff,
-        n: prev['自然排名'],
-        sp: prev['sp广告排名'],
-        prev_date: prev['下载日期'],
-        next_date: next['下载日期'],
-        asin: next['ASIN']
-    }
-}) : tempData.map(item => {
-    item.n_diff = '-';
-    item.sp_diff = '-';
-    item.n = item['自然排名'];
-    item.sp = item['sp广告排名'];
-    item.prev_date = item['下载日期'];
-    item.next_date = item['下载日期'];
-    item.asin = item['ASIN'];
-    return item
-})[0]
+onBeforeUpdate(() => {
+    // 解构 props 数据
+    const { data } = props.data;
+    dataSequlise(data);
+})
 
 </script>
 
@@ -106,6 +125,7 @@ staticReactive = tempData.length === 2 ? tempData.reduce((prev, next) => {
 }
 
 .statistic-card {
+    width: 100%;
     height: 100%;
     padding: 20px;
     border-radius: 4px;

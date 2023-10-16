@@ -65,7 +65,8 @@
                 </el-table-column>
             </el-table>
         </div>
-        <Drawer :visible="drawerVisibleRef" :data="drawerContentRef" @onCloseDrawer="onCloseDrawer"></Drawer>
+        <Drawer :visible="drawerVisibleRef" :data="drawerContentRef" 
+            @onCloseDrawer="onCloseDrawer" @onTriggerExpand="onTriggerExpand"></Drawer>
     </div>
 </template>
 
@@ -77,7 +78,7 @@ import moment from 'moment';
 import { ElMessage } from 'element-plus';
 import { Top, Bottom, Minus, Search } from '@element-plus/icons-vue';
 import PageTitle from '@/components/PageTitle.vue';
-import { getAsinOverview } from '@/api/asin.js';
+import { getAsinOverview, getKeyHistoriesByPk } from '@/api/asin.js';
 import { triggerLoading, closeLoading } from '@/utils/loading.js';
 import Drawer from '@/components/Drawer.vue'
 
@@ -110,6 +111,7 @@ onMounted(() => {
 // 转至详情页
 const drawerVisibleRef = ref(false);
 const drawerContentRef = ref([]);
+const DrawerChartRef = ref({}); 
 const goToDetail = (param) => {
     console.log(param)
     drawerVisibleRef.value = true;
@@ -118,6 +120,19 @@ const goToDetail = (param) => {
 const onCloseDrawer = (boolean) => {
     drawerVisibleRef.value = boolean;
     drawerContentRef.value = [];
+}
+
+const onTriggerExpand = (row) => {
+    // 从子组件中获取需要的数据 asin 和 关键词
+    getKeyHistoriesByPk(row.ASIN, row['关键词']).then(res => {
+        if(res.statusText === 'OK'){
+            drawerContentRef.value.chart = res.data.data
+        }
+    }).catch(err => {
+        const message = err instanceof Error ? err.message : err;
+        ElMessage.error(`${message}`);        
+    })
+
 }
 
 // 页面加载即打开loading

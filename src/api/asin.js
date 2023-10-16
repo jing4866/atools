@@ -17,3 +17,11 @@ export const getAsinByPk = (pk, date) => $http.get(`/asin/pk`, {
         date
     }
 });
+
+// 根据 ASIN 和 关键词 请求历史数据
+export const getKeyHistoriesByPk = (pk, key) => $http.get('/asin/histories', {
+    params: {
+        pk,
+        key
+    }
+})
