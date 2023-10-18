@@ -15,9 +15,9 @@ import { exchangeFetch } from '@/api/other.js';
 import { ElMessage } from 'element-plus'
 
 // 汇率列表
-const exchangeRef = ref([])
-// 请求汇率数据
+const exchangeRef = ref([]);
 
+// 请求汇率数据
 const fetchExchange = () => {
   exchangeFetch().then(res => {
     const { statusText, data } = res;
@@ -25,14 +25,17 @@ const fetchExchange = () => {
       exchangeRef.value = JSON.parse(data.data);
     }
   })
-}
+};
 
+// 接收子组件更新请求
 const updateExChangeHandle = async () => {
+  // 保存之前的更新时间
   const last_update = exchangeRef.value.update;
   await fetchExchange();
+  // 记录最新的请求时间
   const new_update = exchangeRef.value.update;
   if (new_update && (last_update === new_update)) {
-    // 已经是最新数据
+    // 第三方没有更新数据
     ElMessage({
       message: '第三方数据尚未更新.',
       type: 'warning',
@@ -50,6 +53,7 @@ const updateExChangeHandle = async () => {
 }
 
 onMounted(() => {
+  // 初始化成功后，请求接口数据
   fetchExchange()
 })
 
