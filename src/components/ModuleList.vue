@@ -148,17 +148,17 @@ const updateTimer = () => {
         USTime.year = moment.utc().year();
         USTime.month = moment.utc().month();
         USTime.date = moment.utc().date();
-        USTime.hour = moment.utc().hour();
-        USTime.minute = moment.utc().minute();
-        USTime.second = moment.utc().second();
+        USTime.hour = moment.utc().hour().toString().length === 1 ? `0${moment.utc().hour()}`: moment.utc().hour();
+        USTime.minute = moment.utc().minute().toString().length === 1 ? `0${moment.utc().minute()}`: moment.utc().minute();
+        USTime.second = moment.utc().second().toString().length === 1 ? `0${moment.utc().second()}`: moment.utc().second();
         USTime.week = moment.utc().day();
         // 设置北京时间
         BJTime.year = moment().year();
         BJTime.month = moment().month();
         BJTime.date = moment().date();
-        BJTime.hour = moment().hour();
-        BJTime.minute = moment().minute();
-        BJTime.second = moment().second();
+        BJTime.hour = moment().hour().toString().length === 1 ? `0${moment().hour()}`: moment().hour();
+        BJTime.minute = moment().minute().toString().length === 1 ? `0${moment().minute()}`: moment().minute();
+        BJTime.second = moment().second().toString().length === 1 ? `0${moment().second()}`: moment().second();
         BJTime.week = moment().day();
     }, 1000)
 };
@@ -229,7 +229,7 @@ updateTimer();
                 padding-top: 20px;
                 .big{
                     font-size: 50px;
-                    padding: 10px 5px;
+                    padding: 20px 5px;
                 }
                 .small{
                     font-size: 20px;
