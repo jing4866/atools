@@ -64,8 +64,8 @@
 								</div>
 							</template>
 						</el-table-column>
-						<el-table-column prop="关键词" label="关键词" />
-						<el-table-column prop="下载日期" label="下载日期" align="center" width="120" />
+						<el-table-column prop="关键词" label="关键词" sortable />
+						<el-table-column prop="下载日期" label="下载日期" align="center" sortable width="120" />
 						<el-table-column prop="周搜索量" label="周搜索量" align="center" sortable width="120" />
 						<el-table-column prop="周搜索量" label="日搜索量" align="center" sortable width="120">
 							<template #default="scope">
@@ -173,8 +173,10 @@ const closeHandler = () => {
 
 const tableData = computed(() => {
 	// 处理从父组件中接收到的数据
-	const { children, compare, chart } = props.data;
+	const { children, compare, chart, t_count } = props.data;
+	//console.log(props, 'props.data')
 	// 遍历今日数据
+	// children数据为全部关键词数据
 	return _.map(children, (child) => {
 		// 在前一日数据中找到关键词相同的数据
 		const result = compare.filter(

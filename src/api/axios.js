@@ -5,7 +5,7 @@ const AUTH_TOKEN = '';
 // AXIOS 基本配置
 const $http = axios.create({
     baseURL: 'http://localhost:8080/api/',
-    timeout: 6000,
+    timeout: 50000,
     Authorization: AUTH_TOKEN || '',
     ContentType: 'application/x-www-form-urlencoded'
 })

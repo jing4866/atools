@@ -19,8 +19,9 @@
                 <el-table-column type="index" label="序号" width="70" align="center" />
                 <el-table-column prop="ASIN" label="ASIN">
                     <template #default="scope">
-                        <el-text class="link-text" type="primary" @click="() => goToDetail(scope.row)">{{
-                            scope.row.ASIN }}</el-text>
+                        <el-text class="link-text" type="primary" @click="() => goToDetail(scope.row)">
+                            {{scope.row.ASIN }}
+                        </el-text>
                     </template>
                 </el-table-column>
                 <el-table-column prop="earliest_date" label="最早日期" align="center" />
@@ -115,6 +116,7 @@ const DrawerChartRef = ref({});
 const goToDetail = (param) => {
     drawerVisibleRef.value = true;
     drawerContentRef.value = param;
+    //console.log(param, 'param')
 }
 const onCloseDrawer = (boolean) => {
     drawerVisibleRef.value = boolean;
@@ -126,6 +128,7 @@ const onTriggerExpand = (row) => {
     getKeyHistoriesByPk(row.ASIN, row['关键词']).then(res => {
         if(res.statusText === 'OK'){
             drawerContentRef.value.chart = res.data.data
+            // console.log(res.data.data,'getKeyHistoriesByPk' )
         }
     }).catch(err => {
         const message = err instanceof Error ? err.message : err;
@@ -158,19 +161,31 @@ getAsinOverview().then(res => {
 
 // 格式化数据
 const data2Serialize = (data) => {
-    const { asins, keys, comparekeys } = data;
-    // 将关键词数据进行分组
-    const keysGroup = _.groupBy(keys, item => item['ASIN']);
+    const { asins, allkeys, lastkeys, comparekeys } = data;
+    // 将关键词数据进行分组/去重
+    // const no_repeat_keys = _.unionBy(allkeys, '关键词');
+    const keysGroup = _.groupBy(allkeys, item => item['ASIN']); 
+    // console.log(keysGroup, 'keysGroup')
+    const no_repeat_keys = _.map(keysGroup, (val, key) => {
+        return {
+            key: key,
+            value: _.unionBy(val, '关键词')
+        }
+    });
+    console.log('no_repeat_keys', no_repeat_keys)
+    // 将最新一日数据分组
+    const lastGroup = _.groupBy(lastkeys, item => item['ASIN']); 
+    // 将对比数据分组
     const compareGroup = _.groupBy(comparekeys, item => item['ASIN']);
-
     // 返回数据处理结果
     return _.map(asins, item => {
-        // 指定asin下今日关键词数
-        item.t_count = keysGroup[item.ASIN] ? keysGroup[item.ASIN].length : null;
-        // 指定asin下今日关键词列表
-        item.children = keysGroup[item.ASIN] ? keysGroup[item.ASIN] : [];
-        // 指定asin下前一日关键词数
+        const the_same = no_repeat_keys.filter(it => it.key === item.ASIN)[0];
+        // 指定asin下全部关键词列表
+        item.children = the_same !== undefined && the_same.key === item.ASIN ? the_same.value : [];
+        // 指定asin下需要比较的前一日关键词数
         item.y_count = compareGroup[item.ASIN] ? compareGroup[item.ASIN].length : null;
+        // 指定asin下最新关键词数
+        item.t_count = lastGroup[item.ASIN] ? lastGroup[item.ASIN].length : null;
         // 指定asin下前一日关键词列表
         item.compare = compareGroup[item.ASIN] ? compareGroup[item.ASIN] : [];
         // 返回结果
