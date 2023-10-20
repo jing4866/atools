@@ -70,10 +70,11 @@ export const option = {
     ],
     // 提示框组件
     tooltip: {
-        trigger: 'axis',
-        position: function (pt) {
-            return [pt[0] - 140, '10%'];
-        }
+        show: true,
+        trigger: 'item',
+        // position: function (pt) {
+        //     return [pt[0] - 140, '-10%'];
+        // }
     },
     series: [
         {
@@ -89,6 +90,10 @@ export const option = {
             lineStyle: {
                 color: '#41a5ee'
             },
+            // label: {
+            //     show: true,
+            //     position: 'top'
+            // },
             data: []
         },
         {
