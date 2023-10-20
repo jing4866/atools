@@ -43,7 +43,7 @@
 					</el-col>
 				</el-row>
 				<div class="table-content">
-					<el-table :data="tableData" style="width: 100%" :height="tableH" row-key="关键词" 
+					<el-table :data="tableData" ref="expandTable" style="width: 100%" :height="tableH" row-key="关键词" 
 						:expand-row-keys="expandRowKeys" 
 						@expand-change="expandChangeHandle">
 						<el-table-column type="expand">
@@ -260,17 +260,25 @@ onMounted(() => {
 
 // 当前expand变化的行
 const expandRowKeys = ref([]); // 当前展开行
+const expandTable = ref();
 const expandChangeHandle = (row, expandedRows) => {
-	// 移除其他数据，只展示当前行
-	expandRowKeys.value.shift();
-	expandRowKeys.value.push(row['关键词']);
-
-	// 当 expandedRows 为空时，是关闭展开行
-	if(expandedRows.length !== 0){
+	// 先将展开项的key关键字清空
+	expandRowKeys.value = [];
+	if( expandedRows.length === 0 ){
+		// expandedRows为空时 什么都不做
+	}else if(expandedRows.length === 1){
+		// 当只点开了一行数据时
+		expandRowKeys.value.push(row['关键词']);
 		// 将当前展开行的数据传递给父组件
 		emit('onTriggerExpand', row);
+	}else{
+		// 当展开不只一行时
+		expandRowKeys.value.push(row['关键词']);
+		// 将当前展开行的数据传递给父组件
+		emit('onTriggerExpand', row);
+		// 关闭之前的行
+		expandTable.value.toggleRowExpansion(expandedRows[0], true);
 	}
-
 };
 
 </script>
