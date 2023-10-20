@@ -1,5 +1,5 @@
 <template>
-  <div class="container ">
+  <div class="container">
     <h1 class="main-title">
       <span class="title-span">A Tools</span>
     </h1>
@@ -62,11 +62,6 @@ onMounted(() => {
 
 
 <style scoped>
-.container-bg {
-  min-height: calc(100vh - 200px);
-  background: url(@/assets/img/wave_lines.png) center 50% no-repeat;
-  background-size: 100%;
-}
 
 .main-title {
   line-height: 64px;
@@ -75,7 +70,7 @@ onMounted(() => {
   letter-spacing: -.4px;
   font-weight: 800;
   white-space: pre-wrap;
-  margin: 100px 0 0 100px;
+  margin: 80px 0 0 60px;
 
   .title-span {
     background: linear-gradient(120deg, #bd34fe 30%, #41d1ff);

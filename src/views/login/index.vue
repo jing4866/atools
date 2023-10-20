@@ -11,14 +11,18 @@
             <!-- 右侧登录注册 -->
             <div class="right-container">
                 <SignIn v-if="checkLogin" :loading="loading" @signInSubmit="signInSubmit"></SignIn>
-                <SignUp v-else  :loading="loading"  @signUpSubmit="signUpSubmit"></SignUp>
+                <SignUp v-else :loading="loading" @signUpSubmit="signUpSubmit"></SignUp>
             </div>
             <!-- 切换登录注册 -->
             <div class="checkout">
-                <el-button type="primary" link class="check-btn" @click="checkHandle">
-                    <el-icon><Promotion /></el-icon>
-                    {{ checkLogin ? '注册' : '登录' }}
-                </el-button>
+                <el-tooltip class="box-item" effect="dark" content="请联系管理员添加账号" placement="top">
+                    <el-button type="primary" link class="check-btn" @click="checkHandle" disabled>
+                        <el-icon>
+                            <Promotion />
+                        </el-icon>
+                        {{ checkLogin ? '注册' : '登录' }}
+                    </el-button>
+                </el-tooltip>
             </div>
         </div>
     </div>
@@ -56,10 +60,10 @@ const signInSubmit = (val) => {
     triggerLoading();
     loginState.updateLoading(true);
     // 请求接口
-    signInService(val).then( res => {
+    signInService(val).then(res => {
         const { statusText, data } = res;
         // 登录成功
-        if(statusText === 'OK'){
+        if (statusText === 'OK') {
             // 存储用户信息到 Store
             console.log('signInSubmit', data);
             $router.push('/');
@@ -67,8 +71,8 @@ const signInSubmit = (val) => {
         // 关闭Loading
         closeLoading();
         loginState.updateLoading(false);
-    }).catch( err => {
-        const error = err instanceof Error ?  err.message : err;
+    }).catch(err => {
+        const error = err instanceof Error ? err.message : err;
         // 提示错误信息
         ElMessage.error(`登录失败: ${error}`)
         // 关闭Loading
@@ -81,10 +85,10 @@ const signInSubmit = (val) => {
 const signUpSubmit = (val) => {
     triggerLoading();
     loginState.updateLoading(true);
-    signUpService(val).then( res => {
+    signUpService(val).then(res => {
         const { statusText, data } = res;
         // 注册成功
-        if(statusText === 'OK'){
+        if (statusText === 'OK') {
             // 存储用户信息到 Store
             console.log('signInSubmit', data);
             $router.push('/');
@@ -92,8 +96,8 @@ const signUpSubmit = (val) => {
         // 关闭Loading
         closeLoading();
         loginState.updateLoading(false);
-    }).catch( err => {
-        const error = err instanceof Error ?  err.message : err;
+    }).catch(err => {
+        const error = err instanceof Error ? err.message : err;
         // 提示错误信息
         ElMessage.error(`注册失败: ${error}`)
         // 关闭Loading
@@ -119,7 +123,7 @@ const signUpSubmit = (val) => {
 
     /* 浅色 #2deff9  rgb(45,239,249) */
     /* 深色 #445df9  rgb(68,93,249) */
-    .sign-wraper {    
+    .sign-wraper {
         display: flex;
         position: absolute;
         left: 50%;
@@ -129,23 +133,26 @@ const signUpSubmit = (val) => {
         border-radius: 20px;
         overflow: hidden;
     }
-    .left-container{
+
+    .left-container {
         position: relative;
         width: 380px;
         color: #ffffff;
         background-color: #3c91f9;
         box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.3);
-        &::before{
+
+        &::before {
             content: "";
             position: absolute;
             width: 100%;
             top: 0;
             bottom: 0;
             background-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(6px);  
-            z-index: 0;       
+            backdrop-filter: blur(6px);
+            z-index: 0;
         }
-        .title{
+
+        .title {
             position: relative;
             line-height: 42px;
             font-size: 36px;
@@ -154,7 +161,8 @@ const signUpSubmit = (val) => {
             margin-top: 55px;
             z-index: 3;
         }
-        .logo{
+
+        .logo {
             position: absolute;
             width: 100px;
             height: 100px;
@@ -168,7 +176,8 @@ const signUpSubmit = (val) => {
             font-family: fantasy;
             z-index: 3;
         }
-        .description{
+
+        .description {
             position: absolute;
             bottom: 20px;
             width: 100%;
@@ -177,6 +186,7 @@ const signUpSubmit = (val) => {
             font-size: 12px;
         }
     }
+
     .sign {
         width: 380px;
         padding: 50px;
@@ -184,13 +194,16 @@ const signUpSubmit = (val) => {
 
         .el-form-item {
             display: block;
+
             .el-form-item__label {
                 font-size: 12px;
                 color: #606266;
             }
+
             .el-input__inner {
                 height: 38px;
             }
+
             .el-button {
                 display: block;
                 height: 38px;
@@ -199,10 +212,10 @@ const signUpSubmit = (val) => {
             }
         }
     }
-    .checkout{
+
+    .checkout {
         position: absolute;
         top: 10px;
         right: 20px;
     }
-}
-</style>
+}</style>

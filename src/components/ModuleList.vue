@@ -35,26 +35,14 @@
                             <span class="small">{{ USTime.second }}</span>
                         </div>
                         <!-- 星期 -->
-                        <div class="us-week" v-if="USTime.week===0">星期日</div>
-                        <div class="us-week" v-else-if="USTime.week===1">星期一</div>
-                        <div class="us-week" v-else-if="USTime.week===2">星期二</div>
-                        <div class="us-week" v-else-if="USTime.week===3">星期三</div>
-                        <div class="us-week" v-else-if="USTime.week===4">星期四</div>
-                        <div class="us-week" v-else-if="USTime.week===5">星期五</div>
-                        <div class="us-week" v-else="USTime.week===6">星期六</div>
+                        <div class="us-week">{{ USTime.week }}</div>
                         <!-- 年月日 -->
                         <div class="us-year">{{ USTime.year }} 年 {{ USTime.month }} 月 {{ USTime.date }} 日</div>
                     </div>
                     <div class="bj-time">
                         <span>北京时间：</span> 
                         <span class="p-10">{{ BJTime.hour }}:{{ BJTime.minute }}:{{ BJTime.second }} </span>
-                        <span v-if="BJTime.week===0">星期日</span>
-                        <span v-else-if="BJTime.week===1">星期一</span>
-                        <span v-else-if="BJTime.week===2">星期二</span>
-                        <span v-else-if="BJTime.week===3">星期三</span>
-                        <span v-else-if="BJTime.week===4">星期四</span>
-                        <span v-else-if="BJTime.week===5">星期五</span>
-                        <span v-else="BJTime.week===6">星期六</span>
+                        <span>{{ BJTime.week }}</span>
                         <span class="p-10">{{ BJTime.year }} 年 {{ BJTime.month }} 月 {{ BJTime.date }} 日</span>
                     </div>
                 </div>
@@ -74,7 +62,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, watchEffect } from 'vue';
+import { reactive, ref, watchEffect, onUpdated } from 'vue';
 import { Refresh } from '@element-plus/icons-vue';
 import moment from 'moment';
 // 接收父组件属性
@@ -116,10 +104,6 @@ watchEffect(() => {
 
 // 美国时间相关函数
 const USTimeRef = ref();
-console.log(moment.utc().format(), 'time')
-
-
-
 const USTime = reactive({
     year: '',
     month: '',
@@ -129,7 +113,6 @@ const USTime = reactive({
     second: '',
     week: '',
 });
-
 const BJTime = reactive({
     year: '',
     month: '',
@@ -141,32 +124,64 @@ const BJTime = reactive({
 })
 
 let timer = null;
+/**
+ * 初始化时间
+ * @param { Boolean } isUTC 是否显示UTC时间 默认false 
+ * @return { Object } { now: '2022-12-12 12:12:12 星期日'}
+ * */ 
+const initTime = ( isUTC = false ) => {
+    const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+    const moments = isUTC ? moment.utc() : moment();
+    const year   = moments.year();
+    const month  = moments.month().toString().length === 1 ? `0${moments.month()}` : moments.month() ;
+    const date   = moments.date().toString().length === 1 ? `0${moments.date()}` : moments.date() ;
+    const hour   = moments.hour().toString().length === 1 ? `0${moments.hour()}` : moments.hour() ;
+    const minute = moments.minute().toString().length === 1 ? `0${moments.minute()}` : moments.minute() ;
+    const second = moments.second().toString().length === 1 ? `0${moments.second()}` : moments.second() ;
+    const week   = weekdays[moments.day()];
+    return {
+        now: `${year} - ${month} - ${date} ${hour} : ${minute} : ${second} ${week}`,
+        year,
+        month,
+        date,
+        hour,
+        minute,
+        second,
+        week
+    }
+}
+// 时钟定时器
 const updateTimer = () => {
     timer = setInterval(() => {
+        let nowUS = initTime(true);
+        let nowBJ = initTime(false);
         // clearInterval(timer);
         // 设置美国时间
-        USTime.year = moment.utc().year();
-        USTime.month = moment.utc().month();
-        USTime.date = moment.utc().date();
-        USTime.hour = moment.utc().hour().toString().length === 1 ? `0${moment.utc().hour()}`: moment.utc().hour();
-        USTime.minute = moment.utc().minute().toString().length === 1 ? `0${moment.utc().minute()}`: moment.utc().minute();
-        USTime.second = moment.utc().second().toString().length === 1 ? `0${moment.utc().second()}`: moment.utc().second();
-        USTime.week = moment.utc().day();
-        // 设置北京时间
-        BJTime.year = moment().year();
-        BJTime.month = moment().month();
-        BJTime.date = moment().date();
-        BJTime.hour = moment().hour().toString().length === 1 ? `0${moment().hour()}`: moment().hour();
-        BJTime.minute = moment().minute().toString().length === 1 ? `0${moment().minute()}`: moment().minute();
-        BJTime.second = moment().second().toString().length === 1 ? `0${moment().second()}`: moment().second();
-        BJTime.week = moment().day();
+        USTime.year   = nowUS.year;
+        USTime.month  = nowUS.month;
+        USTime.date   = nowUS.date;
+        USTime.hour   = nowUS.hour;
+        USTime.minute = nowUS.minute;
+        USTime.second = nowUS.second;
+        USTime.week   = nowUS.week;
+        // // 设置北京时间
+        BJTime.year   = nowBJ.year;
+        BJTime.month  = nowBJ.month;
+        BJTime.date   = nowBJ.date;
+        BJTime.hour   = nowBJ.hour;
+        BJTime.minute = nowBJ.minute;
+        BJTime.second = nowBJ.second;
+        BJTime.week   = nowBJ.week;
     }, 1000)
 };
-
+// 执行函数调用
+initTime();
 updateTimer();
 
-
-
+onUpdated(() => {
+    clearInterval(timer);
+    updateTimer();
+})
 
 
 </script>
@@ -246,7 +261,7 @@ updateTimer();
             .us-year{
                 float: left;
                 width: 40%;
-                font-size: 16px;
+                font-size: 14px;
                 padding: 10px 0;
             }
             .bj-time{
