@@ -106,7 +106,10 @@ const dataSequlise = (data) => {
         }
     }
 }
-
+// 初始化
+const { data } = props.data;
+dataSequlise(data);
+// 数据更新
 onBeforeUpdate(() => {
     // 解构 props 数据
     const { data } = props.data;

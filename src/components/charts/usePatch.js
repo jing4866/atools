@@ -37,7 +37,7 @@ const patchDate = (from, to, yy, mm, theMon, data) => {
         let the_full = `${yy}-${mon}-${day}`;
         // 是否有当前日期的数据存在
         const isExist = _.find(theMon, function (item) { return item['下载日期'] === the_full });
-        console.log(theMon, 'theMon[0]')
+
         // 如果不存在当前日期的数据，则补全日期
         if (!isExist && theMon[0] !==undefined) {
             data.push({
