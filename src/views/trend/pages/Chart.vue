@@ -100,7 +100,6 @@ const defer = useDefer();
 
 <style>
 .trend-container {
-    padding: 10px 20px;
     .chart-wraper {
         background: #f6f6f7;
         margin-bottom: 20px;

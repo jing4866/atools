@@ -50,6 +50,20 @@ export const route = [
         ]
     },
     {
+        path: '/spider',
+        component: Layout,
+        hidden: false,
+        children: [
+            {
+                path: '',
+                name: 'Spider',
+                toPath: '/spider',
+                meta: { title: '网络爬虫', icon: 'bug', affix: true },
+                component: () => import('@/views/spider/index.vue')
+            }
+        ]
+    },
+    {
         path: '/tools',
         component: Layout,
         meta: {

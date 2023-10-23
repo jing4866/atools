@@ -65,6 +65,10 @@ onBeforeMount(()=>{
     // 当页面强制刷新时 导航状态丢失
     activeRef.value = $route.fullPath;
 })
+// 当页面路由更改时，修正导航状态
+watch($route, (route, preRoute) => {
+    activeRef.value = route.fullPath;
+})
 
 
 </script>
