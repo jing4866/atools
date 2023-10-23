@@ -116,7 +116,6 @@ const DrawerChartRef = ref({});
 const goToDetail = (param) => {
     drawerVisibleRef.value = true;
     drawerContentRef.value = param;
-    //console.log(param, 'param')
 }
 const onCloseDrawer = (boolean) => {
     drawerVisibleRef.value = boolean;
@@ -128,7 +127,6 @@ const onTriggerExpand = (row) => {
     getKeyHistoriesByPk(row.ASIN, row['关键词']).then(res => {
         if(res.statusText === 'OK'){
             drawerContentRef.value.chart = res.data.data
-            // console.log(res.data.data,'getKeyHistoriesByPk' )
         }
     }).catch(err => {
         const message = err instanceof Error ? err.message : err;
@@ -172,7 +170,6 @@ const data2Serialize = (data) => {
             value: _.unionBy(val, '关键词')
         }
     });
-    console.log('no_repeat_keys', no_repeat_keys)
     // 将最新一日数据分组
     const lastGroup = _.groupBy(lastkeys, item => item['ASIN']); 
     // 将对比数据分组

@@ -10,12 +10,17 @@
                     </el-tooltip>
                 </div>
                 <div class="modules-description">
-                    <ul class="modules-list">
-                        <li v-for="item in exchangeRef">
-                            <span> 1 </span>{{ item.c_name }}<span> ≈ </span>{{ item.buy_rate }}<span> 人民币 </span>
-                        </li>
-                    </ul>
-                    <p class="modules-footer">更新时间:{{ updateRef }}</p>
+                    <template v-if="exchangeRef.length > 0">
+                        <ul class="modules-list">
+                            <li v-for="item in exchangeRef">
+                                <span> 1 </span>{{ item.c_name }}<span> ≈ </span>{{ item.buy_rate }}<span> 人民币 </span>
+                            </li>
+                        </ul>
+                        <p class="modules-footer">更新时间:{{ updateRef }}</p>
+                    </template>
+                    <template v-else>
+                        <p style="color:red;">请检查服务器或第三方接口状态</p>
+                    </template>
                 </div>
             </div>
         </div>
