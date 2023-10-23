@@ -51,7 +51,8 @@
                     </el-form>
                     <div class="operator-list">
                         <p class="p-desc">爬取列表:</p>
-                        <ul class="ul-item">
+                        <div v-if="spiderTaskRef.length===0"  class="ul-item" style="color: orange">请选择或是手动添加ASIN</div>
+                        <ul v-else class="ul-item">
                             <li class="l-item"><span>XXXXX</span>
                                 <el-popconfirm title="确认删除?">
                                     <template #reference>
@@ -106,12 +107,15 @@ const isStoreSuccessRef = ref(false)
 const asinSelectionsRef = ref([]);
 // 手动添加ASIN数据
 const valueRef = ref('');
+// 需要爬取的asin列表
+const spiderTaskRef = ref([]);
 
 
 </script>
 
 <style scoped>
 .spider-container {
+    font-size: 12px;
     .spider-content {
         display: flex;
         justify-content: space-between;
@@ -135,6 +139,7 @@ const valueRef = ref('');
 
                 .list-logs {
                     max-height: calc(100vh - 280px);
+                    overflow: auto;
                 }
 
                 .list-feedback {
