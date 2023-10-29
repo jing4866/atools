@@ -5,35 +5,8 @@
         <div class="spider-content">
             <!-- 左侧结果输出栏 -->
             <div class="content-list">
-                <div class="list-item" v-loading="loading" element-loading-background="rgba(122, 122, 122, 0.3)">
-                    <div class="list-btns">
-                        <el-button :icon="CopyDocument" size="small">复制</el-button>
-                    </div>
-                    <div class="list-logs">
-                        <ul v-for="list in spiderRef">
-                            <li v-for="item in list">{{ item.date }}, {{ item.parent_asin }}, {{ item.classic }}, {{
-                                item.rank }}</li>
-                            <li v-if="list.length">------</li>
-                        </ul>
-                        <ul v-if="spiderRef.length === 0">
-                            <li v-if="spiderRef.length === 0">暂无数据</li>
-                        </ul>
-                    </div>
-                    <div class="list-feedback">
-                        <!-- 爬虫网络请求失败 -->
-                        <div v-if="spiderNetErrRef" style="color: red"> 网络错误：{{ spiderNetErrRef }}, 请检查是否已开启网络代理。 </div>
-                        <!-- 爬虫成功 -->
-                        <div v-else-if="spiderRef.length !== 0">
-                            抓取 {{ spiderRef.length }} 条信息完毕。
-                        </div>
-                        <!--  -->
-                        <div v-if="isSpider2StoreRef">
-                            ------
-                            <span v-if="isStoreSuccessRef" style="color: green">保存数据库成功</span>
-                            <span v-else style="color: red">保存数据库失败</span>
-                        </div>
-                    </div>
-                </div>
+                <Logs :loading="loading" :data="spiderRef"
+                      :isError="spiderNetErrRef" :isStore="isSpider2StoreRef" ></Logs>
             </div>
             <!-- 右侧操作栏 -->
             <div class="content-operator">
@@ -89,10 +62,11 @@ import { ref, onMounted } from 'vue';
 import { Delete, CopyDocument } from '@element-plus/icons-vue';
 import { ElLoading, ElMessage } from 'element-plus';
 import PageTitle from '@/components/PageTitle.vue';
+import Logs from './components/Logs.vue';
 import Dialog from './dialogs/Dialog.vue';
 import WarningDialog from './dialogs/WarningDialog.vue';
 import useAddToSpider from './compositions/useAddToSpider';
-import { getProductBySpider, updateProductByAsins, getSpiderData } from '@/api/spider.js';
+import { getProductBySpider, getSpiderData } from '@/api/spider.js';
 
 // 爬取结果列表 
 const spiderRef = ref([]);
@@ -132,50 +106,6 @@ onMounted(() => {
     selectInit()
 })
 
-
-
-// 新增需要爬虫的产品id
-// const addToSpiderOnly = () => {
-//     let arr = []
-//     if (valueRef.value.trim().length !== 0) {
-//         arr = valueRef.value.trim().split(',');
-//     }
-//     if (arr.length !== 0) {
-//         for (const item of arr) {
-//             if (item.trim().length !== 0) {
-//                 // 先判断任务列表中是否存在
-//                 if (spiderTaskRef.value.includes(item)) {
-//                     ElMessage.warning(`${item} 已存在于爬虫列表`);
-//                 } else {
-//                     spiderTaskRef.value.push(item);
-//                 }
-//             }
-//         }
-//     }
-//     return arr
-// }
-
-// const addToSpiderStore = () => {
-//     const toChecks = addToSpiderOnly();
-//     if (valueRef.value.trim().length !== 0) {
-//         updateProductByAsins(valueRef.value.trim()).then(res => {
-//             const { statusText, data } = res;
-//             if (statusText === 'OK') {
-//                 if (data.success) {
-//                     ElMessage.success(`数据Spider状态更新成功`);
-//                     // 当数据更新成功后重新调用select列表数据
-//                     selectInit();
-//                 } else {
-//                     warningDataRef.value = data.data;
-//                     dialogVisibleRef.value = true
-//                 }
-//             }
-//         }).catch(err => {
-//             const message = err instanceof Error ? err.message : err;
-//             ElMessage.error(`${message}`);
-//         })
-//     }
-// };
 
 // 关闭弹出层事件
 const dialogVisibleChange = () => {
@@ -229,35 +159,6 @@ const spiderOnlyHandle = () => {
         display: flex;
         justify-content: space-between;
         padding: 10px;
-
-        .content-list {
-            width: 55%;
-            padding: 10px;
-
-            .list-btns {
-                display: flex;
-                justify-content: end;
-                padding: 10px;
-            }
-
-            .list-item {
-                height: calc(100vh - 180px);
-                border: 1px solid #dcdfe6;
-                border-radius: 5px;
-                background-color: #f6f6f7;
-
-                .list-logs {
-                    max-height: calc(100vh - 280px);
-                    overflow: auto;
-                }
-
-                .list-feedback {
-                    padding: 10px;
-                    text-align: left;
-                    text-indent: 18px;
-                }
-            }
-        }
 
         .content-operator {
             width: 45%;
