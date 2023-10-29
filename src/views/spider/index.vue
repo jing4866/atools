@@ -28,22 +28,7 @@
                             </el-button-group>
                         </el-form-item>
                     </el-form>
-                    <div class="operator-list">
-                        <p class="p-desc">爬取列表:</p>
-                        <div v-if="spiderTaskRef.length === 0" class="ul-item" style="color: orange">请选择或是手动添加ASIN</div>
-                        <ul v-else class="ul-item">
-                            <li class="l-item" v-for="item in spiderTaskRef">
-                                <span>- {{ item }}</span>
-                                <el-popconfirm title="移出爬虫列表?" @confirm="confirmEvent(item)">
-                                    <template #reference>
-                                        <el-icon>
-                                            <Delete />
-                                        </el-icon>
-                                    </template>
-                                </el-popconfirm>
-                            </li>
-                        </ul>
-                    </div>
+                    <SpiderTask :task="spiderTaskRef" @updateTask="confirmEvent"></SpiderTask>
                     <div class="operators">
                         <el-button type="primary" @click="spiderOnlyHandle">仅爬取</el-button>
                         <el-button type="success">爬取并入库</el-button>
@@ -63,6 +48,7 @@ import { Delete, CopyDocument } from '@element-plus/icons-vue';
 import { ElLoading, ElMessage } from 'element-plus';
 import PageTitle from '@/components/PageTitle.vue';
 import Logs from './components/Logs.vue';
+import SpiderTask from './components/SpiderTask.vue';
 import Dialog from './dialogs/Dialog.vue';
 import WarningDialog from './dialogs/WarningDialog.vue';
 import useAddToSpider from './compositions/useAddToSpider';
@@ -170,31 +156,6 @@ const spiderOnlyHandle = () => {
                 border: 1px solid #dcdfe6;
                 border-radius: 5px;
                 background-color: rgba(64, 158, 255, 0.1);
-
-                .operator-list {
-                    padding: 5px;
-
-                    .p-desc {
-                        padding-left: 13px;
-                    }
-
-                    .ul-item {
-                        height: calc(100vh - 390px);
-                        padding: 5px;
-                        overflow: auto;
-                        padding-left: 13px;
-                        padding-right: 20px;
-                    }
-
-                    .l-item {
-                        display: flex;
-                        justify-content: space-between;
-
-                        &:hover {
-                            color: rgb(64, 158, 255)
-                        }
-                    }
-                }
 
                 .operators {
                     padding: 5px;
