@@ -5,33 +5,20 @@
         <div class="spider-content">
             <!-- 左侧结果输出栏 -->
             <div class="content-list">
-                <Logs :loading="loading" :data="spiderRef"
-                      :isError="spiderNetErrRef" :isStore="isSpider2StoreRef" ></Logs>
+                <Logs :loading="loading" :data="spiderRef" :isError="spiderNetErrRef" :isStore="isSpider2StoreRef"></Logs>
             </div>
             <!-- 右侧操作栏 -->
             <div class="content-operator">
                 <div class="operator-item">
-                    <el-form>
-                        <el-form-item label="选择 ASIN" label-width="120">
-                            <el-select v-model="spiderTaskRef" style="width: 250px" clearable multiple collapse-tags
-                                placeholder="请选择需要爬取数据的ASIN">
-                                <el-option v-for="item in asinSelectionsRef" :label="item.parent_asin"
-                                    :value="item.parent_asin" :key="item.parent_asin" />
-                            </el-select>
-                        </el-form-item>
-                        <!-- 添加需要爬虫的产品 -->
-                        <el-form-item label="手动添加 ASIN" label-width="120">
-                            <el-input v-model="addSpiderRef" clearable style="width: 250px" placeholder="支持字母数字，以英文逗号为分隔符" />
-                            <el-button-group>
-                                <el-button type="primary" @click="addToSpiderOnly">追加仅爬取</el-button>
-                                <el-button type="primary" @click="addToSpiderStore">追加并入库</el-button>
-                            </el-button-group>
-                        </el-form-item>
-                    </el-form>
+                    <!-- 表单 -->
+                    <Operator :selected="multipleSelectedRef" :value="addSpiderRef" :data="asinSelectionsRef"
+                        @selectedChange="updateSelected" @updateTask="updateTaskHandle" @updateStore="updateStoreHandle">
+                    </Operator>
+                    <!-- 任务列表 -->
                     <SpiderTask :task="spiderTaskRef" @updateTask="confirmEvent"></SpiderTask>
                     <div class="operators">
                         <el-button type="primary" @click="spiderOnlyHandle">仅爬取</el-button>
-                        <el-button type="success">爬取并入库</el-button>
+                        <el-button type="success" @click="spiderToStoreHandle">爬取并入库</el-button>
                     </div>
                 </div>
             </div>
@@ -44,15 +31,15 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { Delete, CopyDocument } from '@element-plus/icons-vue';
-import { ElLoading, ElMessage } from 'element-plus';
+import { ElMessage } from 'element-plus';
 import PageTitle from '@/components/PageTitle.vue';
 import Logs from './components/Logs.vue';
 import SpiderTask from './components/SpiderTask.vue';
+import Operator from './components/Operator.vue';
 import Dialog from './dialogs/Dialog.vue';
 import WarningDialog from './dialogs/WarningDialog.vue';
-import useAddToSpider from './compositions/useAddToSpider';
-import { getProductBySpider, getSpiderData } from '@/api/spider.js';
+import useAddToSpider from './compositions/useAddToSpider.js';
+import { getProductBySpider, getSpiderData, addToStore } from '@/api/spider.js';
 
 // 爬取结果列表 
 const spiderRef = ref([]);
@@ -62,8 +49,7 @@ const spiderNetErrRef = ref(null);
 const isSpider2StoreRef = ref(false);
 // 爬取结果保存数据库是否成功
 const isStoreSuccessRef = ref(false)
-// ASIN 多选框数据
-const asinSelectionsRef = ref([]);
+
 // 手动添加ASIN数据
 // const valueRef = ref('');
 // 需要爬取的asin列表
@@ -72,6 +58,8 @@ const spiderTaskRef = ref([]);
 const loading = ref(false);
 
 // 初始化Select列表
+// ASIN 多选框数据
+const asinSelectionsRef = ref([]);
 const selectInit = () => {
     getProductBySpider().then(res => {
         const { statusText, data } = res;
@@ -85,12 +73,29 @@ const selectInit = () => {
 };
 
 // 使用compositions
-const { addSpiderRef, warningDataRef, dialogVisibleRef, addToSpiderOnly, addToSpiderStore } = useAddToSpider(spiderTaskRef.value, selectInit);
-
+const { addSpiderRef, warningDataRef, dialogVisibleRef, addToSpiderOnly, addToSpiderStore } = useAddToSpider(spiderTaskRef, selectInit);
+// 更新多选对象
+const multipleSelectedRef = ref([])
+const updateSelected = (arr) => {
+    multipleSelectedRef.value = arr
+    // 更新爬虫列表
+    const temp = spiderTaskRef.value;
+    spiderTaskRef.value = [...new Set(multipleSelectedRef.value, temp)]
+}
+// 将用户添加产品更新到任务队列
+const updateTaskHandle = (val) => {
+    addSpiderRef.value = val;
+    addToSpiderOnly();
+};
+// 将用户添加的产品更新到任务队列，并更新数据库
+const updateStoreHandle = (val) => {
+    addSpiderRef.value = val;
+    addToSpiderStore();
+}
 
 onMounted(() => {
     selectInit()
-})
+});
 
 
 // 关闭弹出层事件
@@ -106,8 +111,8 @@ const confirmEvent = (val) => {
     }
 }
 
-// 
-const spiderOnlyHandle = () => {
+// 仅爬取数据
+const spiderOnlyHandle = async () => {
     if (!spiderTaskRef.value.length) {
         return ElMessage.warning(`请选择产品`);
     }
@@ -115,21 +120,44 @@ const spiderOnlyHandle = () => {
     spiderNetErrRef.value = null;
     isSpider2StoreRef.value = false;
     spiderRef.value = [];
-    for (const asin of spiderTaskRef.value) {
-        getSpiderData(asin).then(res => {
-            const { data, statusText } = res;
-            if (statusText === 'OK') {
-                spiderRef.value.push(data.data);
-                isStoreSuccessRef.value = true
-            }
-            loading.value = false;
-        }).catch(err => {
-            spiderNetErrRef.value = err;
-            loading.value = false;
-        })
+    const spiderTasksArray = []
+    for(const spider of spiderTaskRef.value){
+        spiderTasksArray.push(getSpiderData(spider))
     }
-    console.log(spiderRef.value)
+    try {
+        const result = await Promise.allSettled(spiderTasksArray);
+        for(const item of result){
+            const { value } = item
+            spiderRef.value.push(value.data.data)
+        }
+        isStoreSuccessRef.value = true;
+        loading.value = false;
+        return true
+    } catch (error) {
+        spiderNetErrRef.value = err;
+        loading.value = false;
+        return false
+    }
+}
 
+// 爬取数据并添加到数据库
+const spiderToStoreHandle = async() => {
+    const success = await spiderOnlyHandle();
+    if(success===true){
+        addToStore(spiderRef.value).then(res => {
+            const { statusText, data} = res;
+            if(statusText === 'OK' && data.success){
+                ElMessage.success(`数据库更新成功`);  
+            }else{
+                ElMessage.warning(`数据库更新异常`); 
+            }
+        }).catch(err => {
+            const message = err instanceof Error ? err.message : err;
+            ElMessage.error(`${message}`);           
+        });
+    }else{
+        return ElMessage.warning(`爬取数据失败。`);       
+    }
 }
 
 

@@ -17,3 +17,8 @@ export const getSpiderData = ( asin ) => $http.get('/other/spider', {
         asin
     }
 });
+
+// 向数据库传递需要插入的信息
+export const addToStore = (data) => $http.post('/rank/update',{
+    data
+})

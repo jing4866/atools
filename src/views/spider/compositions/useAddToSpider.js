@@ -37,10 +37,10 @@ export default function (spiderTask, callback) {
         for (const item of arr) {
             if (item.trim().length !== 0) {
                 // 先判断任务列表中是否存在
-                if (spiderTask.includes(item)) {
+                if (spiderTask.value.includes(item)) {
                     ElMessage.warning(`${item} 已存在于爬虫列表`);
                 } else {
-                    spiderTask.push(item);
+                    spiderTask.value.push(item);
                 }
             }
         }

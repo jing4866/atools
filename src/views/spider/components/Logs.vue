@@ -9,7 +9,8 @@
                 <p>【{{ list.parent_asin }}】</p>
                 <ul v-if="!list.failure">
                     <li v-for="item in list.result">
-                        {{ item.date }}, {{ item.parent_asin }}, {{ item.classic }}, {{ item.rank }}
+                        <!-- [{Date:'', PASIN:'', category:'', rank:'' }] -->
+                        {{ item.Date }}, {{ item.PASIN }}, {{ item.category }}, {{ item.rank }}
                     </li>
                     <li v-if="list.result.length">------</li>
                 </ul>
