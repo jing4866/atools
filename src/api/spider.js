@@ -22,3 +22,9 @@ export const getSpiderData = ( asin ) => $http.get('/other/spider', {
 export const addToStore = (data) => $http.post('/rank/update',{
     data
 })
+
+// 获取全部历史排名
+export const getHistoryRanks = () => $http.get('/rank/history')
+
+// 删除一条历史记录
+export const delHistoryRank = (data) => $http.post('/rank/history/del', { data })

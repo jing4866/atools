@@ -94,11 +94,11 @@ const copyHandle = () => {
 <style>
 .content-list {
     width: 55%;
-    padding: 10px;
+    padding: 5px 10px;
     .list-btns {
         display: flex;
         justify-content: end;
-        padding: 10px;
+        padding: 5px 10px;
     }
 
     .list-item {

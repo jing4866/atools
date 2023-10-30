@@ -2,6 +2,9 @@
     <div class="spider-container">
         <!-- 面包屑 -->
         <PageTitle title="网络爬虫" description="根据指定产品信息爬取网站数据" />
+        <div class="btn-groups">
+            <el-button :icon="List" size="small" type="primary" plain @click="historyDialogHandle">历史排名</el-button>
+        </div>
         <div class="spider-content">
             <!-- 左侧结果输出栏 -->
             <div class="content-list">
@@ -26,20 +29,24 @@
             </div>
         </div>
         <Dialog :data="warningDataRef" :dialogVisible="dialogVisibleRef" @close="dialogVisibleChange"></Dialog>
+        <DialogHistory :visible="historyVisibleRef" :data="historyRanksRef" :filters="asinSelectionsRef" 
+            @onClose="historyVisibleChange" @onDelete="historyDelete"></DialogHistory>
     </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
+import { List } from '@element-plus/icons-vue';
 import PageTitle from '@/components/PageTitle.vue';
 import Logs from './components/Logs.vue';
 import SpiderTask from './components/SpiderTask.vue';
 import Operator from './components/Operator.vue';
 import Dialog from './dialogs/Dialog.vue';
+import DialogHistory from './dialogs/DialogHistory.vue';
 import useAddToSpider from './compositions/useAddToSpider.js';
 import useSpiderActions from './compositions/useSpiderActions.js';
-import { getProductBySpider } from '@/api/spider.js';
+import { getProductBySpider, getHistoryRanks, delHistoryRank } from '@/api/spider.js';
 
 // 需要爬取的asin列表
 const spiderTaskRef = ref([]);
@@ -124,20 +131,62 @@ const clearLogsHandle = () => {
     isAddToStoreRef.value = false;
 }
 
+// 点击触发历史排名弹出窗
+const historyVisibleRef = ref(false);
+const historyRanksRef = ref([]);
+const historyDialogHandle = () => {
+    // 获取全部历史排名数据
+    getHistoryRanks().then(res => {
+        const { statusText, data } = res;
+        if( statusText === 'OK' ){
+            historyVisibleRef.value = true;
+            historyRanksRef.value = data.data;
+        }else{
+            ElMessage.error(`服务器出错。`); 
+        } 
+    }).catch(err => {
+        const message = err instanceof Error ? err.message : err;
+        ElMessage.error(`${message}`);       
+    })
+};
+
+const historyVisibleChange = () => {
+    historyVisibleRef.value = false
+};
+
+const historyDelete = (row) => {
+    delHistoryRank(row).then(res => {
+        const { statusText, data } = res;
+        if( statusText === 'OK' &&  data.result === 1){
+            ElMessage.success(`删除成功`); 
+            historyDialogHandle()
+        }else{
+            ElMessage.warning(`删除数据出错`); 
+        }
+    }).catch(err => {
+        const message = err instanceof Error ? err.message : err;
+        ElMessage.error(`${message}`);  
+    })
+}
+
 </script>
 
 <style scoped>
 .spider-container {
     font-size: 12px;
-
+    .btn-groups{
+        display: flex;
+        justify-content: end;
+        padding: 0 20px;
+    }
     .spider-content {
         display: flex;
         justify-content: space-between;
-        padding: 10px;
+        padding: 0 10px;
 
         .content-operator {
             width: 45%;
-            padding: 10px;
+            padding: 5px 10px;
 
             .operator-item {
                 height: calc(100vh - 180px);
