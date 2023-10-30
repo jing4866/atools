@@ -65,7 +65,7 @@ onMounted(() => {
 
 .main-title {
   line-height: 64px;
-  font-size: 56px;
+  font-size: 50px;
   color: transparent;
   letter-spacing: -.4px;
   font-weight: 800;

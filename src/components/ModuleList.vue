@@ -42,13 +42,13 @@
                         <!-- 星期 -->
                         <div class="us-week">{{ USTime.week }}</div>
                         <!-- 年月日 -->
-                        <div class="us-year">{{ USTime.year }} 年 {{ USTime.month }} 月 {{ USTime.date }} 日</div>
+                        <div class="us-year">{{ USTime.year }} / {{ USTime.month }} / {{ USTime.date }}</div>
                     </div>
                     <div class="bj-time">
                         <span>北京时间：</span> 
-                        <span class="p-10">{{ BJTime.hour }}:{{ BJTime.minute }}:{{ BJTime.second }} </span>
+                        <span class="p-10" style="width: 80px; display: inline-block;">{{ BJTime.hour }}:{{ BJTime.minute }}:{{ BJTime.second }} </span>
                         <span>{{ BJTime.week }}</span>
-                        <span class="p-10">{{ BJTime.year }} 年 {{ BJTime.month }} 月 {{ BJTime.date }} 日</span>
+                        <span class="p-10">{{ BJTime.year }} / {{ BJTime.month }} / {{ BJTime.date }}</span>
                     </div>
                 </div>
             </div>
@@ -196,7 +196,7 @@ onUpdated(() => {
     display: flex;
     flex-wrap: wrap;
     margin: -8px;
-    padding: 100px;
+    padding: 50px;
 
     .modules-item {
         display: block;
@@ -248,7 +248,7 @@ onUpdated(() => {
                 width: 60%;
                 padding-top: 20px;
                 .big{
-                    font-size: 50px;
+                    font-size: 42px;
                     padding: 20px 5px;
                 }
                 .small{
