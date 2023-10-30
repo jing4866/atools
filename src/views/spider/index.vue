@@ -46,7 +46,8 @@ import Dialog from './dialogs/Dialog.vue';
 import DialogHistory from './dialogs/DialogHistory.vue';
 import useAddToSpider from './compositions/useAddToSpider.js';
 import useSpiderActions from './compositions/useSpiderActions.js';
-import { getProductBySpider, getHistoryRanks, delHistoryRank } from '@/api/spider.js';
+import useHistoryRanks from './compositions/useHistoryRanks.js';
+import { getProductBySpider } from '@/api/spider.js';
 
 // 需要爬取的asin列表
 const spiderTaskRef = ref([]);
@@ -109,6 +110,10 @@ const { spiderRef, spiderNetErrRef,
         isSpider2StoreRef, isAddToStoreRef, loading, 
         spiderOnly, spiderToStore, spiderAndStore } = useSpiderActions(spiderTaskRef);
 
+// 历史排名弹出框 相关 comsositions
+const { historyVisibleRef,  historyRanksRef,
+        historyVisibleChange, historyDialogHandle, historyDelete } = useHistoryRanks();
+
 
 
 // 关闭弹出层事件
@@ -129,44 +134,6 @@ const clearLogsHandle = () => {
     spiderRef.value = [];
     isSpider2StoreRef.value = false; 
     isAddToStoreRef.value = false;
-}
-
-// 点击触发历史排名弹出窗
-const historyVisibleRef = ref(false);
-const historyRanksRef = ref([]);
-const historyDialogHandle = () => {
-    // 获取全部历史排名数据
-    getHistoryRanks().then(res => {
-        const { statusText, data } = res;
-        if( statusText === 'OK' ){
-            historyVisibleRef.value = true;
-            historyRanksRef.value = data.data;
-        }else{
-            ElMessage.error(`服务器出错。`); 
-        } 
-    }).catch(err => {
-        const message = err instanceof Error ? err.message : err;
-        ElMessage.error(`${message}`);       
-    })
-};
-
-const historyVisibleChange = () => {
-    historyVisibleRef.value = false
-};
-
-const historyDelete = (row) => {
-    delHistoryRank(row).then(res => {
-        const { statusText, data } = res;
-        if( statusText === 'OK' &&  data.result === 1){
-            ElMessage.success(`删除成功`); 
-            historyDialogHandle()
-        }else{
-            ElMessage.warning(`删除数据出错`); 
-        }
-    }).catch(err => {
-        const message = err instanceof Error ? err.message : err;
-        ElMessage.error(`${message}`);  
-    })
 }
 
 </script>
