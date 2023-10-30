@@ -117,7 +117,6 @@ const handleCheckAllChange = (value) => {
     isIndeterminate.value = false
 }
 const handleCheckedStatusChange = (value) => {
-    console.log(value)
       const checkedCount = value.length
       checkAll.value = checkedCount === status2Check.length
       isIndeterminate.value = checkedCount > 0 && checkedCount < status2Check.length

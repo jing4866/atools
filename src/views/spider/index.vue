@@ -61,11 +61,14 @@ const selectInit = (callback) => {
         ElMessage.error(`${message}`);
     });
 };
-// 初始化多选列表
+// 初始化页面数据
 const initMultiSelect = (select) => {
     for(const item of select.value){
+        // 初始化任务列表
         spiderTaskRef.value.push(item.parent_asin);
     }
+    // 初始化select选中数据
+    multipleSelectedRef.value = spiderTaskRef.value;
 }
 // 更新多选对象
 const multipleSelectedRef = ref([])
@@ -117,6 +120,8 @@ const confirmEvent = (val) => {
 // 清空爬虫结果列表数据
 const clearLogsHandle = () => {
     spiderRef.value = [];
+    isSpider2StoreRef.value = false; 
+    isAddToStoreRef.value = false;
 }
 
 </script>
