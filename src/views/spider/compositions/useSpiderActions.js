@@ -15,6 +15,8 @@ export default function (spiderTask) {
     const spiderNetErrRef = ref(null);
     // 是否将爬虫数据存入数据库
     const isSpider2StoreRef = ref(false);
+    // 爬取结果添加数据库按钮状态
+    const isAddToStoreRef = ref(false);
     // loading动画
     const loading = ref(false);
 
@@ -42,43 +44,57 @@ export default function (spiderTask) {
                 spiderRef.value.push(value.data.data);
             }
             loading.value = false;
+            isAddToStoreRef.value = true;
             return true;
         } catch (error) {
             spiderNetErrRef.value = err;
             loading.value = false;
+            isAddToStoreRef.value = false;
             return false;
         }
     };
 
+    // 将爬取结果添加到数据库
+    const spiderToStore = () => {
+        addToStoreHandle();
+    }
+
     // 爬取数据并添加到数据库
-    const spiderToStore = async () => {
+    const spiderAndStore = async () => {
         const success = await spiderOnly();
         if (success === true) {
-            addToStore(spiderRef.value)
-                .then(res => {
-                    const { statusText, data } = res;
-                    if (statusText === "OK" && data.success) {
-                        isSpider2StoreRef.value = true;
-                        ElMessage.success(`数据库更新成功`);
-                    } else {
-                        ElMessage.warning(`数据库更新异常`);
-                    }
-                })
-                .catch(err => {
-                    const message = err instanceof Error ? err.message : err;
-                    ElMessage.error(`${message}`);
-                });
+            addToStoreHandle();
         } else {
             return ElMessage.warning(`爬取数据失败。`);
         }
     };
+
+    const addToStoreHandle = () => {
+        addToStore(spiderRef.value)
+        .then(res => {
+            const { statusText, data } = res;
+            if (statusText === "OK" && data.success) {
+                isSpider2StoreRef.value = true;
+                ElMessage.success(`数据库更新成功`);
+            } else {
+                ElMessage.warning(`数据库更新异常`);
+            }
+            isAddToStoreRef.value = false;
+        })
+        .catch(err => {
+            const message = err instanceof Error ? err.message : err;
+            ElMessage.error(`${message}`);
+        });
+    }
 
     return {
         loading,
         spiderRef,
         spiderNetErrRef,
         isSpider2StoreRef,
+        isAddToStoreRef,
         spiderOnly,
         spiderToStore,
+        spiderAndStore,
     };
 }

@@ -38,7 +38,10 @@ const confirmEvent = (val) => {
 <style>
 .operator-list {
     padding: 5px;
-
+    box-shadow: inset 0px 0px 3px rgba(0, 0, 0, 0.3);
+    background-color: #f6f6f7;
+    border-radius: 3px;
+    margin-bottom: 5px;
     .p-desc {
         padding-left: 13px;
     }

@@ -1,7 +1,8 @@
 <template>
     <div class="list-item" v-loading="props.loading" element-loading-background="rgba(122, 122, 122, 0.3)">
         <div class="list-btns">
-            <el-button :icon="CopyDocument" size="small">复制</el-button>
+            <el-button :icon="Delete" size="small" @click="clearHandle">清空</el-button>
+            <el-button :icon="CopyDocument" size="small" @click="copyHandle">复制</el-button>
         </div>
         <!-- 爬虫数据列表 -->
         <div class="list-logs-box">
@@ -18,6 +19,9 @@
                     <li>暂无数据</li>
                     <li v-if="list.status === 503" style="color: red"> 网络状态码：{{ list.status }}, 请检查是否已开启网络代理。 </li>
                 </ul>
+            </div>
+            <div class="list-logs" v-if="props.data.length === 0">
+                <ul><li>暂无数据</li></ul>
             </div>
         </div>
         <!-- 结果汇总 -->
@@ -40,7 +44,9 @@
 
 <script setup>
 // import { ref } from 'vue';
-import { CopyDocument } from '@element-plus/icons-vue';
+import { CopyDocument, Delete } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus';
+import copy from 'copy-text-to-clipboard';
 // 接收父组件数据
 const props = defineProps({
     loading: {
@@ -59,14 +65,36 @@ const props = defineProps({
 });
 
 // 接收父组件方法
-// const emit = defineEmits([])
+const emit = defineEmits(['clear']);
+
+const clearHandle = () => {
+    emit('clear')
+};
+
+const copyHandle = () => {
+    let copyValue = '';
+    for(const list of props.data){
+        for(const item of list.result){
+            copyValue += `${item.Date}, ${item.PASIN}, ${item.category}, ${item.rank} \n`;
+        }
+        copyValue += `---- \n`
+    }
+    const copyReturn = copy(copyValue);
+    if (copyReturn) {
+        ElMessage({
+            message: `复制成功`,
+            type: 'success',
+        })
+    } else {
+        ElMessage.error(`复制失败 : 请尝试手动复制。`)
+    }
+}
 </script>
 
 <style>
 .content-list {
     width: 55%;
     padding: 10px;
-
     .list-btns {
         display: flex;
         justify-content: end;

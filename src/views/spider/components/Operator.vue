@@ -1,17 +1,17 @@
 <template>
     <el-form>
-        <el-form-item label="选择产品" label-width="120">
-            <el-select v-model="multipleRef" style="width: 250px" clearable multiple collapse-tags
-                placeholder="请选择需要爬取数据的产品" @change="selectedHandle">
+        <el-form-item label="选择产品">
+            <el-select v-model="multipleRef" style="width: 200px" clearable multiple collapse-tags
+                placeholder="请选择产品" @change="selectedHandle"  size="small">
                 <el-option v-for="item in props.data" :label="item.parent_asin" :value="item.parent_asin"  />
             </el-select>
         </el-form-item>
         <!-- 添加需要爬虫的产品 -->
-        <el-form-item label="添加产品" label-width="120">
-            <el-input v-model="valueRef" clearable style="width: 250px" placeholder="支持字母数字，以英文逗号为分隔符" />
+        <el-form-item label="添加产品">
+            <el-input v-model="valueRef" clearable style="width: 200px"  size="small" placeholder="以英文逗号为分隔符" />
             <el-button-group>
-                <el-button type="primary" @click="updateTaskHandle">追加仅爬取</el-button>
-                <el-button type="primary" @click="updateStoreHandle">追加并入库</el-button>
+                <el-button type="primary" size="small" @click="updateTaskHandle">追加仅爬取</el-button>
+                <el-button type="primary" size="small" @click="updateStoreHandle">追加并入库</el-button>
             </el-button-group>
         </el-form-item>
     </el-form>

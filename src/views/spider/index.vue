@@ -5,7 +5,8 @@
         <div class="spider-content">
             <!-- 左侧结果输出栏 -->
             <div class="content-list">
-                <Logs :loading="loading" :data="spiderRef" :isError="spiderNetErrRef" :isStore="isSpider2StoreRef"></Logs>
+                <Logs :loading="loading" :data="spiderRef" :isError="spiderNetErrRef" :isStore="isSpider2StoreRef"
+                      @clear="clearLogsHandle"></Logs>
             </div>
             <!-- 右侧操作栏 -->
             <div class="content-operator">
@@ -18,14 +19,13 @@
                     <SpiderTask :task="spiderTaskRef" @updateTask="confirmEvent"></SpiderTask>
                     <div class="operators">
                         <el-button type="primary" @click="spiderOnly">仅爬取</el-button>
-                        <el-button type="success" @click="spiderToStore">爬取并入库</el-button>
+                        <el-button type="primary" @click="spiderToStore" v-show="isAddToStoreRef">结果入库</el-button>
+                        <el-button type="success" @click="spiderAndStore">爬取并入库</el-button>
                     </div>
                 </div>
             </div>
         </div>
         <Dialog :data="warningDataRef" :dialogVisible="dialogVisibleRef" @close="dialogVisibleChange"></Dialog>
-        <!-- 功能提示 -->
-        <WarningDialog></WarningDialog>
     </div>
 </template>
 
@@ -37,7 +37,6 @@ import Logs from './components/Logs.vue';
 import SpiderTask from './components/SpiderTask.vue';
 import Operator from './components/Operator.vue';
 import Dialog from './dialogs/Dialog.vue';
-import WarningDialog from './dialogs/WarningDialog.vue';
 import useAddToSpider from './compositions/useAddToSpider.js';
 import useSpiderActions from './compositions/useSpiderActions.js';
 import { getProductBySpider } from '@/api/spider.js';
@@ -48,17 +47,26 @@ const spiderTaskRef = ref([]);
 // 初始化Select列表
 // ASIN 多选框数据
 const asinSelectionsRef = ref([]);
-const selectInit = () => {
+const selectInit = (callback) => {
     getProductBySpider().then(res => {
         const { statusText, data } = res;
         if (statusText === 'OK') {
             asinSelectionsRef.value = data.data;
+            if(callback){
+                callback(asinSelectionsRef)
+            }
         }
     }).catch(err => {
         const message = err instanceof Error ? err.message : err;
         ElMessage.error(`${message}`);
     });
 };
+// 初始化多选列表
+const initMultiSelect = (select) => {
+    for(const item of select.value){
+        spiderTaskRef.value.push(item.parent_asin);
+    }
+}
 // 更新多选对象
 const multipleSelectedRef = ref([])
 const updateSelected = (arr) => {
@@ -77,9 +85,8 @@ const updateStoreHandle = (val) => {
     addSpiderRef.value = val;
     addToSpiderStore();
 }
-
 onMounted(() => {
-    selectInit()
+    selectInit(initMultiSelect);
 });
 
 // 多选框相关 compositions
@@ -89,8 +96,8 @@ const { addSpiderRef, warningDataRef,
 
 // 爬取按钮相关 compositions
 const { spiderRef, spiderNetErrRef, 
-        isSpider2StoreRef, loading, 
-        spiderOnly, spiderToStore } = useSpiderActions(spiderTaskRef);
+        isSpider2StoreRef, isAddToStoreRef, loading, 
+        spiderOnly, spiderToStore, spiderAndStore } = useSpiderActions(spiderTaskRef);
 
 
 
@@ -105,6 +112,11 @@ const confirmEvent = (val) => {
     if (index !== -1) {
         spiderTaskRef.value.splice(index, 1);
     }
+}
+
+// 清空爬虫结果列表数据
+const clearLogsHandle = () => {
+    spiderRef.value = [];
 }
 
 </script>
