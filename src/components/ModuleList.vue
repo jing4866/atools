@@ -138,7 +138,7 @@ const initTime = ( isUTC = false ) => {
     const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
     const moments = isUTC ? moment.utc() : moment();
     const year   = moments.year();
-    const month  = moments.month().toString().length === 1 ? `0${moments.month()}` : moments.month() ;
+    const month  = (+moments.month() + 1).toString().length === 1 ? `0${+moments.month()+1}` : +moments.month()+1 ;
     const date   = moments.date().toString().length === 1 ? `0${moments.date()}` : moments.date() ;
     const hour   = moments.hour().toString().length === 1 ? `0${moments.hour()}` : moments.hour() ;
     const minute = moments.minute().toString().length === 1 ? `0${moments.minute()}` : moments.minute() ;

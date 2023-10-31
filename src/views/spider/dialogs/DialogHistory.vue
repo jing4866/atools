@@ -7,7 +7,7 @@
                     :filter-method="filterHandler" />
                 <el-table-column prop="Date" label="日期">
                     <template #default="scope">
-                        {{ moment(scope.row.Date).format('YYYY-MM-DD hh:mm:ss') }}
+                        {{ scope.row.Date.replace('T',' ').substring(0,19) }}
                     </template>
                 </el-table-column>
                 <el-table-column prop="category" label="分类" />
@@ -25,13 +25,6 @@
             </el-table>
         </div>
         <div class="total">共 {{ props.data.length }} 条</div>
-        <!-- <template #footer>
-            <span class="dialog-footer">
-                <el-button type="primary" size="small" >
-                    确定
-                </el-button>
-            </span>
-        </template> -->
     </el-dialog>
 </template>
 
