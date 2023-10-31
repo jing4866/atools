@@ -26,13 +26,13 @@ export default function () {
     };
 
     // 删除历史排名数据
-    const deleteRankData = (row) => {
+    const deleteRankData = (row, cb) => {
         delHistoryRank(row)
         .then(res => {
             const { statusText, data } = res;
             if (statusText === "OK" && data.result === 1) {
                 ElMessage.success(`删除成功`);
-                
+                if(cb) cb()
             } else {
                 ElMessage.warning(`删除数据出错`);
             }
@@ -55,8 +55,7 @@ export default function () {
     };
     // 删除历史数据后重新获取数据
     const historyDelete = async (row) => {
-        await deleteRankData(row);
-        await getRanksData();
+        await deleteRankData(row, getRanksData);
     };
 
     return {
