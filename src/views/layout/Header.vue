@@ -36,16 +36,16 @@
         <!-- end：页面导航 -->
 
         <!-- 用户信息：暂时为退出登录 -->
-        <el-sub-menu index="5">
+        <el-sub-menu index="more">
             <template #title>更多</template>
-            <el-menu-item index="5-1">个人信息</el-menu-item>
-            <el-menu-item index="5-1" divided>退出登录</el-menu-item>
+            <el-menu-item index="more-info">个人信息</el-menu-item>
+            <el-menu-item index="more-out" divided>退出登录</el-menu-item>
         </el-sub-menu> 
   </el-menu>
 </template>
 
 <script setup>
-import { computed, ref, watch, onBeforeMount } from 'vue'
+import { ref, watch, onBeforeMount } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 // 当前路由实例信息
 const $route = useRoute();
