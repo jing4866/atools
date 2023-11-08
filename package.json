@@ -16,6 +16,7 @@
     "echarts": "^5.4.3",
     "element-plus": "^2.3.12",
     "lodash": "^4.17.21",
+    "luxon": "^3.4.3",
     "moment": "^2.29.4",
     "natural-orderby": "^3.0.2",
     "pinia": "^2.1.6",

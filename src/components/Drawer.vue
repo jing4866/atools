@@ -189,40 +189,40 @@ const tableData = computed(() => {
 			// 处理自然排名
 			if (result[0]["自然排名"] === "-" || child["自然排名"] === "-") {
 				if (result[0]["自然排名"] !== "-" && child["自然排名"] === "-") {
-					child.n_trend = "下降";
-				} else if (result[0]["自然排名"] === "-" && child["自然排名"] !== "-") {
 					child.n_trend = "上升";
+				} else if (result[0]["自然排名"] === "-" && child["自然排名"] !== "-") {
+					child.n_trend = "下降";
 				} else {
 					child.n_trend = "持平";
 				}
 			} else {
-				// 差值大于0 上升； 差值小于0 下降； 差值相等 持平
+				// 今日-昨日 差值大于0 下降； 差值小于0 上升； 差值相等 持平
 				child.n_trend =
 					child["自然排名"] - result[0]["自然排名"] > 0
-						? "上升"
+						? "下降"
 						: child["自然排名"] - result[0]["自然排名"] < 0
-							? "下降"
+							? "上升"
 							: "持平";
 			}
 			// 处理sp排名
 			if (result[0]["sp广告排名"] === "-" || child["sp广告排名"] === "-") {
 				if (result[0]["sp广告排名"] !== "-" && child["sp广告排名"] === "-") {
-					child.sp_trend = "下降";
+					child.sp_trend = "上升";
 				} else if (
 					result[0]["sp广告排名"] === "-" &&
 					child["sp广告排名"] !== "-"
 				) {
-					child.sp_trend = "上升";
+					child.sp_trend = "下降";
 				} else {
 					child.sp_trend = "持平";
 				}
 			} else {
-				// 差值大于0 上升； 差值小于0 下降； 差值相等 持平
+				// 今日-昨日 差值大于0 下降； 差值小于0 上升； 差值相等 持平
 				child.sp_trend =
 					child["sp广告排名"] - result[0]["sp广告排名"] > 0
-						? "上升"
+						? "下降"
 						: child["sp广告排名"] - result[0]["sp广告排名"] < 0
-							? "下降"
+							? "上升"
 							: "持平";
 			}
 		} else {
