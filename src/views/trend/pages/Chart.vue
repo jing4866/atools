@@ -11,8 +11,8 @@
                     <div class="filter">
                         <el-select class="filter-select" multiple collapse-tags collapse-tags-tooltip 
                             v-model="keyfilterRef" placeholder="过滤关键词" clearable 
-                            @change="(val) => keywordFilterHandle(val, props.data)"
-                            @clear="(val) => keywordClearHandle(val, props.data)">
+                            @change="keywordFilterHandle(keyfilterRef, filterChartRef)"
+                            @clear="keywordClearHandle(keyfilterRef, filterChartRef)">
                             <el-option v-for="item in props.data" :key="item.key" :label="item.key"
                                 :value="item.key" />
                         </el-select>
@@ -27,9 +27,8 @@
                     </el-result>
                 </div>
                 <div class="trend-content" v-else>
-                    <template v-for="(item, index) in props.data">
+                    <template v-for="(item, index) in filterChartRef">
                         <!-- 开启一个延时函数，优化渲染速度 -->
-                        <template v-if="defer(index)">
                             <div v-if="item.filtered" class="chart-wraper">
                                 <div class="title-left">
                                     {{ item.key }}
@@ -43,7 +42,6 @@
                                     <DoubleLines :key="item.timestamp" :data="item"></DoubleLines>
                                 </div>
                             </div>
-                        </template>
                     </template>
                 </div>
             </div>
@@ -51,11 +49,11 @@
     </div>
 </template>
 <script setup>
-import { ref, onUpdated } from 'vue';
+import { ref, onUpdated, computed, watchEffect } from 'vue';
 import _ from 'lodash';
 import DoubleLines from '@/components/charts/DoubleLines.vue';
 import Statistic from '@/components/Statistic.vue';
-import { keywordFilterHandle, keywordClearHandle } from '../compositions/useKeywordState.js';
+import useKeywordState from '../compositions/useKeywordState.js';
 import { useDefer } from '../compositions/useDefer.js';
 
 
@@ -79,11 +77,15 @@ const emit = defineEmits([])
 // 关键词筛选
 const keyfilterRef = ref([]);
 
+const { chartFilterByKey, keywordFilterHandle, keywordClearHandle} = useKeywordState()
  
 const defer = useDefer();
 
-onUpdated(() => {
-    console.log(props.data)
+const filterChartRef = ref([]);
+watchEffect(() => {
+    if(props.data.length){
+        filterChartRef.value = chartFilterByKey(keyfilterRef.value, props.data)
+    }
 })
 
 
