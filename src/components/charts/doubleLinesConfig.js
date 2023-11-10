@@ -71,13 +71,13 @@ export const option = {
     // 提示框组件
     tooltip: {
         show: true,
-        trigger: 'axis',
-        position: function (pt) {
-            return [pt[0] - 140, '-10%'];
-        },
-        formatter(params){
-            console.log(params)
-        }
+        trigger: 'item',
+        // position: function (pt) {
+        //     return [pt[0] - 140, '-10%'];
+        // },
+        // formatter(params){
+        //     console.log(params)
+        // }
     },
     series: [
         {
@@ -85,7 +85,7 @@ export const option = {
             type: 'line',
             symbol: 'emptyCircle',
             // symbolSize: 8,
-            sampling: 'ltmaxtb',
+            // sampling: 'ltmaxtb',
             connectNulls: false,
             itemStyle: {
                 color: '#41a5ee'
@@ -93,12 +93,16 @@ export const option = {
             lineStyle: {
                 color: '#41a5ee'
             },
-            label: {
-                show: true,
-                position: 'top'
-            },
-            tooltip: {
-                show: true
+            // label: { // 每个点是否显示数据
+            //     show: true,
+            //     position: 'top'
+            // },
+            markPoint: { // 显示最大值和最小值
+                symbolSize: 40, 
+              data: [
+                { type: 'max', name: 'Max' },
+                { type: 'min', name: 'Min' }
+              ]
             },
             data: []
         },
@@ -107,7 +111,7 @@ export const option = {
             type: 'line',
             symbol: 'emptyCircle',
             // symbolSize: 8,
-            sampling: 'lttb',
+            // sampling: 'lttb',
             connectNulls: false,
             itemStyle: {
                 color: '#ffc20e '

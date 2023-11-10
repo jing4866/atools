@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { ref, onBeforeUpdate, onMounted, getCurrentInstance } from 'vue';
+import { ref, onBeforeUpdate, onMounted, getCurrentInstance, shallowRef } from 'vue';
 import * as echarts from 'echarts';
 import { option } from './doubleLinesConfig.js';
 import usePatch from './usePatch.js';
@@ -22,7 +22,7 @@ const props = defineProps({
 
 
 // 设置句柄
-const chartHandleRef = ref('');
+const chartHandleRef = shallowRef('');
 
 /*
  * 处理接收到的数据为指定格式
