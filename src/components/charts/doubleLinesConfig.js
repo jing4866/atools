@@ -71,18 +71,21 @@ export const option = {
     // 提示框组件
     tooltip: {
         show: true,
-        trigger: 'item',
-        // position: function (pt) {
-        //     return [pt[0] - 140, '-10%'];
-        // }
+        trigger: 'axis',
+        position: function (pt) {
+            return [pt[0] - 140, '-10%'];
+        },
+        formatter(params){
+            console.log(params)
+        }
     },
     series: [
         {
             name: '自然排名',
             type: 'line',
             symbol: 'emptyCircle',
-            symbolSize: 8,
-            sampling: 'lttb',
+            // symbolSize: 8,
+            sampling: 'ltmaxtb',
             connectNulls: false,
             itemStyle: {
                 color: '#41a5ee'
@@ -90,17 +93,20 @@ export const option = {
             lineStyle: {
                 color: '#41a5ee'
             },
-            // label: {
-            //     show: true,
-            //     position: 'top'
-            // },
+            label: {
+                show: true,
+                position: 'top'
+            },
+            tooltip: {
+                show: true
+            },
             data: []
         },
         {
             name: '广告排名',
             type: 'line',
             symbol: 'emptyCircle',
-            symbolSize: 8,
+            // symbolSize: 8,
             sampling: 'lttb',
             connectNulls: false,
             itemStyle: {

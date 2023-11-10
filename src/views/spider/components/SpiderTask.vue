@@ -57,7 +57,7 @@ const confirmEvent = (val) => {
     .l-item {
         display: flex;
         justify-content: space-between;
-
+        font-size: 14px;
         &:hover {
             color: rgb(64, 158, 255)
         }

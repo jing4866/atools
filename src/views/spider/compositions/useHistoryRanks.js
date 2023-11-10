@@ -7,39 +7,36 @@ export default function () {
     const historyVisibleRef = ref(false);
     // 历史排名数据
     const historyRanksRef = ref([]);
-
+    // loading
+    const loadingHRef = ref(false);
     // 向服务器请求历史排名数据
     const getRanksData = () => {
+        loadingHRef.value = true
         getHistoryRanks()
-        .then(res => {
-            const { statusText, data } = res;
-            if (statusText === "OK") {
-                historyRanksRef.value = data.data;
-            } else {
-                ElMessage.error(`服务器出错。`);
-            }
+        .then(data => {
+            historyRanksRef.value = data;
+            loadingHRef.value = false;
         })
         .catch(err => {
             const message = err instanceof Error ? err.message : err;
             ElMessage.error(`${message}`);
+            loadingHRef.value =false
         });       
     };
 
     // 删除历史排名数据
     const deleteRankData = (row, cb) => {
+        loadingHRef.value =true
         delHistoryRank(row)
-        .then(res => {
-            const { statusText, data } = res;
-            if (statusText === "OK" && data.result === 1) {
-                ElMessage.success(`删除成功`);
-                if(cb) cb()
-            } else {
-                ElMessage.warning(`删除数据出错`);
-            }
+        .then(data => {
+            ElMessage.success(`删除成功`);
+            if(cb) cb()
+            loadingHRef.value = false;
         })
         .catch(err => {
             const message = err instanceof Error ? err.message : err;
             ElMessage.error(`${message}`);
+            loadingHRef.value = false
         });       
     };
 
@@ -61,6 +58,7 @@ export default function () {
     return {
         historyVisibleRef,
         historyRanksRef,
+        loadingHRef,
         historyVisibleChange,
         historyDialogHandle,
         historyDelete

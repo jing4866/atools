@@ -41,13 +41,13 @@ export default function (spiderTask) {
             const result = await Promise.allSettled(spiderTasksArray);
             for (const item of result) {
                 const { value } = item;
-                spiderRef.value.push(value.data.data);
+                spiderRef.value.push(value);
             }
             loading.value = false;
             isAddToStoreRef.value = true;
             return true;
         } catch (error) {
-            spiderNetErrRef.value = err;
+            spiderNetErrRef.value = error;
             loading.value = false;
             isAddToStoreRef.value = false;
             return false;
@@ -71,14 +71,9 @@ export default function (spiderTask) {
 
     const addToStoreHandle = () => {
         addToStore(spiderRef.value)
-        .then(res => {
-            const { statusText, data } = res;
-            if (statusText === "OK" && data.success) {
-                isSpider2StoreRef.value = true;
-                ElMessage.success(`数据库更新成功`);
-            } else {
-                ElMessage.warning(`数据库更新异常`);
-            }
+        .then(data => {
+            isSpider2StoreRef.value = true;
+            ElMessage.success(`数据库更新成功`);
             isAddToStoreRef.value = false;
         })
         .catch(err => {

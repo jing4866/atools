@@ -13,8 +13,8 @@
                             v-model="keyfilterRef" placeholder="过滤关键词" clearable 
                             @change="(val) => keywordFilterHandle(val, props.data)"
                             @clear="(val) => keywordClearHandle(val, props.data)">
-                            <el-option v-for="item in props.data" :key="item.keyword" :label="item.keyword"
-                                :value="item.keyword" />
+                            <el-option v-for="item in props.data" :key="item.key" :label="item.key"
+                                :value="item.key" />
                         </el-select>
                     </div>
                 </div>
@@ -32,11 +32,11 @@
                         <template v-if="defer(index)">
                             <div v-if="item.filtered" class="chart-wraper">
                                 <div class="title-left">
-                                    {{ item.keyword }}
+                                    {{ item.key }}
                                 </div>
                                 <!-- 环比数据 -->
                                 <div class="static-center">
-                                    <Statistic :key="item.timestamp" :data="item"></Statistic>
+                                    <Statistic :key="item.key" :current="[item.current_n, item.current_sp]"  :previous="[item.previous_n, item.previous_sp]"></Statistic>
                                 </div>
                                 <!-- 图表数据 -->
                                 <div class="chart-right">
@@ -51,7 +51,7 @@
     </div>
 </template>
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, onUpdated } from 'vue';
 import _ from 'lodash';
 import DoubleLines from '@/components/charts/DoubleLines.vue';
 import Statistic from '@/components/Statistic.vue';
@@ -79,21 +79,12 @@ const emit = defineEmits([])
 // 关键词筛选
 const keyfilterRef = ref([]);
 
-
-// 当前页面状态
-// const state = reactive({
-
-
-//     keyword: [],   //  页面关键词过滤select 
-//     patch: false
-// });
-
-
-
-// 
+ 
 const defer = useDefer();
 
-
+onUpdated(() => {
+    console.log(props.data)
+})
 
 
 </script>

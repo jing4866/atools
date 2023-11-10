@@ -4,190 +4,71 @@
         <!-- 面包屑 -->
         <PageTitle title="数据分析" description="产品数据信息汇总" />
         <!-- 筛选 -->
-        <div class="filter-container">
-            <div class="filter-desc"> 当前页面总数据: {{ dataRef.length }} 条</div>
-            <el-input v-model.lazy="filterRef" placeholder="ASIN 查询，不区分大小写。" clearable class="filter-input"
-                @input="filterHandler" @clear="clearFilter">
-                <template #append>
-                    <el-button :icon="Search" />
-                </template>
-            </el-input>
-        </div>
+        <OperationBar :count="dataRef.length" @search="searchHandle" @clear="clearHanle"></OperationBar>
         <!-- 数据列表 -->
-        <div class="dashboard-content">
-            <el-table :data="dataFilterRef" :height="tableH" style="width: 100%">
-                <el-table-column type="index" label="序号" width="70" align="center" />
-                <el-table-column prop="ASIN" label="ASIN">
-                    <template #default="scope">
-                        <el-text class="link-text" type="primary" @click="() => goToDetail(scope.row)">
-                            {{scope.row.ASIN }}
-                        </el-text>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="earliest_date" label="最早日期" align="center" />
-                <el-table-column prop="latest_date" label="最新日期" align="center" />
-                <el-table-column prop="k_count" label="关键词历史总数" sortable align="center" />
-                <el-table-column prop="today" label="当前日期" align="center">
-                    <template #default="scope">
-                        {{ moment(scope.row.today).subtract(1, 'day').format('YYYY-MM-DD') }}
-                    </template>
-                </el-table-column>
-                <el-table-column prop="t_count" label="关键词数" sortable align="center" />
-                <el-table-column prop="y_count" label="昨日数" sortable align="center" />
-                <el-table-column prop="key" label="趋势" align="center">
-                    <template #default="scope">
-                        <div>
-                            <!-- 上升 -->
-                            <div v-if="(scope.row.t_count > scope.row.y_count) || (scope.row.t_count !=='-' && scope.row.y_count === '-')">
-                                <el-icon color="red" style="vertical-align: middle;margin-right: 5px;">
-                                    <Top />
-                                </el-icon>
-                                <span style="color: red; vertical-align: middle;">
-                                    {{ scope.row.y_count === '-' ? scope.row.t_count : scope.row.t_count - scope.row.y_count }}
-                                </span>
-                            </div>
-                            <!-- 下降 -->
-                            <div v-else-if="(scope.row.t_count ==='-' && scope.row.y_count !== '-' ) || (scope.row.t_count < scope.row.y_count)">
-                                <el-icon color="green" style="vertical-align: middle;margin-right: 5px;">
-                                    <Bottom />
-                                </el-icon>
-                                <span style="color: green; vertical-align: middle;">
-                                    {{ scope.row.t_count === '-' ? scope.row.t_count : scope.row.t_count - scope.row.y_count }}
-                                </span>
-                            </div>
-                            <!-- 持平 -->
-                            <div v-else-if="scope.row.t_count === scope.row.y_count">
-                                <el-icon>
-                                    <Minus />
-                                </el-icon>
-                            </div>
-                        </div>
-                    </template>
-                </el-table-column>
-            </el-table>
-        </div>
-        <Drawer :visible="drawerVisibleRef" :data="drawerContentRef" 
-            @onCloseDrawer="onCloseDrawer" @onTriggerExpand="onTriggerExpand"></Drawer>
+        <mainTable :height="tableHeightRef" :filter="filterRef" :data="dataRef" :counter="counterRef" @checkDetail="trggerDrawer"></mainTable>
+        <!-- Drawer -->
+        <Drawer :available="availableRef" :loading="tableChartLoadingRef" :data="drawerDataRef" :table="tableChartRef"
+            @onCloseDrawer="triggerDrawerClose" @onUpdateDrawer="getkeysByASIN"></Drawer>
     </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { onMounted, onUpdated, ref } from 'vue';
+import { ElLoading } from 'element-plus'
 import _ from 'lodash';
-import moment from 'moment';
-import { ElMessage } from 'element-plus';
-import { Top, Bottom, Minus, Search } from '@element-plus/icons-vue';
 import PageTitle from '@/components/PageTitle.vue';
-import { getAsinOverview, getKeyHistoriesByPk } from '@/api/asin.js';
-import { triggerLoading, closeLoading } from '@/utils/loading.js';
-import Drawer from '@/components/Drawer.vue'
-
-
-// table高度
-let tableH = 500;
-// 路由中间件
-const $router = useRouter();
-// 原始数据
-const dataRef = ref([]);
-// 搜索过滤后的数据
-const dataFilterRef = ref([]);
-// 搜索词
-const filterRef = ref('');
-// 清空搜索框
-const clearFilter = () => {
-    filterRef.value = '';
-}
-// 搜索过滤函数
-const filterHandler = () => {
-    // 返回符合条件的数据：不区分大小写
-    dataFilterRef.value = dataRef.value.filter(item => item['ASIN'].includes(filterRef.value.toUpperCase()))
-}
+import OperationBar from './OperationBar/index.vue';
+import mainTable from './mainTable/index.vue';
+import useMainTable from './mainTable/useMainTable.js';
+import Drawer from './Drawer/index.vue';
+import useTableChart from './compositions/useTableChart.js';
 
 // 根据浏览器高度设置表格高度 以固定表头
 onMounted(() => {
-    tableH = document.documentElement.clientHeight - 250;
-})
-
-// 转至详情页
-const drawerVisibleRef = ref(false);
-const drawerContentRef = ref([]);
-const DrawerChartRef = ref({}); 
-const goToDetail = (param) => {
-    drawerVisibleRef.value = true;
-    drawerContentRef.value = param;
-}
-const onCloseDrawer = (boolean) => {
-    drawerVisibleRef.value = boolean;
-    drawerContentRef.value = [];
-}
-
-const onTriggerExpand = (row) => {
-    // 从子组件中获取需要的数据 asin 和 关键词
-    getKeyHistoriesByPk(row.ASIN, row['关键词']).then(res => {
-        if(res.statusText === 'OK'){
-            drawerContentRef.value.chart = res.data.data
-        }
-    }).catch(err => {
-        const message = err instanceof Error ? err.message : err;
-        ElMessage.error(`${message}`);        
-    })
-
-}
-
-// 页面加载即打开loading
-triggerLoading();
-// 请求数据
-getAsinOverview().then(res => {
-    if (res.statusText === 'OK') {
-        const { data } = res.data;
-        // 原始数据
-        dataRef.value = data2Serialize(data);
-        // 显示过滤后的数据
-        dataFilterRef.value = dataRef.value;
-        // 关闭loading
-        closeLoading();
-    } else {
-        // 如果请求返回异常
-        ElMessage.error(`页面请求数据异常，请刷新。`);
-    }
-}).catch(err => {
-    closeLoading();
-    const message = err instanceof Error ? err.message : err;
-    ElMessage.error(`${message}`);
+    tableHeightRef.value = document.documentElement.clientHeight - 250;
 });
 
-// 格式化数据
-const data2Serialize = (data) => {
-    const { asins, allkeys, lastkeys, comparekeys } = data;
-    // 将关键词数据进行分组/去重
-    // const no_repeat_keys = _.unionBy(allkeys, '关键词');
-    const keysGroup = _.groupBy(allkeys, item => item['ASIN']); 
-    // console.log(keysGroup, 'keysGroup')
-    const no_repeat_keys = _.map(keysGroup, (val, key) => {
-        return {
-            key: key,
-            value: _.unionBy(val, '关键词')
-        }
-    });
-    // 将最新一日数据分组
-    const lastGroup = _.groupBy(lastkeys, item => item['ASIN']); 
-    // 将对比数据分组
-    const compareGroup = _.groupBy(comparekeys, item => item['ASIN']);
-    // 返回数据处理结果
-    return _.map(asins, item => {
-        const the_same = no_repeat_keys.filter(it => it.key === item.ASIN)[0];
-        // 指定asin下全部关键词列表
-        item.children = the_same !== undefined && the_same.key === item.ASIN ? the_same.value : [];
-        // 指定asin下需要比较的前一日关键词数
-        item.y_count = compareGroup[item.ASIN] ? compareGroup[item.ASIN].length : null;
-        // 指定asin下最新关键词数
-        item.t_count = lastGroup[item.ASIN] ? lastGroup[item.ASIN].length : null;
-        // 指定asin下前一日关键词列表
-        item.compare = compareGroup[item.ASIN] ? compareGroup[item.ASIN] : [];
-        // 返回结果
-        return item;
-    })
+// 组件更新事件 
+onUpdated(() => {
+    if(counterRef.value === dataRef.value.length * 2){
+        fullscreenLoading.close();
+    };
+});
+// 初始化时加载 LOADING
+const fullscreenLoading = ElLoading.service({
+    lock: true,
+    text: 'Loading',
+    background: 'rgba(0, 0, 0, 0.7)',
+});
+// table高度
+let tableHeightRef = ref(500);
+// 搜索词
+const filterRef = ref('');
+const searchHandle = (val) => {
+    filterRef.value = val;
+};
+const clearHanle = () => {
+    filterRef.value = '';
+};
+
+
+// 使用本组件composition
+const { dataRef, counterRef } = useMainTable();
+
+// 使用 Drawer 组件的 compositions
+const { tableChartRef, tableChartLoadingRef,  getkeysByASIN }  = useTableChart();
+
+const availableRef = ref(false);
+const drawerDataRef = ref({});
+
+const trggerDrawer = (val) => {
+    drawerDataRef.value = val;
+    availableRef.value = true;
+}
+const  triggerDrawerClose = () => {
+    drawerDataRef.value = {};
+    availableRef.value = false;   
 }
 
 </script>
@@ -204,21 +85,6 @@ const data2Serialize = (data) => {
     }
 }
 
-.filter-container {
-    display: flex;
-    justify-content: space-between;
-    margin: 5px 20px;
-    padding: 5px 20px;
-    background-color: #f6f6f7;
-    border-radius: 3px;
 
-    .filter-desc {
-        line-height: 40px;
-    }
-
-    .filter-input {
-        width: 300px;
-    }
-}
 
 </style>

@@ -79,7 +79,7 @@ const fetchChartHandle = (query) => {
     // 查询后台数据
     chartDatasByPk(pk, queryDate).then(res => {
         // 将数据根据关键词进行分组
-        const data_group = chart2Group(res);
+        const data_group = chart2Group(res,'关键词', pk, state.date_range);
         // 一共有多少组关键词
         state.chartData = data_group;
         loadingInstance.close();

@@ -29,7 +29,7 @@
             </div>
         </div>
         <Dialog :data="warningDataRef" :dialogVisible="dialogVisibleRef" @close="dialogVisibleChange"></Dialog>
-        <DialogHistory :visible="historyVisibleRef" :data="historyRanksRef" :filters="asinSelectionsRef" 
+        <DialogHistory :visible="historyVisibleRef" :data="historyRanksRef" :filters="asinSelectionsRef" :loading="loadingHRef"
             @onClose="historyVisibleChange" @onDelete="historyDelete"></DialogHistory>
     </div>
 </template>
@@ -56,14 +56,11 @@ const spiderTaskRef = ref([]);
 // ASIN 多选框数据
 const asinSelectionsRef = ref([]);
 const selectInit = (callback) => {
-    getProductBySpider().then(res => {
-        const { statusText, data } = res;
-        if (statusText === 'OK') {
-            asinSelectionsRef.value = data.data;
+    getProductBySpider().then(data => {
+        asinSelectionsRef.value = data;
             if(callback){
                 callback(asinSelectionsRef)
             }
-        }
     }).catch(err => {
         const message = err instanceof Error ? err.message : err;
         ElMessage.error(`${message}`);
@@ -111,7 +108,7 @@ const { spiderRef, spiderNetErrRef,
         spiderOnly, spiderToStore, spiderAndStore } = useSpiderActions(spiderTaskRef);
 
 // 历史排名弹出框 相关 comsositions
-const { historyVisibleRef,  historyRanksRef,
+const { historyVisibleRef,  historyRanksRef, loadingHRef,
         historyVisibleChange, historyDialogHandle, historyDelete } = useHistoryRanks();
 
 

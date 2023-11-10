@@ -16,10 +16,9 @@ export default function () {
     // 请求汇率数据
     const fetchExchange = async() => {
         loadingRef.value = true;
-        const res = await exchangeFetch();
-        const { statusText, data } = res;
-        if (statusText === "OK") {
-            const {time_last_updated, base, date, rates } = JSON.parse(data.data);
+        const data = await exchangeFetch();
+        if (data) {
+            const {time_last_updated, base, date, rates } = JSON.parse(data);
             dataRef.value = {
                 status: true,
                 base,

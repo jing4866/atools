@@ -1,7 +1,7 @@
 <template>
     <el-dialog v-model="visibleRef" title="排名历史" width="70%">
         <div>
-            <el-table ref="tableRef" :data="props.data" height="400" @close="closeHandle">
+            <el-table ref="tableRef" :data="props.data" v-loading="props.loading" height="400" @close="closeHandle">
                 <el-table-column type="index" />
                 <el-table-column prop="PASIN" label="PASIN" column-key="PASIN" :filter-multiple="true" :filters="asinFilter"
                     :filter-method="filterHandler" />
@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import { ref, computed, toRefs, watch } from 'vue';
+import { ref, computed,  watch } from 'vue';
 import moment from 'moment';
 
 const props = defineProps({
@@ -45,6 +45,10 @@ const props = defineProps({
     filters: {
         type: Array,
         default: []
+    },
+    loading: {
+        type: Boolean,
+        default: false
     }
 });
 

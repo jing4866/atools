@@ -1,7 +1,7 @@
 <!-- 统计组件 -->
 <template>
     <div class="statistic-card">
-        <!-- 自然流量 -->
+        <!-- 自然排名 -->
         <div class="statistic-item">
             <div class="statistic-tooltip">
                 <span class="statistic-title">自然排名</span>
@@ -12,17 +12,12 @@
                 </el-tooltip>
             </div>
             <div class="statistic-value">
-                <strong>{{ staticReactive['n'] }}</strong>
-                <span :class="staticReactive['n_diff'] > 0 ? 'red' : 'green'">
-                    {{ staticReactive['n_diff'] }}
-                    <el-icon>
-                        <CaretTop v-if="staticReactive['n_diff'] > 0" />
-                        <CaretBottom v-else />
-                    </el-icon>
-                </span>
+                <strong>{{ props.current[0] || '无值' }}</strong>
+                <Drift :cur="props.current[0]" :pre="props.previous[0]"></Drift>
             </div>
         </div>
         <el-divider />
+        <!-- 广告排名 -->
         <div class="statistic-item">
             <div class="statistic-tooltip">
                 <span class="statistic-title">广告排名</span>
@@ -33,88 +28,31 @@
                 </el-tooltip>
             </div>
             <div class="statistic-value" style="color: #ffc20e;">
-                <strong>{{ staticReactive['sp'] }}</strong>
-                <span :class="staticReactive['sp_diff'] > 0 ? 'red' : 'green'">
-                    {{ staticReactive['sp_diff'] }}
-                    <el-icon>
-                        <CaretTop v-if="staticReactive['sp_diff'] > 0" />
-                        <CaretBottom v-else />
-                    </el-icon>
-                </span>
+                <strong>{{ props.current[1] || '无值' }}</strong>
+                <Drift :cur="props.current[1]" :pre="props.previous[1]"></Drift>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { CaretBottom, CaretTop, Warning } from '@element-plus/icons-vue';
-import { reactive, onBeforeUpdate } from 'vue';
+import { Warning } from '@element-plus/icons-vue';
+import Drift from './Drift.vue';
 import _ from 'lodash';
 
 // 接收父组件数据
 const props = defineProps({
-    data: Object,  // 包含数据： {keyword:'', count: 0, data:[]}
-    default: () => {
-        return { keyword: '', count: 0, data: [] }
+    // 当前数据
+    current: {
+        type: Array,
+        default: ['-' ,'-'] // index：0 为自然排名当前值， index:1为sp排名当前值 
+    },
+    // 对比数据
+    previous: {
+        type: Array,
+        default: ['-', '-'] // index：0 为自然排名当对比值， index:1为sp排名对比值
     }
 });
-
-
-// 数据内容 {关键词: '', 自然排名: '', sp广告排名: '-', 下载日期: '', ASIN: ''}
-let staticReactive = reactive({});
-
-const dataSequlise = (data) => {
-    // 定义变量并提出最后两项数据
-    let tempData = data;
-    // 截取目标数据
-    if (data && data.length > 0) {
-        // 至少有两项数据
-        tempData = data.slice(-2);
-        staticReactive = tempData.length === 2 ? tempData.reduce((prev, next) => {
-            // 处理非法数据数据 
-            const n_diff = next['自然排名'] - prev['自然排名'];
-            const sp_diff = next['sp广告排名'] - prev['sp广告排名'];
-
-            return {
-                n_diff: _.isNaN(n_diff) ? '-' : n_diff,
-                sp_diff: _.isNaN(sp_diff) ? '-' : sp_diff,
-                n: prev['自然排名'],
-                sp: prev['sp广告排名'],
-                prev_date: prev['下载日期'],
-                next_date: next['下载日期'],
-                asin: next['ASIN']
-            }
-        }) : tempData.map(item => {
-            item.n_diff = '-';
-            item.sp_diff = '-';
-            item.n = item['自然排名'];
-            item.sp = item['sp广告排名'];
-            item.prev_date = item['下载日期'];
-            item.next_date = item['下载日期'];
-            item.asin = item['ASIN'];
-            return item
-        })[0]
-    } else {
-        staticReactive = {
-            n_diff: '-',
-            sp_diff: '-',
-            n: '-',
-            sp: '-',
-            prev_date: '-',
-            next_date: '-',
-            asin: '-'
-        }
-    }
-}
-// 初始化
-const { data } = props.data;
-dataSequlise(data);
-// 数据更新
-onBeforeUpdate(() => {
-    // 解构 props 数据
-    const { data } = props.data;
-    dataSequlise(data);
-})
 
 </script>
 

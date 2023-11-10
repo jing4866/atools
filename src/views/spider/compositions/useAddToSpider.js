@@ -54,18 +54,15 @@ export default function (spiderTask, callback) {
             // 用户未输入有效信息
             return ElMessage.warning(`请输入。`);
         }else{
-            updateProductByAsins(addSpiderRef.value.trim()).then(res => {
-                const { statusText, data } = res;
-                if (statusText === 'OK') {
-                    if (data.success) {
-                        ElMessage.success(`数据Spider状态更新成功`);
-                        // 当数据更新成功后重新调用select列表数据
-                        callback();  // selectInit
-                    } else {
-                        // 当数据在数据库中状态异常 抛出告警信息
-                        warningDataRef.value = data.data;
-                        dialogVisibleRef.value = true
-                    }
+            updateProductByAsins(addSpiderRef.value.trim()).then(data => {
+                if (data.success) {
+                    ElMessage.success(`数据Spider状态更新成功`);
+                    // 当数据更新成功后重新调用select列表数据
+                    callback();  // selectInit
+                } else {
+                    // 当数据在数据库中状态异常 抛出告警信息
+                    warningDataRef.value = data;
+                    dialogVisibleRef.value = true
                 }
             }).catch(err => {
                 // 网络错误告警

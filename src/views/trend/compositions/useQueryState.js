@@ -4,17 +4,7 @@ import moment from 'moment';
 
 // 初始化 产品 Select 列表
 export const selectIdOptions = async() => {
-    const data = await getAsinOnly().then(res => {
-        const { statusText, data } = res;
-        if (statusText === 'OK') {
-            return data.data
-        };
-        return []
-    }).catch(err => {
-        const message = err instanceof Error ? err.message : err ;     // { data } = err.response;
-        ElMessage.error(`${message}`);
-        return [];
-    });
+    const data = await getAsinOnly()
     return data;
 };
 
