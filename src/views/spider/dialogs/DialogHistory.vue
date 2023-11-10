@@ -1,8 +1,8 @@
 <template>
     <el-dialog v-model="visibleRef" title="排名历史" width="70%">
         <div>
-            <el-table ref="tableRef" :data="props.data" v-loading="props.loading" height="400" @close="closeHandle">
-                <el-table-column type="index" />
+            <el-table ref="tableRef" :data="props.data" v-loading="props.loading" height="450" @close="closeHandle">
+                <el-table-column type="index"  width="60" />
                 <el-table-column prop="PASIN" label="PASIN" column-key="PASIN" :filter-multiple="true" :filters="asinFilter"
                     :filter-method="filterHandler" />
                 <el-table-column prop="Date" label="日期">
@@ -24,13 +24,21 @@
                 </el-table-column>
             </el-table>
         </div>
-        <div class="total">共 {{ props.data.length }} 条</div>
+        <!-- 分页 -->
+        <div class="pager-container">
+            <Pagination :total="pageConfig.total" :size="pageConfig.size" :current="pageConfig.current"
+                @onSizeChange="sizeChangeHandle" 
+                @onCurrentChange="currentChangeHandle"
+                @onPreClick="preClickHandle"
+                @onNextClick="nextClickHandle"></Pagination>
+        </div>
     </el-dialog>
 </template>
 
 <script setup>
-import { ref, computed,  watch, onMounted, onUpdated } from 'vue';
-import moment from 'moment';
+import { ref, computed,  watch } from 'vue';
+import Pagination from '@/components/Pagination.vue';
+import usePagination from '../compositions/usePagination.js';
 
 const props = defineProps({
     data: {
@@ -58,7 +66,8 @@ const emit = defineEmits(['onClose', 'onDelete']);
 // const { visible } = toRefs(props); // 网络建议 不起作用
 const visibleRef = ref(false);
 watch(props, (newValue) => {
-    visibleRef.value = newValue.visible
+    visibleRef.value = newValue.visible;
+    pageConfig.total = newValue.data.length;
 });
 
 // 表头筛选
@@ -89,6 +98,11 @@ const deleteHandle = (row) => {
     emit('onDelete', row)
 }
 
+
+// 分页函数
+const { pageConfig, 
+        sizeChangeHandle, currentChangeHandle, preClickHandle, nextClickHandle} = usePagination();
+
 </script>
 
 <style>
@@ -99,6 +113,11 @@ const deleteHandle = (row) => {
 
     .total {
         padding: 5px 0;
+    }
+    .pager-container{
+        display: flex;
+        justify-content: center;
+        padding: 10px;
     }
 }
 </style>
