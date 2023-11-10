@@ -1,4 +1,5 @@
 import { ref, reactive } from 'vue';
+import { ElLoading } from 'element-plus'
 import _ from 'lodash';
 
 
@@ -15,11 +16,21 @@ export default function (){
         });
     }
     const keywordFilterHandle = (val, data) => {
+        const loadingInstance = ElLoading.service({
+            text: 'Loading...',
+            background: 'rgba(0, 0, 0, 0.5)'
+        })
         chartFilterByKey(val, data);
+        loadingInstance.close();
     };
 
     const keywordClearHandle = (val, data) => {
+        const loadingInstance = ElLoading.service({
+            text: 'Loading...',
+            background: 'rgba(0, 0, 0, 0.5)'
+        })
         chartFilterByKey(val, data);
+        loadingInstance.close();
     };
 
     return {

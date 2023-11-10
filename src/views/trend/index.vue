@@ -104,6 +104,7 @@ selectIdOptions().then(res => {
 
 <style>
 .trend-container {
+    padding: 0 10px;
     .query-box {
         padding: 5px 10px;
     }
