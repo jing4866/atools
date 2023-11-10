@@ -1,9 +1,13 @@
 <template>
-  <div class="container">
+  <!-- Home Page -->
+  <div class="home-container">
+    <!-- 一级标题 -->
     <h1 class="main-title">
       <span class="title-span">A Tools</span>
     </h1>
+    <!-- 描述 -->
     <div class="main-desc">一些在线小工具。</div>
+    <!-- 列表 -->
     <ModuleList />
   </div>
 </template>
@@ -35,12 +39,5 @@ import ModuleList from './ModuleList.vue';
 
 .main-desc {
   margin: 10px 0 0 100px;
-}
-
-/* 简单适配移动端 */
-@media (max-width: 896px) {
-  .main-title {
-    margin: 50px 0 0 50px;
-  }
 }
 </style>

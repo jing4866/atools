@@ -10,34 +10,24 @@ export default function () {
     // loading
     const loadingHRef = ref(false);
     // 向服务器请求历史排名数据
-    const getRanksData = () => {
-        loadingHRef.value = true
-        getHistoryRanks()
-        .then(data => {
-            historyRanksRef.value = data;
-            loadingHRef.value = false;
-        })
-        .catch(err => {
-            const message = err instanceof Error ? err.message : err;
-            ElMessage.error(`${message}`);
-            loadingHRef.value =false
-        });       
+    const getRanksData = async() => {
+        // loadingHRef.value = true;
+        const data = await getHistoryRanks();
+        historyRanksRef.value = data;
+        loadingHRef.value = false;
+        return data      
     };
 
     // 删除历史排名数据
-    const deleteRankData = (row, cb) => {
-        loadingHRef.value =true
-        delHistoryRank(row)
-        .then(data => {
-            ElMessage.success(`删除成功`);
-            if(cb) cb()
-            loadingHRef.value = false;
-        })
-        .catch(err => {
-            const message = err instanceof Error ? err.message : err;
-            ElMessage.error(`${message}`);
-            loadingHRef.value = false
-        });       
+    const deleteRankData = async(row, cb) => {
+        loadingHRef.value =true;
+        const data = await delHistoryRank(row);
+        ElMessage.success({
+            grouping: true,
+            message: `删除成功`
+        });
+        if(cb) cb();
+        loadingHRef.value = false;       
     };
 
     // 关闭历史排名弹出框
@@ -47,12 +37,13 @@ export default function () {
 
     // 数据请求成功后修改visible状态
     const historyDialogHandle = async() => {
-        await getRanksData();
+        loadingHRef.value = true;
         historyVisibleRef.value = true;
+        const data = await getRanksData();
     };
     // 删除历史数据后重新获取数据
     const historyDelete = async (row) => {
-        await deleteRankData(row, getRanksData);
+        const data = await deleteRankData(row, getRanksData);
     };
 
     return {

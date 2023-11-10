@@ -30,6 +30,7 @@ $http.interceptors.response.use( (response) => {
             // 请求服务器返回错误信息
             ElMessage({
                 type: 'error',
+                grouping: true,
                 message: message
             })
             return null
