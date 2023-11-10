@@ -29,6 +29,7 @@
                 <div class="trend-content" v-else>
                     <template v-for="(item, index) in filterChartRef">
                         <!-- 开启一个延时函数，优化渲染速度 -->
+                        <template v-if="defer(index)">
                             <div v-if="item.filtered" class="chart-wraper">
                                 <div class="title-left">
                                     {{ item.key }}
@@ -42,6 +43,8 @@
                                     <DoubleLines :key="item.timestamp" :data="item"></DoubleLines>
                                 </div>
                             </div>
+                        </template>
+
                     </template>
                 </div>
             </div>
@@ -79,14 +82,17 @@ const keyfilterRef = ref([]);
 
 const { chartFilterByKey, keywordFilterHandle, keywordClearHandle} = useKeywordState()
  
-const defer = useDefer();
+
+let defer= useDefer(props.data.length);
 
 const filterChartRef = ref([]);
+
 watchEffect(() => {
     if(props.data.length){
-        filterChartRef.value = chartFilterByKey(keyfilterRef.value, props.data)
+        filterChartRef.value = chartFilterByKey(keyfilterRef.value, props.data);
+        defer= useDefer(props.data.length);
     }
-})
+});
 
 
 </script>
