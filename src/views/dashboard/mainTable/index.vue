@@ -1,6 +1,11 @@
 <template>
-    <div class="dashboard-content main-table-container">
-        <el-table :data="dataFilters" :height="props.height">
+    <div class="main-table-container dashboard-content">
+        <el-table v-loading="props.loading"
+                element-loading-text="Loading..."
+                :element-loading-spinner="svg"
+                element-loading-svg-view-box="-10, -10, 50, 50"
+                element-loading-background="rgba(255, 255, 255, 0.5)" 
+                :data="dataFilters" :height="props.height">
             <el-table-column type="index" label="序号" width="70" align="center" />
             <el-table-column prop="ASIN" label="ASIN">
                 <template #default="scope">
@@ -39,29 +44,39 @@ const props = defineProps({
         type: Number,
         default: 500
     },
+    // 表格加载 LOADING 状态
+    loading: {
+        type: Boolean,
+        default: false
+    },
+    // 父组件中的关键词过滤参数
     filter: {
         type: String,
         default: ''
     },
+    // 父组件传递来的原始数据
     data: {
         type: Array,
         default: []
     }
 });
-// 接收父组件的事件
+/**
+ * @checkDetail 查看表格详细信息 触发Drawer弹出层
+ * */ 
 const emits = defineEmits(['checkDetail']);
 
-// 计算属性： 父组件的search过滤条件
+// 计算属性： props.filter 为过滤条件
 const dataFilters = computed(() => {
     if(!props.data){
         return []
     }
     return props.data.filter(item => {
-        return item.ASIN.toLowerCase().includes(props.filter.toLowerCase())
+        // 不区分大小写
+        return item.ASIN.toLowerCase().includes(props.filter.toLowerCase());
     })
 });
 
-// 触发父组件的事件
+// 触发父组件的事件，参数为当前行信息
 const goToDetail = (row) => {
     emits('checkDetail', row);
 };

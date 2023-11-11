@@ -37,7 +37,6 @@ export default function () {
 
     // 数据请求成功后修改visible状态
     const historyDialogHandle = async(limit, current) => {
-        console.log(limit, current)
         loadingHRef.value = true;
         historyVisibleRef.value = true;
         const data = await getRanksData(limit, current);

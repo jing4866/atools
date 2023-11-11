@@ -6,7 +6,9 @@
         <!-- 筛选 -->
         <OperationBar :count="dataRef.length" @search="searchHandle" @clear="clearHanle"></OperationBar>
         <!-- 数据列表 -->
-        <mainTable :height="tableHeightRef" :filter="filterRef" :data="dataRef" :counter="counterRef" @checkDetail="trggerDrawer"></mainTable>
+        <mainTable :height="tableHeightRef" :loading="tableLoadingRef" 
+            :filter="filterRef" :data="dataRef" 
+            @checkDetail="trggerDrawer"></mainTable>
         <!-- Drawer -->
         <Drawer :available="availableRef" :loading="tableChartLoadingRef" :data="drawerDataRef" :table="tableChartRef"
             @onCloseDrawer="triggerDrawerClose" @onUpdateDrawer="getkeysByASIN"></Drawer>
@@ -14,35 +16,26 @@
 </template>
 
 <script setup>
+// 依赖
 import { onMounted, onUpdated, ref } from 'vue';
 import { ElLoading } from 'element-plus'
 import _ from 'lodash';
+// 组件
 import PageTitle from '@/components/PageTitle.vue';
 import OperationBar from './OperationBar/index.vue';
 import mainTable from './mainTable/index.vue';
-import useMainTable from './mainTable/useMainTable.js';
 import Drawer from './Drawer/index.vue';
 import useTableChart from './compositions/useTableChart.js';
+import useMainTable from './compositions/useMainTable.js';
 
-// 根据浏览器高度设置表格高度 以固定表头
+
+// table高度
+let tableHeightRef = ref(500);
 onMounted(() => {
+    // 根据浏览器高度设置表格高度 以固定表头
     tableHeightRef.value = document.documentElement.clientHeight - 250;
 });
 
-// 组件更新事件 
-onUpdated(() => {
-    if(counterRef.value === dataRef.value.length * 2){
-        fullscreenLoading.close();
-    };
-});
-// 初始化时加载 LOADING
-const fullscreenLoading = ElLoading.service({
-    lock: true,
-    text: 'Loading',
-    background: 'rgba(0, 0, 0, 0.7)',
-});
-// table高度
-let tableHeightRef = ref(500);
 // 搜索词
 const filterRef = ref('');
 const searchHandle = (val) => {
@@ -54,7 +47,7 @@ const clearHanle = () => {
 
 
 // 使用本组件composition
-const { dataRef, counterRef } = useMainTable();
+const { dataRef, tableLoadingRef } = useMainTable();
 
 // 使用 Drawer 组件的 compositions
 const { tableChartRef, tableChartLoadingRef,  getkeysByASIN }  = useTableChart();

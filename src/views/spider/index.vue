@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, watchEffect } from 'vue';
 import { ElMessage } from 'element-plus';
 import { List } from '@element-plus/icons-vue';
 import PageTitle from '@/components/PageTitle.vue';
@@ -136,8 +136,7 @@ const clearLogsHandle = () => {
 
 // 分页信息
 const { pageConfig } = usePagination();
-watch(pageConfig, async (oldValue, newValue) => {
-    console.log(pageConfig)
+watch(async () => {
     await historyDialogHandle(pageConfig.size, pageConfig.current);
 })
 

@@ -13,6 +13,7 @@
 <script setup>
 import { ref } from 'vue';
 import { Search } from '@element-plus/icons-vue';
+
 // 接收父组件的数据
 const props = defineProps({
     // 当前页面总数据量
@@ -21,9 +22,11 @@ const props = defineProps({
         default: 0
     }
 });
+
 // 接收父组件事件
 const emits = defineEmits(['search', 'clear'])
 
+// 用户输入的关键词 String
 const filterRef = ref('')
 
 // 向父组件传递用户输入值
