@@ -23,8 +23,13 @@ export const addToStore = (data) => $http.post('/rank/update',{
     data
 })
 
-// 获取全部历史排名
-export const getHistoryRanks = () => $http.get('/rank/history')
+// 获取历史排名
+export const getHistoryRanks = (limit, current) => $http.get('/rank/history', {
+    params: {
+        limit, 
+        current
+    }
+})
 
 // 删除一条历史记录
 export const delHistoryRank = (data) => $http.post('/rank/history/del', { data })

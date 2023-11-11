@@ -3,7 +3,7 @@
         <!-- 面包屑 -->
         <PageTitle title="网络爬虫" description="根据指定产品信息爬取网站数据" />
         <div class="btn-groups">
-            <el-button :icon="List" size="small" type="primary" plain @click="historyDialogHandle">历史排名</el-button>
+            <el-button :icon="List" size="small" type="primary" plain @click="() => historyDialogHandle(pageConfig.size, pageConfig.current)">历史排名</el-button>
         </div>
         <div class="spider-content">
             <!-- 左侧结果输出栏 -->
@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { List } from '@element-plus/icons-vue';
 import PageTitle from '@/components/PageTitle.vue';
@@ -48,6 +48,7 @@ import useAddToSpider from './compositions/useAddToSpider.js';
 import useSpiderActions from './compositions/useSpiderActions.js';
 import useHistoryRanks from './compositions/useHistoryRanks.js';
 import { getProductBySpider } from '@/api/spider.js';
+import usePagination from './compositions/usePagination.js';
 
 // 需要爬取的asin列表
 const spiderTaskRef = ref([]);
@@ -132,6 +133,14 @@ const clearLogsHandle = () => {
     isSpider2StoreRef.value = false; 
     isAddToStoreRef.value = false;
 }
+
+// 分页信息
+const { pageConfig } = usePagination();
+watch(pageConfig, async (oldValue, newValue) => {
+    console.log(pageConfig)
+    await historyDialogHandle(pageConfig.size, pageConfig.current);
+})
+
 
 </script>
 

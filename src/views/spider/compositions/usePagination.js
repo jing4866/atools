@@ -2,7 +2,7 @@ import { reactive } from 'vue';
 
 const pageConfig = reactive({
     total: 0,
-    size: 20,
+    size: 10,
     current: 1
 })
 export default function () {

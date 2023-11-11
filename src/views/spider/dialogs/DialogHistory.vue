@@ -1,8 +1,8 @@
 <template>
     <el-dialog v-model="visibleRef" title="排名历史" width="70%">
         <div>
-            <el-table ref="tableRef" :data="props.data" v-loading="props.loading" height="450" @close="closeHandle">
-                <el-table-column type="index"  width="60" />
+            <el-table ref="tableRef" :data="props.data.rows" v-loading="props.loading" height="460" @close="closeHandle">
+                <el-table-column type="index" :index="indexMethod"  width="60" />
                 <el-table-column prop="PASIN" label="PASIN" column-key="PASIN" :filter-multiple="true" :filters="asinFilter"
                     :filter-method="filterHandler" />
                 <el-table-column prop="Date" label="日期">
@@ -42,8 +42,8 @@ import usePagination from '../compositions/usePagination.js';
 
 const props = defineProps({
     data: {
-        type: Array,
-        default: []
+        type: Object,
+        default: {}
     },
     visible: {
         type: Boolean,
@@ -67,9 +67,13 @@ const emit = defineEmits(['onClose', 'onDelete']);
 const visibleRef = ref(false);
 watch(props, (newValue) => {
     visibleRef.value = newValue.visible;
-    pageConfig.total = newValue.data.length;
+    pageConfig.total = newValue.data.count;
 });
 
+// 自定义索引
+const indexMethod = (index) => {
+    return pageConfig.size * (pageConfig.current - 1) + index + 1
+}
 // 表头筛选
 const asinFilter = computed(() => {
     const filter = [];
@@ -109,6 +113,7 @@ const { pageConfig,
 .el-dialog {
     .el-dialog__body {
         padding: 10px 30px;
+        padding-top: 0;
     }
 
     .total {

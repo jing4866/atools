@@ -10,9 +10,9 @@ export default function () {
     // loading
     const loadingHRef = ref(false);
     // 向服务器请求历史排名数据
-    const getRanksData = async() => {
+    const getRanksData = async(limit, current) => {
         // loadingHRef.value = true;
-        const data = await getHistoryRanks();
+        const data = await getHistoryRanks(limit, current);
         historyRanksRef.value = data;
         loadingHRef.value = false;
         return data      
@@ -36,10 +36,11 @@ export default function () {
     };
 
     // 数据请求成功后修改visible状态
-    const historyDialogHandle = async() => {
+    const historyDialogHandle = async(limit, current) => {
+        console.log(limit, current)
         loadingHRef.value = true;
         historyVisibleRef.value = true;
-        const data = await getRanksData();
+        const data = await getRanksData(limit, current);
     };
     // 删除历史数据后重新获取数据
     const historyDelete = async (row) => {
