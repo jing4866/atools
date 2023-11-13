@@ -8,6 +8,7 @@ import 'element-plus/dist/index.css';
 import '@/assets/styles/custom.css';
 import { createPinia } from 'pinia';
 
+
 // 全局状态管理中间件
 const pinia = createPinia()
 

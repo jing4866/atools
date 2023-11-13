@@ -9,10 +9,14 @@
         </el-page-header>
         <!-- 模块描述 -->
         <div class="module-desc">
-            <el-icon>
-                <Warning />
-            </el-icon>
-            <span class="module-desc-text">{{ description }}</span>
+            <div>
+                <el-icon>
+                    <Warning />
+                </el-icon>
+                <span class="module-desc-text">{{ description }}</span>
+            </div>
+                <!-- 默认插槽：接收一些额外操作，在页面最右侧 -->
+                <slot></slot>
         </div>
     </div>
 </template>
@@ -42,9 +46,11 @@ const props = defineProps({
     padding: 10px;
 
     .module-desc {
+        display: flex;
+        justify-content: space-between;
         font-size: 12px;
         color: #636466;
-        padding: 5px 40px 5px 85px;
+        padding: 5px 10px 5px 85px;
 
         .module-desc-text {
             color: #636466;

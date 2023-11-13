@@ -11,7 +11,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="category" label="分类" />
-                <el-table-column prop="rank" label="排名" sortable width="150" />
+                <el-table-column prop="rank" label="排名" width="150" />
                 <el-table-column label="操作" width="100">
                     <template #default="scope">
                         <el-popconfirm title="确认删除?"  @confirm="deleteHandle(scope.row)">
@@ -60,7 +60,7 @@ const props = defineProps({
     }
 });
 
-const emit = defineEmits(['onClose', 'onDelete']);
+const emit = defineEmits(['onClose', 'onDelete', 'callback']);
 
 // 处理浏览器警告visible is readonly
 // const { visible } = toRefs(props); // 网络建议 不起作用
@@ -89,6 +89,7 @@ const asinFilter = computed(() => {
 const tableRef = ref();
 const filterHandler = (value, row, column) => {
     // tableRef.value.clearFilter(['PASIN'])
+    // console.log(filterHandler)
     const property = column['property']
     return row[property] === value
 };

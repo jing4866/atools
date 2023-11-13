@@ -2,15 +2,16 @@ import { ref } from "vue";
 import { ElMessage } from 'element-plus';
 import { getHistoryRanks, delHistoryRank } from "@/api/spider.js";
 
+// 历史排名弹出框 visible
+const historyVisibleRef = ref(false);
+// 历史排名数据
+const historyRanksRef = ref([]);
+// loading
+const loadingHRef = ref(false);
 export default function () {
-    // 历史排名弹出框 visible
-    const historyVisibleRef = ref(false);
-    // 历史排名数据
-    const historyRanksRef = ref([]);
-    // loading
-    const loadingHRef = ref(false);
+
     // 向服务器请求历史排名数据
-    const getRanksData = async(limit, current) => {
+    const getRanksData = async(limit = 10, current = 1) => {
         // loadingHRef.value = true;
         const data = await getHistoryRanks(limit, current);
         historyRanksRef.value = data;
