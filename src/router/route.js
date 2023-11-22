@@ -64,6 +64,20 @@ export const route = [
         ]
     },
     {
+        path: '/ranks',
+        component: Layout,
+        hidden: false,
+        children: [
+            {
+                path: '',
+                name: 'RankHistory',
+                toPath: '/ranks',
+                meta: { title: '历史排名', icon: 'bug', affix: true },
+                component: () => import('@/views/ranks/index.vue')
+            }
+        ]
+    },
+    {
         path: '/tools',
         component: Layout,
         meta: {

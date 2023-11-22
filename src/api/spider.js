@@ -24,10 +24,11 @@ export const addToStore = (data) => $http.post('/rank/update',{
 })
 
 // 获取历史排名
-export const getHistoryRanks = (limit, current) => $http.get('/rank/history', {
+export const getHistoryRanks = (limit, current, asin) => $http.get('/rank/history', {
     params: {
         limit, 
-        current
+        current,
+        asin
     }
 })
 

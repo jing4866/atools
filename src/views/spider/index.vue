@@ -3,8 +3,10 @@
         <!-- 面包屑 -->
         <PageTitle title="网络爬虫" description="根据指定产品信息爬取网站数据" >
             <template v-slot:default>
-                <el-button :icon="List" size="small" type="primary" plain 
-                    @click="() => historyDialogHandle(pageConfig.size, pageConfig.current)">历史排名</el-button>
+                <!-- <el-button :icon="List" size="small" type="primary" plain 
+                    @click="() => historyDialogHandle(pageConfig.size, pageConfig.current)">历史排名</el-button> -->
+               <el-button :icon="List" size="small" type="primary" plain 
+                    @click="() => $router.push('/ranks')">历史排名</el-button>
             </template>
         </PageTitle>
         <div class="btn-groups">
@@ -41,6 +43,7 @@
 
 <script setup>
 import { ref, onMounted, watch, watchEffect } from 'vue';
+import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { List } from '@element-plus/icons-vue';
 import PageTitle from '@/components/PageTitle.vue';
@@ -55,6 +58,7 @@ import useHistoryRanks from './compositions/useHistoryRanks.js';
 import { getProductBySpider } from '@/api/spider.js';
 import usePagination from './compositions/usePagination.js';
 
+const $router = useRouter();
 
 // 需要爬取的asin列表
 const spiderTaskRef = ref([]);

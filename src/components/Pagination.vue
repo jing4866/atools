@@ -22,6 +22,14 @@ const props = defineProps({
     current: {
         type: Number,
         default: 1
+    },
+    cb: {
+        type: Function,
+        default: () => {}
+    },
+    filter: {
+        type: String,
+        default: ''
     }
 });
 
@@ -31,7 +39,7 @@ const emits = defineEmits(['onSizeChange', 'onCurrentChange', 'onPreClick', 'onN
  * @param { Number }
  * */ 
 const sizeChangeHandle = (value) => {
-    emits('onSizeChange', value);
+    emits('onSizeChange', value, props.cb, props.filter);
 };
 
 /**
@@ -39,7 +47,7 @@ const sizeChangeHandle = (value) => {
  * @param { Number }
  * */ 
 const currentChangeHandle = (value) => {
-    emits('onCurrentChange', value);
+    emits('onCurrentChange', value, props.cb, props.filter);
 };
 
 /**
@@ -47,7 +55,7 @@ const currentChangeHandle = (value) => {
  * @param { Number }
  * */ 
 const preClickHandle = (value) => {
-    emits('onPreClick', value - 1)
+    emits('onPreClick', value - 1, props.cb, props.filter)
 };
 
 /**
@@ -55,6 +63,6 @@ const preClickHandle = (value) => {
  * @param { Number }
  * */ 
 const nextClickHandle = (value) => {
-    emits('onNextClick', value + 1)    
+    emits('onNextClick', value + 1, props.cb, props.filter)    
 }
 </script>
