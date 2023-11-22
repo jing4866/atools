@@ -15,4 +15,12 @@ export const str2Array = ( str ) =>{
     return []
 }
 
-
+/**
+ * @param { function } fn 回调函数 
+ * @param { Number } duration 延迟时长 
+ * */ 
+export const delay = (duration=1000) => {
+    return new Promise( resolve => {
+        setTimeout(resolve, duration);
+    })
+}

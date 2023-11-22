@@ -1,6 +1,7 @@
 import { ref } from "vue";
 import { ElMessage } from "element-plus";
 import { getSpiderData, addToStore } from "@/api/spider.js";
+import { delay } from '@/utils/util.js';
 
 /**
  * 爬虫操作
@@ -32,26 +33,32 @@ export default function (spiderTask) {
         isSpider2StoreRef.value = false;
         spiderRef.value = [];
         // 处理任务列表数据
-        const spiderTasksArray = [];
+        // const spiderTasksArray = [];
+        // 延迟请求，反爬
         for (const spider of spiderTask.value) {
-            spiderTasksArray.push(getSpiderData(spider));
+            await delay(1000)
+            const result = await getSpiderData(spider)
+            spiderRef.value.push(result);
         }
-        // 发送请求
-        try {
-            const result = await Promise.allSettled(spiderTasksArray);
-            for (const item of result) {
-                const { value } = item;
-                spiderRef.value.push(value);
-            }
-            loading.value = false;
-            isAddToStoreRef.value = true;
-            return true;
-        } catch (error) {
-            spiderNetErrRef.value = error;
-            loading.value = false;
-            isAddToStoreRef.value = false;
-            return false;
-        }
+        loading.value = false;
+        isAddToStoreRef.value = true;
+
+        // // 发送请求
+        // try {
+        //     const result = await Promise.allSettled(spiderTasksArray);
+        //     for (const item of result) {
+        //         const { value } = item;
+        //         spiderRef.value.push(value);
+        //     }
+        //     loading.value = false;
+        //     isAddToStoreRef.value = true;
+        //     return true;
+        // } catch (error) {
+        //     spiderNetErrRef.value = error;
+        //     loading.value = false;
+        //     isAddToStoreRef.value = false;
+        //     return false;
+        // }
     };
 
     // 将爬取结果添加到数据库
